@@ -1,0 +1,76 @@
+.action-bar {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+}
+
+.search-bar input[type="text"] {
+    width: 300px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+}
+
+.search-bar select {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-right: 10px;
+}
+
+.search-bar button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.search-bar button:hover {
+    background-color: #0056b3;
+}
+
+.add-role-btn {
+    padding: 10px 20px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-role-btn:hover {
+    background-color: #c82333;
+}
+
+.table {
+    background-color: transparent; /* Menghapuskan warna latar belakang kelabu */
+    border-collapse: collapse; /* Menggabungkan sempadan sel jadual */
+    width: 100%; /* Opsional: memastikan jadual mengambil keseluruhan lebar yang tersedia */
+}
+
+.table th, .table td {
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #ddd; /* Menggunakan warna sempadan yang lebih ringan */
+    background-color: transparent; /* Menghapuskan warna latar belakang sel */
+    text-transform: uppercase; 
+}
+
+.table .badge {
+    font-size: 14px;
+    padding: 5px 10px;
+    background-color: transparent; /* Jika badge mempunyai warna latar belakang kelabu, anda boleh menukarnya */
+}
+
+.table .btn {
+    margin-right: 5px;
+}
