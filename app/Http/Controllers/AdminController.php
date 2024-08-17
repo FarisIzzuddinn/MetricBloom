@@ -30,9 +30,14 @@ class AdminController extends Controller
  
          // Tentukan status berdasarkan purata pencapaian
          $status = $averageAchievement >= 50 ? 'Hijau' : 'Merah';
+
+         $kpis = AddKpi::all();
+         $labels = $kpis->pluck('kpi')->toArray();
+         $data = $kpis->pluck('peratus_pencapaian')->toArray();
+    
  
          // Hantar data ke view
-         return view('admin.dashboard.index', compact('addKpis', 'averageAchievement', 'status'));
+         return view('admin.dashboard.index', compact('addKpis', 'averageAchievement', 'status' , 'labels', 'data'));
     }
 
     public function addKpi()

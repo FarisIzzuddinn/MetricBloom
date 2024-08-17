@@ -47,9 +47,9 @@
                         <div class="col-sm-7">
                             <select id="addNegeri" name="negeri" class="form-select" required>
                                 <option value="" disabled selected>Select Negeri</option>
-                                <option value="Johor">JOHOR</option>
-                                <option value="Kedah">KEDAH</option>
-                                <option value="Kelantan">KELANTAN</option>
+                                <option value="Johor">Johor</option>
+                                <option value="Kedah">Kedah</option>
+                                <option value="Kelantan">Kelantan</option>
                                 <option value="Melaka">Melaka</option>
                                 <option value="Negeri Sembilan">Negeri Sembilan</option>
                                 <option value="Pahang">Pahang</option>
@@ -90,7 +90,7 @@
                     <div class="row mb-3">
                         <label for="sasaran" class="col-sm-5 col-form-label">SASARAN</label>
                         <div class="col-sm-7">
-                            <input type="text" id="addSasaran" name="sasaran" class="form-control" required>
+                            <input type="number" inputmode="numeric" id="addSasaran" name="sasaran" class="form-control" required>
                         </div>
                     </div>
                     

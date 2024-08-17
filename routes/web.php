@@ -55,6 +55,8 @@ Route::group(['middleware' => ['role:super admin']], function () {
 Route::group(['middleware' => ['role:admin']], function () {
     // dashboard 
     Route::get('/admin/dashboard/index', [AdminController::class, 'index'])->name('admin.index');
+    // Route::get('/admin/dashboard/index', [AdminController::class, 'getKpiData'])->name('admin.charts');
+
     // crud Kpi
     Route::get('/admin/kpi', [AddKpiController::class, 'index'])->name('admin.kpi');  
     Route::get('/kpi/add', [AddKpiController::class, 'create'])-> name('kpi.add');
@@ -78,6 +80,8 @@ Route::middleware(['role:user'])->group(function () {
     Route::get('/user/{AddKPI}/edit', [UserKpiController::class, 'edit'])->name('user.edit');
     Route::post('/user/KPI/IndexKPI', [UserKpiController::class, 'storeInput'])->name('user.kpi.storeInput');
     Route::get('/user/KPI/IndexKPI', [UserKpiController::class, 'index'])->name('user.kpi.input');
+
+
 
     // Route::get('/user/KPI/IndexKPI', [UserKpiController::class, 'charts'])->name('user.kpi.charts');
 });

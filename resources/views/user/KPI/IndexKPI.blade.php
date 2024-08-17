@@ -207,7 +207,7 @@
 <script>
     function openEditPopup(addKpi) {
         const modal = new bootstrap.Modal(document.getElementById('editKpi'));
-        document.getElementById('editTeras').value = addKpi.teras;
+        document.getElementById('editTeras').value = addKpi.teras.id;
         document.getElementById('editSO').value = addKpi.SO;
         document.getElementById('editkpi').value = addKpi.kpi;
         document.getElementById('editPernyataanKpi').value = addKpi.pernyataan_kpi;
@@ -346,25 +346,31 @@
     //         }
 
     // Create the initial chart
+    const labels = @json($labels);
+    const data = @json($data);
+
+    // Create the initial chart
     const ctx4 = document.getElementById('myChart4').getContext('2d');
     const myChart = new Chart(ctx4, {
         type: 'bar', // or 'line', 'pie', etc.
         data: {
-            labels: [], // Initially empty
+            labels: labels, // Initially empty
             datasets: [{
                 label: 'Your Dataset',
-                data: [], // Initially empty
+                data: data, // Initially empty
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1
             }]
         },
         options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
+            // scales: {
+            //     y: {
+            //         beginAtZero: true
+            //     }
+            // }
+        indexAxis: 'y',
+
         }
     });
 
@@ -381,10 +387,10 @@
     new Chart(ctx5, {
     type: 'pie',
     data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        labels: labels,
         datasets: [{
         label: '# of Votes',
-        data: [12, 19, 3, 5, 2, 3],
+        data: data,
         borderWidth: 1
         }]
     },

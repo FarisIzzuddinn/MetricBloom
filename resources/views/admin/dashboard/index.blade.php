@@ -78,7 +78,7 @@
                                     <tr>
                                         <td class="small-text text-secondary">{{ $index + 1 }}</td>
                                         <td class="small-text">{{ $addkpi->teras->id }}</td>
-                                        <td class="small-text kpi-statement">{{ $addkpi->SO->id}}</td>
+                                        <td class="small-text kpi-statement">{{ $addkpi->so->id}}</td>
                                         <td class="small-text">{{ $addkpi->negeri }}</td>
                                         <td class="small-text">{{ $addkpi->user->name }}</td>
                                         <td class="small-text">{{ $addkpi->kpi }}</td>
@@ -114,6 +114,26 @@
                             <span class="badge-{{ $statusClass }} me-2">{{ number_format($averageAchievement, 2) }}%</span>
                         </div>
                     </div> 
+                    <div class="container-sm border mb-5 mt-5">
+                        <div class="row border">
+                            <div class="col border" style="position: relative; height:40vh; width:80vw">
+                                <canvas id="myChart4"></canvas>
+                            </div>
+                            <div class="col border" style="position: relative; height:40vh; width:80vw">
+                                <canvas id="myChart5"></canvas>
+                            </div>
+                        </div>
+                        <div class="row border">
+                            <div class="col border">
+                                <canvas id="myChart1"></canvas>
+                            </div>
+                            <div class="col border">
+                                <canvas id="myChart2"></canvas>
+                            </div>
+                            <div class="col border">
+                                <canvas id="myChart3"></canvas>
+                            </div>
+                        </div>
                     </div> 
                 </div>
             </div>
@@ -121,7 +141,168 @@
     </div>
 </div>      
 
+<script>
+    const ctx1 = document.getElementById('myChart1');
 
+    new Chart(ctx1, {
+    type: 'bar',
+    data: {
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        datasets: [{
+        axis: 'y',
+        label: '# of Votes',
+        data: [12, 19, 3, 5, 2, 3],
+        fill: false,
+        backgroundColor: [
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(255, 159, 64, 0.2)',
+        'rgba(255, 205, 86, 0.2)',
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(201, 203, 207, 0.2)'
+        ],
+        borderColor: [
+        'rgb(255, 99, 132)',
+        'rgb(255, 159, 64)',
+        'rgb(255, 205, 86)',
+        'rgb(75, 192, 192)',
+        'rgb(54, 162, 235)',
+        'rgb(153, 102, 255)',
+        'rgb(201, 203, 207)'
+        ],
+        borderWidth: 1
+        }]
+    },
+    options: {
+        indexAxis: 'y',
+    }
+    });
+
+    const ctx2 = document.getElementById('myChart2');
+
+    new Chart(ctx2, {
+    type: 'line',
+    data: {
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        datasets: [{
+        label: '# of Votes',
+        data: [12, 19, 3, 5, 2, 3],
+        borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+        y: {
+            beginAtZero: true
+        }
+        }
+    }
+    });
+
+    const ctx3 = document.getElementById('myChart3');
+
+    new Chart(ctx3, {
+    type: 'bar',
+    data: {
+        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        datasets: [{
+            axis: 'y',
+        label: '# of Votes',
+        data: [12, 19, 3, 5, 2, 3],
+        borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+        y: {
+            beginAtZero: true
+        }
+        }
+    }
+    });
+
+    // const ctx4 = document.getElementById('myChart4');
+
+    // document.addEventListener('DOMContentLoaded', function () {
+    //         function updateChart() {
+    //             
+    //             axios.get(url)
+    //                 .then(function (response) {
+    //                     // Get data from response
+    //                     const labels = response.data.labels;
+    //                     const values = response.data.values;
+
+    //                     // Update the chart with new data
+    //                     myChart.data.labels = labels;
+    //                     myChart.data.datasets[0].data = values;
+    //                     myChart.update();
+    //                 })
+    //                 .catch(function (error) {
+    //                     console.error('Error fetching chart data:', error);
+    //                 });
+    //         }
+  // Get data from PHP
+  const labels = @json($labels);
+        const data = @json($data);
+
+    // Create the initial chart
+    const ctx4 = document.getElementById('myChart4').getContext('2d');
+    const myChart = new Chart(ctx4, {
+        type: 'bar', // or 'line', 'pie', etc.
+        data: {
+            labels: labels, // Initially empty
+            datasets: [{
+                label: 'Your Dataset',
+                data: data, // Initially empty
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            // scales: {
+            //     y: {
+            //         beginAtZero: true
+            //     }
+            // }
+        indexAxis: 'y',
+
+        }
+    });
+
+
+
+      
+        const ctx5 = document.getElementById('myChart5').getContext('2d');
+
+        new Chart(ctx5, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: '# of Votes',
+                    data: data,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                return `${tooltipItem.label}: ${tooltipItem.raw}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+</script>
 @endsection
 
 

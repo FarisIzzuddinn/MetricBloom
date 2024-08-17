@@ -68,5 +68,7 @@ class RolesAndPermissionsSeeder extends Seeder
                 $user->assignRole($userRole);
             }
         }
+
+        
     }
 }

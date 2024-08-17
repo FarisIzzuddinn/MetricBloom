@@ -151,12 +151,15 @@
                         <label for="editPemilik" class="col-sm-5 col-form-label">PEMILIK</label>
                         <div class="col-sm-7">
                             <select id="editPemilik" name="user_id" class="form-select" required>
+                                <option value="" disabled selected>Select Pemilik</option> <!-- Default option -->
                                 @foreach ($users as $user)
-                                    <option value="{{ $user->id }}">{{ $user->name }}</option>   
+                                    <option value="{{ $user->id }}">{{ $user->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
+                    
+                    
                     
                     <div class="row mb-3">
                         <label for="editPernyataanKpi" class="col-sm-5 col-form-label">PERNYATAAN KPI</label>
@@ -197,10 +200,10 @@
 <script>
     function openEditPopup(addKpi) {
         document.getElementById('editKpiForm').action = `/admin/addKpi/update/${addKpi.id}`;
-        document.getElementById('editTeras').value = addKpi.teras.teras;
-        document.getElementById('editSO').value = addKpi.so.SO;
+        document.getElementById('editTeras').value = addKpi.teras.id;
+        document.getElementById('editSO').value = addKpi.so.id;
         document.getElementById('editNegeri').value = addKpi.negeri;
-        document.getElementById('editPemilik').value = addKpi.user.name;
+        document.getElementById('editPemilik').value = addKpi.user.id;
         document.getElementById('editPernyataanKpi').value = addKpi.pernyataan_kpi;
         document.getElementById('editSasaran').value = addKpi.sasaran;
         document.getElementById('editJenisSasaran').value = addKpi.jenis_sasaran;

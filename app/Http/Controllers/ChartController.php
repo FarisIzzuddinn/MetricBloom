@@ -8,18 +8,15 @@ use Illuminate\Support\Facades\Auth;
 
 class ChartController extends Controller
 {
-    // public function charts() {
+    public function getKpiData()
+    {
+        // Assuming you have a Kpi model and you want to get the KPI names and values
+        $kpis = AddKpi::all(); // Modify this query according to your needs
 
-    //    $userId = Auth::id();
+        $labels = $kpis->pluck('kpi')->toArray(); // Replace 'name' with your KPI name column
+        $data = $kpis->pluck('peratus_pencapaian')->toArray(); // Replace 'value' with your KPI value column
 
-    //    $data = AddKpi::where('user_id', $userId)
-    //                 ->select('kpi','peratus_pencapaian')
-    //                 ->get();
+        return view('/admin/dashboard/index', compact('labels', 'data'));
+    }
 
-    //     $kpi = $data->pluck('kpi');
-    //     $peratus_pencapaian = $data->pluck('peratus_pencapaian');
-
-    //     return view('/user/KPI/IndexKPI', compact('kpi', 'peratus_pencapaian'));
-
-    // }
 }

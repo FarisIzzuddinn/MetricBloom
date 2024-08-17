@@ -16,8 +16,12 @@ class UserKpiController extends Controller
         // Ambil KPI yang berkaitan dengan pengguna tersebut
         $addKpis = AddKpi::where('user_id', $user->id)->get();
 
+        $kpis = AddKpi::where('user_id', $user->id)->get();
+        $labels = $kpis->pluck('kpi')->toArray();
+        $data = $kpis->pluck('peratus_pencapaian')->toArray();
+
         // Paparkan ke view
-        return view('user.KPI.IndexKPI', compact('addKpis'));
+        return view('user.KPI.IndexKPI', compact('addKpis', 'labels', 'data'));
     }
     
     // public function inputForm()
