@@ -1,6 +1,21 @@
 @extends('layout')
 @section('title', 'JABATAN PENJARA MALAYSIA ')
 @section('body')
+
+@php
+    $chartConfiguration = App\Models\ChartConfiguration::first();
+@endphp
+
+@if ($chartConfiguration)
+    @php
+        $chartTitle = $chartConfiguration->chart_title;
+    @endphp
+@else
+    @php
+        $chartTitle = 'Default Chart Title'; // Provide a fallback title or handle the absence of data appropriately
+    @endphp
+@endif
+
 <style>
      .small-text {
         font-size: 0.75rem; /* Mengurangkan saiz font */
@@ -118,6 +133,14 @@
                         <div class="row border">
                             <div class="col border" style="position: relative; height:40vh; width:80vw">
                                 <canvas id="myChart4"></canvas>
+                                {{-- <a href="{{ route('chartRename') }}" class="btn btn-primary mt-3">
+                                    Go to Form
+                                </a> --}}
+                                <form action="{{ route('updateChartTitle') }}" method="POST">
+                                    @csrf
+                                    <input type="text" name="chart_title" value="{{ old('chart_title', $chartConfiguration->chart_title ?? '') }}" required>
+                                    <button type="submit" class="btn btn-primary">Update Chart Title</button>
+                                </form>
                             </div>
                             <div class="col border" style="position: relative; height:40vh; width:80vw">
                                 <canvas id="myChart5"></canvas>
@@ -150,7 +173,7 @@
         labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
         datasets: [{
         axis: 'y',
-        label: '# of Votes',
+        label: 'test',
         data: [12, 19, 3, 5, 2, 3],
         fill: false,
         backgroundColor: [
@@ -222,55 +245,28 @@
     }
     });
 
-    // const ctx4 = document.getElementById('myChart4');
-
-    // document.addEventListener('DOMContentLoaded', function () {
-    //         function updateChart() {
-    //             
-    //             axios.get(url)
-    //                 .then(function (response) {
-    //                     // Get data from response
-    //                     const labels = response.data.labels;
-    //                     const values = response.data.values;
-
-    //                     // Update the chart with new data
-    //                     myChart.data.labels = labels;
-    //                     myChart.data.datasets[0].data = values;
-    //                     myChart.update();
-    //                 })
-    //                 .catch(function (error) {
-    //                     console.error('Error fetching chart data:', error);
-    //                 });
-    //         }
   // Get data from PHP
-  const labels = @json($labels);
+        const labels = @json($labels);
         const data = @json($data);
+        const chartTitle = @json($chartTitle);
 
-    // Create the initial chart
-    const ctx4 = document.getElementById('myChart4').getContext('2d');
-    const myChart = new Chart(ctx4, {
-        type: 'bar', // or 'line', 'pie', etc.
-        data: {
-            labels: labels, // Initially empty
-            datasets: [{
-                label: 'Your Dataset',
-                data: data, // Initially empty
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            // scales: {
-            //     y: {
-            //         beginAtZero: true
-            //     }
-            // }
-        indexAxis: 'y',
-
-        }
-    });
-
+        const ctx4 = document.getElementById('myChart4').getContext('2d');
+        const myChart = new Chart(ctx4, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: chartTitle || 'Default Title', // Provide a fallback title
+                    data: data,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+            }
+        });
 
 
       
@@ -281,7 +277,7 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: '# of Votes',
+                    label: 'gesg',
                     data: data,
                     borderWidth: 1
                 }]

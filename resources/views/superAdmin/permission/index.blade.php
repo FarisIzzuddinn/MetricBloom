@@ -20,7 +20,7 @@
                 <table class="styled-table">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>NO</th>
                             <th>NAME</th>
                             <th>ACTION</th>
                         </tr>

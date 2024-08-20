@@ -19,7 +19,7 @@
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>ID</th>
+                            <th>NO</th>
                             <th>NAME</th>
                             <th>ACTION</th>
                         </tr>

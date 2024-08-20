@@ -72,6 +72,11 @@ Route::group(['middleware' => ['role:admin']], function () {
     //crud so 
     Route::resource('so', SoController::class);
     Route::get('so/{soID}/delete', [SoController::class, 'destroy']);
+
+    Route::post('/chartTitle', [ChartController::class, 'updateChartTitle'])->name('updateChartTitle');
+    Route::post('/chartTitle/rename', [ChartController::class, 'create'])->name('chartRename');
+    
+
 });
 
 // ===================== USER ======================

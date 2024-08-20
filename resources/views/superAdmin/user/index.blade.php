@@ -137,7 +137,7 @@
                 <table class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>Id</th>
+                            <th>NO</th>
                             <th>Name</th>
                             <th>Email</th>
                             <th>Roles</th>
