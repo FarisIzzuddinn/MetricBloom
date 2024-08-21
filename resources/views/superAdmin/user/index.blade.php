@@ -5,101 +5,6 @@
 @include('sidebar')
 <link rel="stylesheet" href="{{ asset('css/superAdminUser.css') }}">
 
-<style>
-    .action-bar {
-        margin-top: 20px;
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center; /* Pastikan semua item berada di tengah-tengah secara menegak */
-    }
-
-    .search-bar {
-        display: flex;
-        align-items: center;
-    }
-
-    .search-bar input[type="text"] {
-        width: 300px;
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        margin-right: 10px;
-    }
-
-    .search-bar select {
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        margin-right: 10px;
-    }
-
-    .search-bar button {
-        display: flex;
-        align-items: center;
-        padding: 10px 20px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-    }
-
-    .search-bar button svg {
-        margin-right: 8px; /* Jarak antara ikon dan teks */
-    }
-
-    .search-bar button:hover {
-        background-color: #0056b3;
-    }
-
-    .add-role-btn {
-        display: flex;
-        align-items: center;
-        padding: 10px 20px;
-        background-color: #dc3545;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 16px;
-        text-decoration: none; /* Menghapuskan garis bawah pada pautan */
-    }
-
-    .add-role-btn svg {
-        margin-right: 8px; /* Jarak antara ikon dan teks */
-    }
-
-    .add-role-btn:hover {
-        background-color: #c82333;
-    }
-
-    .table {
-        background-color: transparent; /* Menghapuskan warna latar belakang kelabu */
-        border-collapse: collapse; /* Menggabungkan sempadan sel jadual */
-        width: 100%; /* Opsional: memastikan jadual mengambil keseluruhan lebar yang tersedia */
-    }
-
-    .table th, .table td {
-        text-align: center;
-        vertical-align: middle;
-        border: 1px solid #ddd; /* Menggunakan warna sempadan yang lebih ringan */
-        background-color: transparent; /* Menghapuskan warna latar belakang sel */
-        text-transform: uppercase; 
-    }
-
-    .table .badge {
-        font-size: 14px;
-        padding: 5px 10px;
-        background-color: transparent; /* Jika badge mempunyai warna latar belakang kelabu, anda boleh menukarnya */
-    }
-
-    .table .btn {
-        margin-right: 5px;
-    }
-</style>
-
 <div class="container">
     <div class="main">
         <main class="content px-2 py-4">
@@ -159,7 +64,7 @@
                             </td>
                             <td>
                                 <a href="{{ url('users/'.$user->id.'/edit') }}" class="btn btn-success">Edit</a>
-                                <a href="{{ url('users/'.$user->id.'/delete') }}" class="btn btn-danger">Delete</a>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-user-name="{{ $user->name }}" data-user-id="{{ $user->id }}">Delete</button>
                             </td>
                         </tr>
                         @endforeach
@@ -170,5 +75,49 @@
         </main>
     </div>
 </div>   
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header d-flex flex-column align-items-center text-center">
+                <h5 class="modal-title" id="deleteModalLabel">Delete Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <p id="deleteMessage">Are you sure you want to delete this user?</p>
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" action="" method="POST" style="display:inline;">
+                <button style="background:blue;"type="button" class="btn btn-secondary" data-bs-dismiss="modal">CANCEL</button>
+                </form>
+                @csrf
+                    @method('DELETE')
+                    <button style="background:red;" type="submit" class="btn btn-danger">DELETE</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var deleteModal = document.getElementById('deleteModal');
+        deleteModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var userName = button.getAttribute('data-user-name');
+            var userId = button.getAttribute('data-user-id');
+
+            var modalMessage = deleteModal.querySelector('#deleteMessage');
+            var form = deleteModal.querySelector('#deleteForm');
+
+            // Kemas kini mesej modal dengan nama pengguna yang betul
+            modalMessage.innerHTML = 'Are you sure you want to delete user <strong>' + userName + '</strong>?';
+            form.action = '{{ url('users') }}/' + userId + '/delete';
+        });
+    });
+</script>
+@endsection
+
 
 @endsection

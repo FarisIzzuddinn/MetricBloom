@@ -3,6 +3,7 @@
     margin-bottom: 20px;
     display: flex;
     justify-content: space-between;
+    align-items: center; /* Pastikan semua item berada di tengah-tengah secara menegak */
 }
 
 .search-bar {
@@ -26,12 +27,19 @@
 }
 
 .search-bar button {
+    display: flex;
+    align-items: center;
     padding: 10px 20px;
     background-color: #007bff;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 16px;
+}
+
+.search-bar button svg {
+    margin-right: 8px; /* Jarak antara ikon dan teks */
 }
 
 .search-bar button:hover {
@@ -39,12 +47,20 @@
 }
 
 .add-role-btn {
+    display: flex;
+    align-items: center;
     padding: 10px 20px;
     background-color: #dc3545;
     color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    font-size: 16px;
+    text-decoration: none; /* Menghapuskan garis bawah pada pautan */
+}
+
+.add-role-btn svg {
+    margin-right: 8px; /* Jarak antara ikon dan teks */
 }
 
 .add-role-btn:hover {
@@ -62,7 +78,6 @@
     vertical-align: middle;
     border: 1px solid #ddd; /* Menggunakan warna sempadan yang lebih ringan */
     background-color: transparent; /* Menghapuskan warna latar belakang sel */
-    text-transform: uppercase; 
 }
 
 .table .badge {
