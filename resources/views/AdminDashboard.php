@@ -3,19 +3,13 @@
 @section('body')
 
 @include('sidebar')
-<style>
-    .main {
-           margin-left: 300px; /* Match this value with the width of the sidebar */
-           margin-right: 20px; /* Adjust this value as needed for right-side spacing */
-           padding: 20px;
-       }
-</style>
+
 <div class="container">
     <div class="main">
         <main class="content px-2 py-4">
             <div class="container-fluid">
-                <h4>SO
-                    <a href="{{ url('so/create') }}" class="btn btn-danger float-end mb-3">Add SO </a>
+                <h4>Teras
+                    <a href="{{ url('teras/create') }}" class="btn btn-danger float-end">Add Teras </a>
                 </h4>
             </div>
 
@@ -24,18 +18,18 @@
                     <thead>
                         <tr>
                             <th>Id</th>
-                            <th>SO</th>
+                            <th>Teras</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($so as $so)
+                        @foreach($teras as $teras)
                         <tr>
-                            <td>{{ $so->id }}</td>
-                            <td>{{ $so->SO }}</td>
+                            <td>{{ $teras->id }}</td>
+                            <td>{{ $teras->teras }}</td>
                             <td>
-                                <a href="{{ url('so/'.$so->id.'/edit') }}" class="btn btn-success">Edit</a>
-                                <a href="{{ url('so/'.$so->id.'/delete') }}" class="btn btn-danger">Delete</a>
+                                <a href="{{ url('teras/'.$teras->id.'/edit') }}" class="btn btn-success">Edit</a>
+                                <a href="{{ url('teras/'.$teras->id.'/delete') }}" class="btn btn-danger">Delete</a>
                             </td>
                         </tr>
                         @endforeach

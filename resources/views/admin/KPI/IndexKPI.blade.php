@@ -22,6 +22,13 @@
         word-wrap: break-word; /* Membolehkan perkataan panjang untuk membalut */
         max-width: 150px; /* Tetapkan lebar maksimum yang sesuai */
     }
+    .main {
+        margin-left: 300px; /* Match this value with the width of the sidebar */
+        margin-right: 20px; /* Adjust this value as needed for right-side spacing */
+        padding: 20px;
+        padding-top: 5px;
+        overflow-x: hidden;
+       }
 </style>
 @include('sidebar')
 <div class="container">

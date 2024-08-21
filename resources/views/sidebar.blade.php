@@ -6,6 +6,12 @@
         top: 2%;
         left: 0%;
     }
+
+    #sidebar{
+        position: fixed;
+    }
+
+   
 </style>
 
 <aside id="sidebar">

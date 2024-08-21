@@ -24,6 +24,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'view dashboard',
             'view add kpi',
             'view user dashboard',
+            'view so',
+            'view teras',
         ];
 
         foreach ($permissions as $permission) {
@@ -34,7 +36,9 @@ class RolesAndPermissionsSeeder extends Seeder
         $adminRole = Role::create(['name' => 'admin']);
         $adminRole->givePermissionTo([
             'view dashboard',
-            'view add kpi'
+            'view add kpi',
+            'view so',
+            'view teras',
         ]);
 
         $superadminRole = Role::create(['name' => 'super admin']);

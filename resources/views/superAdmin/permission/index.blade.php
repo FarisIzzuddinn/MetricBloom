@@ -4,6 +4,7 @@
 
 @include('sidebar')
 <link rel="stylesheet" href="{{ asset('css/superAdminPremissions.css') }}">
+
 <div class="container">
     <div class="main">
         <main class="content px-2 py-4">
