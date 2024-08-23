@@ -1,32 +1,30 @@
 @extends('layout')
 @section('title', 'Dashboard')
-@section('body')
-
-@include('sidebar')
+@section('content')
 
 <style>
 
-    .main {
-        margin-left: 300px; 
-        margin-right: 20px; 
-        padding: 20px;
+.table {
+        margin-bottom: 0; /* Remove margin at the bottom of the table */
     }
-
-    .table-bordered {
-        border: 2px solid #1c1c1c; /* Thicker border */
-        border-radius: 0.375rem; /* Adjust radius as needed */
-        overflow: hidden; /* Ensures border-radius affects table corners */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
+    .table th:first-child {
+        border-top-left-radius: 12px;
     }
-
-    .table-bordered th, .table-bordered td {
-        border: 1px solid #1c1c1c; /* Thicker border for cells */
+    .table th:last-child {
+        border-top-right-radius: 12px;
+    }
+    .table tbody tr:last-child td:first-child {
+        border-bottom-left-radius: 12px;
+    }
+    .table tbody tr:last-child td:last-child {
+        border-bottom-right-radius: 12px;
     }
 </style>
 
+
 <div class="container">
-    <div class="main">
-        <main class="content px-2 py-4">
+    <div class="row">
+        <div class="col-lg-12">
             <div class="container-fluid">
                 <h4>Teras
                     <a href="{{ url('teras/create') }}" class="btn btn-danger float-end mb-3">Add Teras</a>
@@ -34,7 +32,7 @@
             </div>
 
             <div class="card-body">
-                <table class="table table-bordered">
+                <table class="table ">
                     <thead>
                         <tr class="table-secondary">
                             <th>Id</th>
@@ -65,8 +63,9 @@
                     </tbody>
                 </table>
             </div>
-
-        </main>
+        </div>
     </div>
-</div>   
+</div>
+
+@endsection
 

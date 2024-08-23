@@ -1,18 +1,31 @@
+
+
 @extends('layout')
 @section('title', 'Dashboard')
-@section('body')
+@section('content')
 
-@include('sidebar')
 <style>
-    .main {
-           margin-left: 300px; /* Match this value with the width of the sidebar */
-           margin-right: 20px; /* Adjust this value as needed for right-side spacing */
-           padding: 20px;
-       }
+
+.table {
+        margin-bottom: 0; /* Remove margin at the bottom of the table */
+    }
+    .table th:first-child {
+        border-top-left-radius: 12px;
+    }
+    .table th:last-child {
+        border-top-right-radius: 12px;
+    }
+    .table tbody tr:last-child td:first-child {
+        border-bottom-left-radius: 12px;
+    }
+    .table tbody tr:last-child td:last-child {
+    }
 </style>
+
+
 <div class="container">
-    <div class="main">
-        <main class="content px-2 py-4">
+    <div class="row">
+        <div class="col-lg-12">
             <div class="container-fluid">
                 <h4>SO
                     <a href="{{ url('so/create') }}" class="btn btn-danger float-end mb-3">Add SO </a>
@@ -20,9 +33,9 @@
             </div>
 
             <div class="card-body">
-                <table class="table table-bordered table-striped">
+                <table class="table">
                     <thead>
-                        <tr>
+                        <tr class="table-secondary">
                             <th>Id</th>
                             <th>SO</th>
                             <th>Action</th>
@@ -43,8 +56,11 @@
                     </tbody>
                 </table>
             </div>
-
-        </main>
+        </div>
     </div>
-</div>   
+</div>
+
+@endsection
+
+
 

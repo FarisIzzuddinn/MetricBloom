@@ -1,15 +1,7 @@
 @extends('layout')
 @section('title', 'Dashboard')
-@section('body')
+@section('content')
 
-@include('sidebar')
-<style>
-      .main {
-           margin-left: 300px; /* Match this value with the width of the sidebar */
-           margin-right: 20px; /* Adjust this value as needed for right-side spacing */
-           padding: 20px;
-       }
-</style>
 <div class="container">
     <div class="main">
         <main class="content px-2 py-4">
@@ -39,3 +31,5 @@
 </div>   
 
 @endsection
+
+

@@ -1,27 +1,18 @@
 @extends('layout')
 @section('title', 'Dashboard')
-@section('body')
-
-@include('sidebar')
-<style>
-    .main {
-           margin-left: 300px; /* Match this value with the width of the sidebar */
-           margin-right: 20px; /* Adjust this value as needed for right-side spacing */
-           padding: 20px;
-       }
-</style>
+@section('content')
 <div class="container">
-    <div class="main">
-        <main class="content px-2 py-4">
+    <div class="row">
+        <div class="col-lg-12">
             @if (session('status'))
-                <div class="alert alert-success">{{ session('status') }}</div>
-            @endif
+            <div class="alert alert-success">{{ session('status') }}</div>
+        @endif
 
-            <div class="container-fluid">
-                <h3 class="fw-bold fs-4 ms-2 mb-3">Roles : {{ $role->name }}
-                    <a href="{{ url('roles') }}" class="btn btn-danger float-end">back</a>
-                </h3>
-            </div>
+        <div class="container-fluid">
+            <h3 class="fw-bold fs-4 ms-2 mb-3">Roles : {{ $role->name }}
+                <a href="{{ url('roles') }}" class="btn btn-danger float-end">back</a>
+            </h3>
+        </div>
 
             <div class="card-body">
                 <form action="{{ url('roles/'.$role->id.'/give-permission') }}" method="POST" class="d-inline">
@@ -54,10 +45,14 @@
                     </div>
                 </form>
             </div>
-
-        </main>
+        </div>
     </div>
-</div>   
+</div>
+
+
 
 @endsection
+
+
+
 
