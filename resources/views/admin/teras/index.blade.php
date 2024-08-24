@@ -39,15 +39,15 @@
                 <table class="table ">
                     <thead>
                         <tr class="table-secondary">
-                            <th>Id</th>
-                            <th>Teras</th>
-                            <th>Action</th>
+                            <th>NO</th>
+                            <th>TERAS</th>
+                            <th>ACTION</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($teras as $teras)
+                        @foreach($teras as $index => $teras)
                         <tr>
-                            <td>{{ $teras->id }}</td>
+                            <td>{{ $index + 1 }}</td>
                             <td>{{ $teras->teras }}</td>
                             <td>
                                 <a href="{{ url('teras/'.$teras->id.'/edit') }}" class="btn btn-success">

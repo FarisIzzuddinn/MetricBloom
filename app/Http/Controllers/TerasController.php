@@ -28,7 +28,7 @@ class TerasController extends Controller
             'teras' => $request->teras,
         ]);
 
-        return redirect()->route('so.index')->with("status", "SO created successfully");
+        return redirect()->route('teras.index')->with("status", "SO created successfully");
     }
 
     public function edit(Teras $teras)
@@ -52,10 +52,24 @@ class TerasController extends Controller
 
         return redirect()->route('teras.index')->with("status", "SO updated successfully");
     }
-    public function destroy($terasId){
-        $teras = Teras::find($terasId);
-        $teras ->delete();
 
-        return redirect()->route('teras.index')->with("status", "Permission Delete Successfully");
+    public function renumberItems()
+    {
+        $items = Teras::orderBy('created_at')->get();
+        foreach ($items as $index => $item) {
+            $item->update(['position' => $index + 1]);
+        }
+    }
+
+    public function destroy($terasId)
+    {
+        $teras = Teras::find($terasId);
+        if ($teras) {
+            $teras->delete();
+            $this->renumberItems(); // Renumber items after deletion
+            return redirect()->route('teras.index')->with("status", "Teras delete successfully");
+        }
+
+        return redirect()->route('teras.index')->with("status", "SO not found");
     }
 }

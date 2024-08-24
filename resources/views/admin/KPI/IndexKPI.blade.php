@@ -63,8 +63,8 @@
                 <thead>
                     <tr class="table-secondary">
                         <th class="text-secondary small-text">BIL</th>
-                        <th class="text-secondary small-text">TERAS</th>
-                        <th class="text-secondary small-text">SO</th>                          
+                        {{-- <th class="text-secondary small-text">TERAS</th> --}}
+                        {{-- <th class="text-secondary small-text">SO</th>                           --}}
                         <th class="text-secondary small-text">NEGERI</th>                          
                         <th class="text-secondary small-text">PEMILIK</th>                          
                         <th class="text-secondary small-text">KPI</th>
@@ -78,8 +78,8 @@
                     @foreach ($addKpis as $addKpi)
                         <tr>
                             <td class="text-secondary small-text">{{ $loop->iteration }}</td>
-                            <td class="small-text">{{ $addKpi->teras->id }}</td>
-                            <td class="small-text">{{ $addKpi->so->id }}</td>
+                            {{-- <td class="small-text">{{ $addKpi->teras->id }}</td> --}}
+                            {{-- <td class="small-text">{{ $addKpi->so->id }}</td> --}}
                             <td class="small-text">{{ $addKpi->negeri }}</td>
                             <td class="small-text">{{ $addKpi->user->name }}</td>
                             <td class="small-text">{{ $addKpi->kpi }}</td>

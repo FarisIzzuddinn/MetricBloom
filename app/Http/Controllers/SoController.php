@@ -10,7 +10,16 @@ class SoController extends Controller
     public function index()
     {
         $so = So::all(); // Retrieve all SO records
+
         return view('admin.SO.index', compact('so'));
+    }
+
+    public function renumberItems()
+    {
+        $items = So::orderBy('created_at')->get();
+        foreach ($items as $index => $item) {
+            $item->update(['position' => $index + 1]);
+        }
     }
 
     public function create()
@@ -52,10 +61,17 @@ class SoController extends Controller
 
         return redirect()->route('so.index')->with("status", "SO updated successfully");
     }
-    public function destroy($soId){
-        $so = So::find($soId);
-        $so->delete();
+   
 
-        return redirect()->route('so.index')->with("status", "Permission Delete Successfully");
+    public function destroy($soId)
+    {
+        $so = So::find($soId);
+        if ($so) {
+            $so->delete();
+            $this->renumberItems(); // Renumber items after deletion
+            return redirect()->route('so.index')->with("status", "SO deleted and renumbered successfully");
+        }
+
+        return redirect()->route('so.index')->with("status", "SO not found");
     }
 }
