@@ -5,9 +5,8 @@
 @section('content')
 
 <style>
-
-.table {
-        margin-bottom: 0; /* Remove margin at the bottom of the table */
+    .table {
+        margin-bottom: 0;
     }
     .table th:first-child {
         border-top-left-radius: 12px;
@@ -19,6 +18,10 @@
         border-bottom-left-radius: 12px;
     }
     .table tbody tr:last-child td:last-child {
+    }
+
+    h4{
+        text-align: start;
     }
 </style>
 

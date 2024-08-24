@@ -1,7 +1,11 @@
 @extends('layout')
 @section('title', 'Dashboard')
 @section('content')
-
+<style>
+    h3{
+        text-align: start;
+    }
+</style>
 <div class="container">
     <div class="row">
         <div class="col-lg-12">
@@ -16,7 +20,7 @@
                     @csrf
 
                     <div class="mb-3">
-                        <label for="SO">SO Name</label>
+                        <label for="SO" class="title">SO Name</label>
                         <input type="text" name="SO" class="form-control">
                     </div>
                     <div class="mb-3">

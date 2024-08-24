@@ -1,266 +1,276 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            overflow-x: hidden;
-        }
+    <title>Bootstrap Sidebar</title>
+    <link href="https://cdn.lineicons.com/4.0/lineicons.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
-        #sidebar {
-            width: 50px; /* Collapsed width */
-            background-color: #343a40;
-            color: white;
-            transition: all 0.3s;
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            z-index: 1000;
-        }
+body {
+    font-family: 'Poppins', sans-serif;
+}
 
-        #sidebar.expanded {
-            width: 250px; /* Expanded width */
-        }
+h1 {
+    font-weight: 800;
+}
 
-        #content {
-            width: 100%;
-            padding: 20px;
-            margin-left: 80px;
-            transition: all 0.3s;
-        }
+li {
+    list-style: none;
+}
 
-        #sidebar.expanded + #content {
-            margin-left: 250px;
-        }
+a {
+    text-decoration: none;
+}
 
-        .sidebar-header {
-            padding: 20px;
-         
-        }
+.main {
+    min-height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    background-color: #f9f9f9;
+}
 
-        .list-unstyled li {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-        }
+#sidebar {
+    max-width: 264px;
+    min-width: 264px;
+    transition: all 0.35s ease-in-out;
+    background-color: #000;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: fixed; 
+}
 
-        .list-unstyled li a {
-            color: white;
-            text-decoration: none;
-            font-size: 1.2em;
-            display: flex;
-            align-items: center;
-            width: 100%;
-        }
+#sidebar.collapsed {
+    transform: translateX(-264px); /* Slide out of view */
+}
 
-        .list-unstyled li i {
-            font-size: 3.0em; /* Icon size */
-            margin-right: 10px;
-            min-width: 40px;
-            text-align: center;
-        }
+.toggler-btn {
+    background-color: transparent;
+    cursor: pointer;
+    border: 0;
+}
 
-        .list-unstyled li span {
-            display: none; /* Hide text by default */
-        }
+.toggler-btn i {
+    font-size: 1.75rem;
+    color: #000;
+    font-weight: 1000;
+}
 
-        #sidebar.expanded .list-unstyled li span {
-            display: inline; /* Show text when expanded */
-        }
+.navbar {
+    padding: 1.15rem 1.5rem;
+    border-bottom: 2px dashed #b3a8a8;
+}
 
-         .sidebar-logo {
-        width: 40px; /* Adjust width as needed */
-        height: auto; /* Maintain aspect ratio */
+.sidebar-nav {
+    flex: 1 1 auto;
+}
+
+.sidebar-logo {
+    padding: 1.15rem 1.5rem;
+    text-align: center;
+}
+
+.sidebar-logo a {
+    color: #FFF;
+    font-weight: 800;
+    font-size: 20px;
+}
+
+.sidebar-header {
+    color: #FFF;
+    font-size: .75rem;
+    padding: 1.5rem 1.5rem .375rem;
+}
+
+a.sidebar-link {
+    padding: .625rem 1.625rem;
+    color: #FFF;
+    position: relative;
+    transition: all 0.35s;
+    display: block;
+    font-size: 1.25rem;
+}
+
+a.sidebar-link:hover {
+    background-color: #f9f6f630;
+}
+
+.sidebar-link[data-bs-toggle="collapse"]::after {
+    border: solid;
+    border-width: 0 .075rem .075rem 0;
+    content: "";
+    display: inline-block;
+    padding: 2px;
+    position: absolute;
+    right: 1.5rem;
+    top: 1.4rem;
+    transform: rotate(-135deg);
+    transition: all .2s ease-out;
+}
+
+.sidebar-link[data-bs-toggle="collapse"].collapsed::after {
+    transform: rotate(45deg);
+    transition: all .2s ease-out;
+}
+
+/* Screen size less than 768px */
+
+@media (max-width:768px) {
+
+    .sidebar-toggle {
+        margin-left: -264px;
     }
 
-        #sidebar:not(.locked):hover .list-unstyled li span {
-            display: inline; /* Show text on hover */
-        }
 
-        .list-unstyled li a:hover {
-            background: #007bff;
-        }
 
-        /* Blue button to lock/unlock sidebar */
-        .toggle-button {
-            position: absolute;
-            top: 20px;
-            right: -20px;
-            width: 40px;
-            height: 40px;
-            background-color: #007bff;
-            border-radius: 50%;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
+    #content {
+        width: 100%; /* Full width on smaller screens */
+        margin-left: 0; /* No margin needed */
+    }
 
-        /* Hover effect */
-        #sidebar:not(.locked):hover {
-            width: 250px;
-        }
+    #sidebar.collapsed {
+        margin-left: -264px; /* Hide the sidebar off-screen */
+    }
+}
+#sidebar.collapsed ~ #content {
+    margin-left: 0;
+    width: 100%;
+}
 
-        #sidebar:not(.locked):hover + #content {
-            margin-left: 250px;
-        }
 
-        /* Media Query for smaller screens */
-        @media (max-width: 768px) {
-            #sidebar {
-                margin-left: -80px;
-            }
+#content {
+    width: calc(100% - 85px); /* Adjust width to account for the sidebar */
+    padding: 20px;
+    margin-left: 264px;
 
-            #sidebar.collapsed {
-                margin-left: 0;
-            }
+    transition: margin-left 0.35s ease-in-out;
+}
 
-            #content {
-                margin-left: 0;
-            }
-
-            #sidebar.show {
-                margin-left: 0;
-            }
-
-            #sidebar.expanded {
-                margin-left: 0;
-            }
-
-            #sidebar.expanded + #content {
-                margin-left: 250px;
-            }
-        }
-
-        img {
-          position: absolute;
-          width: 100px;
-          height: 100px;
-          top: 2%;
-          left: 0%;
-      }
-      
-    </style>
-</head>
+</style>
 <body>
     <div class="d-flex">
         <!-- Sidebar -->
-        <nav id="sidebar" class="bg-dark">
-              <div class="sidebar-header">
-                <img src="{{ asset('picture/logopenjara.png') }}" alt="Logo" class="sidebar-logo">
+        <aside id="sidebar" class="sidebar-toggle">
+            <div class="sidebar-logo">
+                <a href="#">JABATAN PENJARA MALAYSIA</a>
             </div>
-            <ul class="list-unstyled components">
-              @if(Auth::check())
-            @php
-                $userPermissions = Auth::user()->getAllPermissions()->pluck('name')->toArray();
-            @endphp
+            <!-- Sidebar Navigation -->
+            <ul class="sidebar-nav p-0">
+                @if(Auth::check())
+                @php
+                    $userPermissions = Auth::user()->getAllPermissions()->pluck('name')->toArray();
+                @endphp
+    
+                @if(in_array('view permissions', $userPermissions))
+                    <li class="sidebar-item">
+                        <a href="{{ url('permissions') }}" class="sidebar-link">
+                            <svg xmlns="http://www.w3.org/2000/svg"  width="20" height="20" fill="currentColor" class="bi bi-person me-3" viewBox="0 0 16 16">
+                                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
+                            </svg>
+                            <span>Permissions</span>
+                        </a>
+                    </li>
+                @endif
+    
+                @if(in_array('view roles', $userPermissions))
+                    <li class="sidebar-item">
+                        <a href="{{ url('roles') }}" class="sidebar-link">
+                            <svg xmlns="http://www.w3.org/2000/svg"  width="20" height="20" fill="currentColor" class="bi bi-plus-square-fill me-3" viewBox="0 0 16 16">
+                                <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0"/>
+                            </svg>
+                            <span>Roles</span>
+                        </a>
+                    </li>
+                @endif
+    
+                @if(in_array('view users', $userPermissions))
+                    <li class="sidebar-item">
+                        <a href="{{ url('users') }}" class="sidebar-link">
+                            <svg xmlns="http://www.w3.org/2000/svg"  width="20" height="20" fill="currentColor" class="bi bi-plus-square-fill me-3" viewBox="0 0 16 16">
+                                <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0"/>
+                            </svg>
+                            <span>Users</span>
+                        </a>
+                    </li>
+                @endif
 
-            @if(in_array('view permissions', $userPermissions))
-                <li class="sidebar-item">
-                    <a href="{{ url('permissions') }}" class="sidebar-link">
-                        <svg xmlns="http://www.w3.org/2000/svg"  width="20" height="20" fill="currentColor" class="bi bi-person me-3" viewBox="0 0 16 16">
-                            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
-                        </svg>
-                        <span>Permissions</span>
-                    </a>
-                </li>
+                @if(in_array('view dashboard', $userPermissions))
+                    <li class="sidebar-item">
+                        <a href="{{ route('admin.index') }}" class="sidebar-link">
+                            <svg xmlns="http://www.w3.org/2000/svg"  width="20" height="20" fill="currentColor" class="bi bi-person me-3" viewBox="0 0 16 16">
+                                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                @endif
+    
+                @if(in_array('view teras', $userPermissions))
+                    <li class="sidebar-item">
+                        <a href="{{ route('teras.index') }}" class="sidebar-link">
+                            <svg xmlns="http://www.w3.org/2000/svg"  width="20" height="20" fill="currentColor" class="bi bi-person me-3" viewBox="0 0 16 16">
+                                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
+                            </svg>
+                            <span>teras</span>
+                        </a>
+                    </li>
+                @endif
+    
+                @if(in_array('view so', $userPermissions))
+                    <li class="sidebar-item">
+                        <a href="{{ route('so.index') }}" class="sidebar-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person me-3" viewBox="0 0 16 16">
+                                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
+                            </svg>
+                            <span>SO</span>
+                        </a>
+                    </li>
+                @endif
+    
+                @if(in_array('view add kpi', $userPermissions))
+                    <li class="sidebar-item">
+                        <a href="{{ route('admin.kpi') }}" class="sidebar-link">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-square-fill me-3" viewBox="0 0 16 16">
+                                <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0"/>
+                            </svg>
+                            <span>Add KPI</span>
+                        </a>
+                    </li>
+                @endif
+    
+                @if(in_array('view user dashboard', $userPermissions))
+                    <li class="sidebar-item">
+                        <a href="{{ route('user.kpi.input') }}" class="sidebar-link">
+                            <i class="lni lni-dashboard"></i>
+                            <span>User Dashboard</span>
+                        </a>
+                    </li>
+                @endif
             @endif
-
-            @if(in_array('view roles', $userPermissions))
-                <li class="sidebar-item">
-                    <a href="{{ url('roles') }}" class="sidebar-link">
-                        <svg xmlns="http://www.w3.org/2000/svg"  width="20" height="20" fill="currentColor" class="bi bi-plus-square-fill me-3" viewBox="0 0 16 16">
-                            <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0"/>
-                        </svg>
-                        <span>Roles</span>
-                    </a>
-                </li>
-            @endif
-
-            @if(in_array('view users', $userPermissions))
-                <li class="sidebar-item">
-                    <a href="{{ url('users') }}" class="sidebar-link">
-                        <svg xmlns="http://www.w3.org/2000/svg"  width="20" height="20" fill="currentColor" class="bi bi-plus-square-fill me-3" viewBox="0 0 16 16">
-                            <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0"/>
-                        </svg>
-                        <span>Users</span>
-                    </a>
-                </li>
-            @endif
-
-            @if(in_array('view dashboard', $userPermissions))
-                <li class="sidebar-item">
-                    <a href="{{ route('admin.index') }}" class="sidebar-link">
-                        <svg xmlns="http://www.w3.org/2000/svg"  width="20" height="20" fill="currentColor" class="bi bi-person me-3" viewBox="0 0 16 16">
-                            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
-                        </svg>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-            @endif
-
-            @if(in_array('view teras', $userPermissions))
-                <li class="sidebar-item">
-                    <a href="{{ route('teras.index') }}" class="sidebar-link">
-                        <svg xmlns="http://www.w3.org/2000/svg"  width="20" height="20" fill="currentColor" class="bi bi-person me-3" viewBox="0 0 16 16">
-                            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
-                        </svg>
-                        <span>teras</span>
-                    </a>
-                </li>
-            @endif
-
-            @if(in_array('view so', $userPermissions))
-                <li class="sidebar-item">
-                    <a href="{{ route('so.index') }}" class="sidebar-link">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-person me-3" viewBox="0 0 16 16">
-                            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
-                        </svg>
-                        <span>SO</span>
-                    </a>
-                </li>
-            @endif
-
-            @if(in_array('view add kpi', $userPermissions))
-                <li class="sidebar-item">
-                    <a href="{{ route('admin.kpi') }}" class="sidebar-link">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus-square-fill me-3" viewBox="0 0 16 16">
-                            <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0"/>
-                        </svg>
-                        <span>Add KPI</span>
-                    </a>
-                </li>
-            @endif
-
-            @if(in_array('view user dashboard', $userPermissions))
-                <li class="sidebar-item">
-                    <a href="{{ route('user.kpi.input') }}" class="sidebar-link">
-                        <i class="lni lni-dashboard"></i>
-                        <span>User Dashboard</span>
-                    </a>
-                </li>
-            @endif
-        @endif
             </ul>
-            @include('logout')
-        </nav>
-
-       
-
-        <!-- Page Content -->
+            <!-- Sidebar Navigation Ends -->
+            <div class="sidebar-footer">
+                @include('logout')
+            </div>
+        </aside>
+        <!-- Sidebar Ends -->
+        <!-- Main Component -->
+        
+           <!-- Page Content -->
         <div id="content">
             <div class="container-fluid">
               <div class="d-flex justify-content-between align-items-center mb-4">
-                <button type="button" id="sidebarCollapse" class="btn btn-dark ms-3">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
-                  </svg>
-              </button>
+                <button class="toggler-btn" type="button">
+                    <i class="lni lni-text-align-left"></i>
+                </button>
                 {{-- <div class="h3 mt-2">Dashboard</div> --}}
                 <div>
                     <input type="search" class="form-control m-2" placeholder="Search (Ctrl+/)">
@@ -279,15 +289,17 @@
             </div>
             @yield('content')
         </div>
+        </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
-    <script>
-        document.getElementById('sidebarCollapse').addEventListener('click', function () {
-            var sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('expanded');
-        });
-    </script>
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 </body>
+<script>
+    const toggler = document.querySelector(".toggler-btn");
+toggler.addEventListener("click", function () {
+  document.querySelector("#sidebar").classList.toggle("collapsed");
+});
+</script>
 </html>

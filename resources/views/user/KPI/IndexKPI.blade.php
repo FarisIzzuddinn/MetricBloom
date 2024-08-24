@@ -1,11 +1,3 @@
-
-
-
-
-
-
-
-
 @extends('layout')
 @section('content')
 

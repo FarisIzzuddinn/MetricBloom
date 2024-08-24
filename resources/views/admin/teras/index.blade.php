@@ -19,6 +19,10 @@
     .table tbody tr:last-child td:last-child {
         border-bottom-right-radius: 12px;
     }
+
+    h4{
+        text-align: start;
+    }
 </style>
 
 
