@@ -41,8 +41,8 @@
                             <thead>
                                 <tr class="border border-dark table-success text-start">
                                     {{-- <th>Bil</th> --}}
-                                    <th>Teras</th>
-                                    <th>SO</th>
+                                    {{-- <th>Teras</th> --}}
+                                    {{-- <th>SO</th> --}}
                                     <th>Negeri</th>
                                     <th>Pemilik</th>
                                     <th>KPI</th>
@@ -58,8 +58,8 @@
                                 @foreach ($kpis as $index => $kpi)
                                 <tr class="border table-light border-dark">
                                         {{-- <td>{{ $index + 1 }}</td> --}}
-                                        <td>{{ $kpi->teras }}</td>
-                                        <td>{{ $kpi->so }}</td>
+                                        {{-- <td>{{ $kpi->teras }}</td> --}}
+                                        {{-- <td>{{ $kpi->so }}</td> --}}
                                         <td>{{ $kpi->negeri }}</td>
                                         <td>{{ $kpi->pemilik }}</td>
                                         <td>{{ $kpi->kpi }}</td>
@@ -75,8 +75,8 @@
                             <tbody>
                                 @foreach ($addKpis as $addKpi)
                                     <tr class="border table-light border-dark">
-                                        <td>{{ $addKpi->teras }}</td>
-                                        <td>{{ $addKpi->SO }}</td>
+                                        {{-- <td>{{ $addKpi->teras }}</td> --}}
+                                        {{-- <td>{{ $addKpi->SO }}</td> --}}
                                         <td>{{ $addKpi->negeri }}</td>
                                         <td>{{ $addKpi->pemilik }}</td>
                                         <td>{{ $addKpi->pernyataan_kpi }}</td>
