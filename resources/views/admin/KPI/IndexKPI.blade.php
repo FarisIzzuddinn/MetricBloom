@@ -1,46 +1,8 @@
-
-<style>
-     .small-text {
-        font-size: 0.75rem; /* Mengurangkan saiz font */
-        white-space: nowrap; /* Mengelakkan pembungkusan teks */
-        text-overflow: ellipsis; /* Menambah ellipsis jika teks melebihi lebar sel */
-        overflow: hidden; /* Mengelakkan teks melimpah keluar dari sel */
-    }
-
-    .small-button {
-        font-size: 0.75rem; /* Saiz font kecil */
-        white-space: nowrap; /* Elakkan pembungkusan teks */
-        padding: 0.25rem 0.5rem; /* Padding yang lebih kecil */
-        text-overflow: ellipsis; /* Tambah ellipsis jika teks melebihi lebar butang */
-        overflow: hidden; /* Elakkan teks melimpah keluar dari butang */
-    }
-
-    .kpi-statement {
-        white-space: pre-wrap; /* Membolehkan pembalut perkataan */
-        word-wrap: break-word; /* Membolehkan perkataan panjang untuk membalut */
-        max-width: 150px; /* Tetapkan lebar maksimum yang sesuai */
-    }
-   
-       .table {
-        margin-bottom: 0; /* Remove margin at the bottom of the table */
-    }
-    .table th:first-child {
-        border-top-left-radius: 12px;
-    }
-    .table th:last-child {
-        border-top-right-radius: 12px;
-    }
-    .table tbody tr:last-child td:first-child {
-        border-bottom-left-radius: 12px;
-    }
-    .table tbody tr:last-child td:last-child {
-    }
-</style>
-
-
 @extends('layout')
-
 @section('content')
+
+<link rel="stylesheet" href="{{ asset("css/table.css") }}">
+
 <div class="container">
     <div class="row">
         <div class="col-lg-12">
@@ -217,8 +179,8 @@
 <script>
     function openEditPopup(addKpi) {
         document.getElementById('editKpiForm').action = `/admin/addKpi/update/${addKpi.id}`;
-        document.getElementById('editTeras').value = addKpi.teras.id;
-        document.getElementById('editSO').value = addKpi.so.id;
+        // document.getElementById('editTeras').value = addKpi.teras.id;
+        // document.getElementById('editSO').value = addKpi.so.id;
         document.getElementById('editNegeri').value = addKpi.negeri;
         document.getElementById('editPemilik').value = addKpi.user.id;
         document.getElementById('editPernyataanKpi').value = addKpi.pernyataan_kpi;

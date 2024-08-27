@@ -1,0 +1,36 @@
+.small-text {
+    font-size: 0.75rem; /* Mengurangkan saiz font */
+    white-space: nowrap; /* Mengelakkan pembungkusan teks */
+    text-overflow: ellipsis; /* Menambah ellipsis jika teks melebihi lebar sel */
+    overflow: hidden; /* Mengelakkan teks melimpah keluar dari sel */
+}
+
+.small-button {
+    font-size: 0.75rem; /* Saiz font kecil */
+    white-space: nowrap; /* Elakkan pembungkusan teks */
+    padding: 0.25rem 0.5rem; /* Padding yang lebih kecil */
+    text-overflow: ellipsis; /* Tambah ellipsis jika teks melebihi lebar butang */
+    overflow: hidden; /* Elakkan teks melimpah keluar dari butang */
+}
+
+.kpi-statement {
+    white-space: pre-wrap; /* Membolehkan pembalut perkataan */
+    word-wrap: break-word; /* Membolehkan perkataan panjang untuk membalut */
+    max-width: 150px; /* Tetapkan lebar maksimum yang sesuai */
+}
+
+   .table {
+    margin-bottom: 0; /* Remove margin at the bottom of the table */
+}
+.table th:first-child {
+    border-top-left-radius: 12px;
+}
+.table th:last-child {
+    border-top-right-radius: 12px;
+}
+.table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 12px;
+}
+.table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 12px;
+}
