@@ -129,7 +129,7 @@
                                 <tr>
                                     <td class="small-text text-secondary">{{ $index + 1 }}</td>
                                     <td class="small-text">{{ $addkpi->teras ? $addkpi->teras->id : 'No Teras Found' }}</td>
-                                    <td class="small-text kpi-statement">{{ $addkpi->so->id}}</td> 
+                                    <td class="small-text kpi-statement">{{$addkpi->so ? $addkpi->so->id : 'No SO Found'}}</td> 
                                     <td class="small-text">{{ $addkpi->negeri }}</td>
                                     <td class="small-text">{{ $addkpi->user->name }}</td>
                                     <td class="small-text">{{ $addkpi->kpi }}</td>
@@ -148,27 +148,7 @@
                                     </td>
                                 </tr>
                             
-                                    <tr>
-                                        <td class="small-text text-secondary">{{ $index + 1 }}</td>
-                                        {{-- <td class="small-text">{{ $addkpi->teras->id }}</td> --}}
-                                        <td class="small-text kpi-statement">{{ $addkpi->so->id}}</td>
-                                        <td class="small-text">{{ $addkpi->negeri }}</td>
-                                        <td class="small-text">{{ $addkpi->user->name }}</td>
-                                        <td class="small-text">{{ $addkpi->kpi }}</td>
-                                        <td class="small-text kpi-statement">{{ $addkpi->pernyataan_kpi }}</td>
-                                        <td class="small-text">{{ $addkpi->sasaran }}</td>
-                                        <td class="small-text">{{ $addkpi->pencapaian }}%</td>
-                                        <td class="small-text">{{ number_format($addkpi->peratus_pencapaian, 2) }}%</td>
-                                        <td class="small-text">
-                                            @if($addkpi->peratus_pencapaian >= 75)
-                                                <span class="badge text-bg-success">Tinggi</span>
-                                            @elseif($addkpi->peratus_pencapaian >= 50)
-                                                <span class="badge text-bg-warning">Sederhana</span>
-                                            @else
-                                                <span class="badge text-bg-danger">Rendah</span>
-                                            @endif
-                                        </td>
-                                    </tr>
+                            
                                 @endforeach
 
                         </tbody>
