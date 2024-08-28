@@ -37,7 +37,7 @@
         <div class="card bg-primary text-white">
             <div class="card-header">Total KPIs</div>
             <div class="card-body">
-                <h5 class="card-title">15</h5>
+                <h5 class="card-title">{{ $totalKpis }}</h5>
             </div>
         </div>
     </div>
@@ -45,7 +45,7 @@
         <div class="card bg-success text-white">
             <div class="card-header">Achieved</div>
             <div class="card-body">
-                <h5 class="card-title">10</h5>
+                <h5 class="card-title">{{ $achievedKpis }}</h5>
             </div>
         </div>
     </div> 
@@ -53,7 +53,7 @@
         <div class="card bg-warning text-white">
             <div class="card-header">Pending</div>
             <div class="card-body">
-                <h5 class="card-title">5</h5>
+                <h5 class="card-title">{{ $pendingKpis }}</h5>
             </div>
         </div>
     </div>
@@ -61,7 +61,7 @@
         <div class="card bg-info text-white">
             <div class="card-header">Average Achievement</div>
             <div class="card-body">
-                <h5 class="card-title">75%</h5>
+                <h5 class="card-title">{{ $averageAchievement }}%</h5>
             </div>
         </div>
     </div>
@@ -111,7 +111,7 @@
                         <thead>
                             <tr class="table-secondary text-secondary small-text">
                                 <th >BIL</th>
-                                {{-- <th >TERAS</th> --}}
+                                <th >TERAS</th>
                                 <th >SO</th>
                                 <th >NEGERI</th>
                                 <th >PEMILIK</th>
@@ -125,11 +125,11 @@
                         </thead>
                         <tbody>
                             @foreach ($addKpis as $index => $addkpi)
-<<<<<<< HEAD
+
                                 <tr>
                                     <td class="small-text text-secondary">{{ $index + 1 }}</td>
-                                    <!-- <td class="small-text">{{ $addkpi->teras->id }}</td> -->
-                                    <!-- <td class="small-text kpi-statement">{{ $addkpi->so->id}}</td> -->
+                                    <td class="small-text">{{ $addkpi->teras ? $addkpi->teras->id : 'No Teras Found' }}</td>
+                                    <td class="small-text kpi-statement">{{ $addkpi->so->id}}</td> 
                                     <td class="small-text">{{ $addkpi->negeri }}</td>
                                     <td class="small-text">{{ $addkpi->user->name }}</td>
                                     <td class="small-text">{{ $addkpi->kpi }}</td>

@@ -16,8 +16,14 @@ class AdminController extends Controller
     public function index()
     {
         // Retrieve data from the Kpi model
-        // $akpis = AdminDashboard::orderBy('sortby', 'asc')->get();
         $addKpis = AddKpi::orderBy('bil')->get();
+        $totalKpis = AddKpi::count();
+        $achievedKpis = AddKpi::where('peratus_pencapaian', '>=', '75')->count();
+        $pendingKpis = AddKpi::where('peratus_pencapaian', '>=', 0)
+                                ->where('peratus_pencapaian', '<', 75)
+                                ->count();
+        $averageAchievement = ($totalKpis > 0) ? round(($achievedKpis / $totalKpis) * 100) : 0;
+
         
          // Kira purata peratus pencapaian
          $totalAchievement = $addKpis->sum('peratus_pencapaian');
@@ -38,7 +44,7 @@ class AdminController extends Controller
     
          $user = Auth::User();
          // Hantar data ke view
-         return view('admin.dashboard.index', compact('addKpis', 'averageAchievement','user', 'status' , 'labels', 'data'));
+         return view('admin.dashboard.index', compact('addKpis', 'averageAchievement', 'pendingKpis', 'totalKpis', 'achievedKpis', 'user', 'status' , 'labels', 'data'));
     }
 
     public function addKpi()
@@ -46,3 +52,4 @@ class AdminController extends Controller
         return view('admin.add-kpi');
     }
 }
+ 

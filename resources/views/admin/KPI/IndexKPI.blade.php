@@ -25,8 +25,8 @@
                 <thead>
                     <tr class="table-secondary">
                         <th class="text-secondary small-text">BIL</th>
-                        {{-- <th class="text-secondary small-text">TERAS</th> --}}
-                        {{-- <th class="text-secondary small-text">SO</th>                           --}}
+                        <th class="text-secondary small-text">TERAS</th>
+                        <th class="text-secondary small-text">SO</th>                          
                         <th class="text-secondary small-text">NEGERI</th>                          
                         <th class="text-secondary small-text">PEMILIK</th>                          
                         <th class="text-secondary small-text">KPI</th>
@@ -40,8 +40,8 @@
                     @foreach ($addKpis as $addKpi)
                         <tr>
                             <td class="text-secondary small-text">{{ $loop->iteration }}</td>
-                            {{-- <td class="small-text">{{ $addKpi->teras->id }}</td> --}}
-                            {{-- <td class="small-text">{{ $addKpi->so->id }}</td> --}}
+                            <td class="small-text">{{ $addKpi->teras ? $addKpi->teras->id : 'No Teras Found' }}</td>
+                            <td class="small-text">{{ $addKpi->so ? $addKpi->so->id : 'No SO found' }}</td> 
                             <td class="small-text">{{ $addKpi->negeri }}</td>
                             <td class="small-text">{{ $addKpi->user->name }}</td>
                             <td class="small-text">{{ $addKpi->kpi }}</td>
@@ -179,8 +179,8 @@
 <script>
     function openEditPopup(addKpi) {
         document.getElementById('editKpiForm').action = `/admin/addKpi/update/${addKpi.id}`;
-        // document.getElementById('editTeras').value = addKpi.teras.id;
-        // document.getElementById('editSO').value = addKpi.so.id;
+        document.getElementById('editTeras').value = addKpi.teras.id;
+        document.getElementById('editSO').value = addKpi.so.id;
         document.getElementById('editNegeri').value = addKpi.negeri;
         document.getElementById('editPemilik').value = addKpi.user.id;
         document.getElementById('editPernyataanKpi').value = addKpi.pernyataan_kpi;

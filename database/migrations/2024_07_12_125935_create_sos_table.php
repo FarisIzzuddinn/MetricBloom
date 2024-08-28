@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('sos', function (Blueprint $table) {
             $table->id();
-            $table->string('SO');
+            $table->string('SO')->unique();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
     
