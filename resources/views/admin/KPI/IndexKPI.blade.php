@@ -129,8 +129,8 @@
                                 <div class="col-sm-7">
                                     <select id="editPemilik" name="user_id" class="form-select" required>
                                         <option value="" disabled selected>Select Pemilik</option> <!-- Default option -->
-                                        @foreach ($users as $user)
-                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                        @foreach ($users as $users)
+                                            <option value="{{ $users->id }}">{{ $users->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>

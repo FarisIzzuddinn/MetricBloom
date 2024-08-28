@@ -4,14 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\So;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SoController extends Controller
 {
     public function index()
     {
         $so = So::all(); // Retrieve all SO records
-
-        return view('admin.SO.index', compact('so'));
+        $user = Auth::User();
+        return view('admin.SO.index', compact('so', 'user'));
     }
 
     public function renumberItems()

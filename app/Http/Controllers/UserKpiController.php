@@ -21,20 +21,9 @@ class UserKpiController extends Controller
         $data = $kpis->pluck('peratus_pencapaian')->toArray();
 
         // Paparkan ke view
-        return view('user.KPI.IndexKPI', compact('addKpis', 'labels', 'data'));
+        return view('user.KPI.IndexKPI', compact('addKpis', 'labels', 'data', 'user'));
     }
     
-    // public function inputForm()
-    // {
-    //     $addKpis = AddKpi::all();
-    //     return view('user.KPI.IndexKPI', compact('addKpis'));
-    // }
-
-    // public function show($id)
-    // {
-    //     $addkpi = AddKpi::findOrFail($id);
-    //     return view('add_kpi.show', compact('kpi'));
-    // }
 
     public function storeInput(Request $request)
 {

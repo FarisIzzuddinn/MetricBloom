@@ -4,13 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Teras;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TerasController extends Controller
 {
     public function index()
     {
         $teras = Teras::all(); // Retrieve all SO records
-        return view('admin.teras.index', compact('teras'));
+        $user = Auth::User();
+        return view('admin.teras.index', compact('teras', 'user'));
     }
 
     public function create()

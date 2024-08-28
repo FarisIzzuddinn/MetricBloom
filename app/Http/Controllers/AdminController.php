@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AddKpi;
+use Illuminate\Support\Facades\Auth;
 // use App\Models\AdminDashboard;
 
 
@@ -35,9 +36,9 @@ class AdminController extends Controller
          $labels = $kpis->pluck('kpi')->toArray();
          $data = $kpis->pluck('peratus_pencapaian')->toArray();
     
- 
+         $user = Auth::User();
          // Hantar data ke view
-         return view('admin.dashboard.index', compact('addKpis', 'averageAchievement', 'status' , 'labels', 'data'));
+         return view('admin.dashboard.index', compact('addKpis', 'averageAchievement','user', 'status' , 'labels', 'data'));
     }
 
     public function addKpi()

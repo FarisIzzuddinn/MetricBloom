@@ -147,8 +147,7 @@
                                         @endif
                                     </td>
                                 </tr>
-                            @endforeach
-=======
+                            
                                     <tr>
                                         <td class="small-text text-secondary">{{ $index + 1 }}</td>
                                         {{-- <td class="small-text">{{ $addkpi->teras->id }}</td> --}}
@@ -171,7 +170,7 @@
                                         </td>
                                     </tr>
                                 @endforeach
->>>>>>> e40646899f5e30b2da62fe7ad0c55f3abba88af0
+
                         </tbody>
                     </table>
                 </div>

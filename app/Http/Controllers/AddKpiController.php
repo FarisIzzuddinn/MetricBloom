@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Teras;
 use App\Models\AddKpi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 // use Illuminate\Support\Facades\Log;
 
 
@@ -18,7 +19,9 @@ class AddKpiController extends Controller
         $teras = Teras::all();
         $users = User::all();
         $addKpis = AddKpi::with('teras')->orderBy('bil')->get(); 
-        return view('admin.kpi.IndexKPI', compact('addKpis', 'users', 'teras', 'so'));
+        $user = Auth::User();
+
+        return view('admin.kpi.IndexKPI', compact('addKpis', 'users', 'teras', 'user', 'so'));
     }
 
     public function create()
