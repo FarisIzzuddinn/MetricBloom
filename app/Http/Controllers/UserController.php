@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 
@@ -32,7 +33,10 @@ class UserController extends Controller
         return view('superAdmin.user.index', [
             'users' => $users,
             'roles' => $roles,
+            'user' => Auth::user(),
         ]);
+
+
     }
 
     // Menampilkan borang untuk membuat pengguna baharu

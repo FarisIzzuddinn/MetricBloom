@@ -1,5 +1,10 @@
 <link rel="stylesheet" href="{{ asset('css/superAdminRoles.css') }}">
 
+{{-- link untuk pagination --}}
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.4/css/dataTables.dataTables.css">
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+<script src="https://cdn.datatables.net/2.1.4/js/dataTables.js"></script>
+
 @extends('layout')
 @section('title', 'Dashboard')
 @section('content')
@@ -25,12 +30,12 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="container-fluid">
-                <h4>Users</h4>
+                <h4>Staff Directory</h4>
 
                 <!-- Search Bar and Add Role Button -->
                 <div class="action-bar">
                     <form action="{{ url('users') }}" method="GET" class="search-bar">
-                        <input type="text" name="search" class="form-control" placeholder="Search by name or email" value="{{ request('search') }}">
+                        {{-- <input type="text" name="search" class="form-control" placeholder="Search by name or email" value="{{ request('search') }}"> --}}
                         <select name="role" class="form-control">
                             <option value="">Select Role</option>
                             @foreach($roles as $role)
@@ -43,19 +48,19 @@
                             </svg>
                             Search
                         </button>
-                    </form>
+                    {{-- </form>
                     <a href="{{ url('users/create') }}" class="btn btn-success add-role-btn">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
                         </svg>
                         ADD ROLE
-                    </a>
+                    </a> --}}
                 </div>
             </div>
 
          
                 <div class="card-body">
-                    <table class="table">
+                    <table id="myTable" class="table">
                         <thead>
                             <tr class="table-secondary">
                                 <th>NO</th>
@@ -119,6 +124,18 @@
 </div>
 
 <script>
+    $(document).ready( function () {
+        $('#myTable').DataTable();
+    });
+
+    $('#myTable').DataTable({
+        lengthMenu: [
+            [10, 30, 50, -1],
+            [10, 30, 50, 'All']
+        ]
+    });
+
+
     document.addEventListener('DOMContentLoaded', function () {
         var deleteModal = document.getElementById('deleteModal');
         deleteModal.addEventListener('show.bs.modal', function (event) {
