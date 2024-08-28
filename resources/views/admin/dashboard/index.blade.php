@@ -163,8 +163,8 @@
                             @foreach ($addKpis as $index => $addkpi)
                                 <tr>
                                     <td class="small-text text-secondary">{{ $index + 1 }}</td>
-                                    {{-- <td class="small-text">{{ $addkpi->teras->id }}</td> --}}
-                                    <td class="small-text kpi-statement">{{ $addkpi->so->id}}</td>
+                                    <!-- <td class="small-text">{{ $addkpi->teras->id }}</td> -->
+                                    <!-- <td class="small-text kpi-statement">{{ $addkpi->so->id}}</td> -->
                                     <td class="small-text">{{ $addkpi->negeri }}</td>
                                     <td class="small-text">{{ $addkpi->user->name }}</td>
                                     <td class="small-text">{{ $addkpi->kpi }}</td>
