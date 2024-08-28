@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Permission;
 
 class PermissionController extends Controller
@@ -11,7 +12,8 @@ class PermissionController extends Controller
     {
         $permissions = Permission::get();
         return view('superAdmin.permission.index', [
-            'permissions' => $permissions
+            'permissions' => $permissions,
+            'user' => Auth::user(),
         ]);
     }
 

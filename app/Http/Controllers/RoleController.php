@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +15,8 @@ class RoleController extends Controller
     {
         $roles = Role::get();
         return view('superAdmin.role.index', [
-            'roles' => $roles
+            'roles' => $roles,
+            'user' => Auth::user(),
         ]);
     }
 

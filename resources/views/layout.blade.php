@@ -155,7 +155,7 @@
            
             <!-- System Title -->
             <a class="navbar-brand fs-6" href="#">JABATAN PENJARA MALAYSIA</a>
-
+            @if(isset($user) && $user->role == 'user')
             <!-- Navbar content -->
             <div class="collapse navbar-collapse justify-content-end">
                 <ul class="navbar-nav">
@@ -171,6 +171,10 @@
                             <i class="bi bi-gear"></i>
                         </a>
                     </li>
+                    {{-- user name --}}
+                    <li class="text-light">
+                        <h4>{{ $user->name }}</h4>
+                    </li>
                     <!-- User Profile Dropdown -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -183,6 +187,7 @@
                     </li>
                 </ul>
             </div>
+            @endif
         </div>
     </nav>
 
