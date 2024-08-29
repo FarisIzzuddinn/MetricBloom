@@ -21,7 +21,7 @@ class AddKpiController extends Controller
         $addKpis = AddKpi::with('teras')->orderBy('bil')->get(); 
         $user = Auth::User();
 
-        return view('admin.kpi.IndexKPI', compact('addKpis', 'users', 'teras', 'user', 'so'));
+        return view('admin.KPI.IndexKPI', compact('addKpis', 'users', 'teras', 'user', 'so'));
     }
 
     public function create()

@@ -12,6 +12,22 @@ class UserKpiController extends Controller
     {
         // Dapatkan pengguna yang sedang login
         $user = Auth::user();
+      
+
+        // Total KPIs for the logged-in user
+        $userTotalKpis = $user->addKpis()->count();
+        
+        // KPIs with achievement percentage >= 75% for the logged-in user
+        $userAchievedKpis = $user->addKpis()->where('peratus_pencapaian', '>=', '75')->count();
+        
+        // KPIs with achievement percentage < 75% for the logged-in user
+        $userPendingKpis = $user->addKpis()->where('peratus_pencapaian', '>=', 0)
+                                            ->where('peratus_pencapaian', '<', 75)
+                                            ->count();
+        
+        // Average achievement percentage for the logged-in user
+        $userAverageAchievement = ($userTotalKpis > 0) ? round(($userAchievedKpis / $userTotalKpis) * 100) : 0;
+        
 
         // Ambil KPI yang berkaitan dengan pengguna tersebut
         $addKpis = AddKpi::where('user_id', $user->id)->get();
@@ -21,7 +37,7 @@ class UserKpiController extends Controller
         $data = $kpis->pluck('peratus_pencapaian')->toArray();
 
         // Paparkan ke view
-        return view('user.KPI.IndexKPI', compact('addKpis', 'labels', 'data', 'user'));
+        return view('user.KPI.IndexKPI', compact('addKpis', 'labels','userTotalKpis','userAchievedKpis','userPendingKpis', 'userAverageAchievement', 'data', 'user'));
     }
     
 

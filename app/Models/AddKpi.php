@@ -30,4 +30,6 @@ class AddKpi extends Model
     {
         return $this->belongsTo(So::class, 'so_id');
     }
+
+
 }

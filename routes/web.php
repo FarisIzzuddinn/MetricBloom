@@ -55,7 +55,6 @@ Route::group(['middleware' => ['role:super admin']], function () {
 Route::group(['middleware' => ['role:admin']], function () {
     // dashboard 
     Route::get('/admin/dashboard/index', [AdminController::class, 'index'])->name('admin.index');
-    // Route::get('/admin/dashboard/index', [AdminController::class, 'getKpiData'])->name('admin.charts');
 
     // crud Kpi
     Route::get('/admin/kpi', [AddKpiController::class, 'index'])->name('admin.kpi');  
@@ -72,12 +71,6 @@ Route::group(['middleware' => ['role:admin']], function () {
     //crud so 
     Route::resource('so', SoController::class);
     Route::get('so/{soID}/delete', [SoController::class, 'destroy']);
-
-    // Route::post('/chartTitle', [ChartController::class, 'updateChartTitle'])->name('updateChartTitle');
-    // Route::post('/chartTitle/rename', [ChartController::class, 'create'])->name('chartRename');
-    // Route::post('/update-chart-title', [ChartController::class, 'updateTitle'])->name('updateChartTitle');
-    // Route::post('/update-chart-title', [ChartController::class, 'updateTitle'])->name('updateChartTitle');
-
   
     Route::post('/chartTitle', [ChartController::class, 'updateChartTitle'])->name('updateChartTitle');
     Route::post('/chartTitle/rename', [ChartController::class, 'create'])->name('chartRename');

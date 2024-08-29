@@ -13,9 +13,7 @@ class AuthController extends Controller
 {
     public function register()
     {
-        // Fetch all roles for selection in the registration form
-        $roles = Role::all();
-        return view('auth.register', compact('roles'));
+        return view('auth.register');
     }
 
     public function registerPost(Request $request)
@@ -24,7 +22,6 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|confirmed|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/',
-            'role' => 'required|string|exists:roles,name',
         ]);
 
         if ($validator->fails()) {
@@ -38,8 +35,7 @@ class AuthController extends Controller
         ]);
 
         // Assign role to the user
-        $role = Role::where('name', $request->role)->first();
-        $user->assignRole($role);
+        $user->assignRole('user');
 
         Auth::login($user);
 

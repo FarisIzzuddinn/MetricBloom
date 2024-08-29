@@ -131,14 +131,14 @@
                     </div>
                     
                     
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <label for="role">Role</label>
                         <select name="role" id="role" class="form-control mb-3">
                             @foreach(\Spatie\Permission\Models\Role::all() as $role)
                                 <option value="{{ $role->name }}">{{ $role->name }}</option>
                             @endforeach
                         </select>
-                    </div>
+                    </div> --}}
                     <div class="input-group mb-3">
                         <button class="btn btn-lg btn-primary w-100 fs-6">Register</button>
                     </div>
