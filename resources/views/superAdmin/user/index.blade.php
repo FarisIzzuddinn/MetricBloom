@@ -5,7 +5,7 @@
 <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
 <script src="https://cdn.datatables.net/2.1.4/js/dataTables.js"></script>
 
-@extends('layout')
+@extends('layoutNoName')
 @section('title', 'Dashboard')
 @section('content')
 
@@ -22,30 +22,32 @@
     .table tbody tr:last-child td:first-child {
         border-bottom-left-radius: 12px;
     }
+    .cont {
+        position: sticky;
+    }
 </style>
 
 <div class="container">
     <div class="row">
-        <div class="col-lg-12">
-            <div class="container-fluid">
-                <h4>Staff Directory</h4>
-
-                <!-- Search Bar and Select Role -->
-                <div class="action-bar d-flex justify-content-between align-items-center mb-3">
-                    <form id="searchForm" action="{{ url('users') }}" method="GET" class="d-flex align-items-center">
-                        <!-- Select Role Dropdown -->
-                        <select name="role" class="form-control me-2" style="width: 200px;">
-                            <option value="">Select Role</option>
-                            @foreach($roles as $role)
-                                <option value="{{ $role }}" {{ request('role') == $role ? 'selected' : '' }}>{{ $role }}</option>
-                            @endforeach
-                        </select>
-
-                        <!-- Search Bar -->
-                        <input type="text" name="search" class="form-control me-2" placeholder="Search..." value="{{ request('search') }}" style="width: 200px;">
-                    </form>
-                </div>
+        <div class="cont sticky-top container-fluid">
+            <h4>Staff Directory</h4>
+            <!-- Search Bar and Select Role -->
+            <div class="action-bar d-flex justify-content-between align-items-center mb-3">
+                <form id="searchForm" action="{{ url('users') }}" method="GET" class="d-flex align-items-center">
+                    <!-- Select Role Dropdown -->
+                    <select name="role" class="form-control me-2" style="width: 200px;">
+                        <option value="">Select Role</option>
+                        @foreach($roles as $role)
+                            <option value="{{ $role }}" {{ request('role') == $role ? 'selected' : '' }}>{{ $role }}</option>
+                        @endforeach
+                    </select>
+    
+                    <!-- Search Bar -->
+                    <input type="text" name="search" class="form-control me-2" placeholder="Search..." value="{{ request('search') }}" style="width: 200px;">
+                </form>
             </div>
+        </div>
+        <div class="col-lg-12">
 
             <div class="card-body">
                 <table id="myTable" class="table">
@@ -114,9 +116,12 @@
     $(document).ready(function () {
         // Inisialisasi DataTable
         $('#myTable').DataTable({
+            layout: {
+                topEnd: null,
+            },
             lengthMenu: [
-                [10, 30, 50, -1],
-                [10, 30, 50, 'All']
+                [10, 20, 30, 50, -1],
+                [10, 20, 30, 50, 'All']
             ]
         });
 

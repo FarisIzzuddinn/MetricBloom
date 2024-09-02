@@ -69,6 +69,16 @@ class UserController extends Controller
         return redirect('/users')->with("status", "User created successfully with roles");
     }
 
+    // public function renumberItems()
+    // {
+    //     $items = User::orderBy('created_at')->get();
+    //     foreach ($items as $index => $item) {
+    //         $item->position = $index + 1;
+    //         $item->save();
+    //     }
+    // }
+
+
     // Menampilkan borang untuk mengedit pengguna
     public function edit(User $user)
     {
@@ -105,12 +115,22 @@ class UserController extends Controller
         return redirect('/users')->with("status", "User updated successfully with the roles");
     }
 
+    public function renumberItems()
+    {
+        $items = User::orderBy('created_at')->get();
+        foreach ($items as $index => $item) {
+            $item->update(['position' => $index + 1]);
+        }
+    }
+
     // Memadam pengguna dari pangkalan data
     public function destroy($userId)
     {
         $user = User::findOrFail($userId);
+        $this->renumberItems();
         $user->delete();
 
         return redirect('/users')->with("status", "User deleted successfully");
     }
+
 }
