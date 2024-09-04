@@ -1,17 +1,20 @@
 <?php
 
+use App\Models\AddKpi;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SoController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Password;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\AddKpiController;
 use App\Http\Controllers\ChartController;
+use App\Http\Controllers\TerasController;
+use App\Http\Controllers\AddKpiController;
 use App\Http\Controllers\UserKpiController;
 use App\Http\Controllers\PermissionController;
-use App\Http\Controllers\SoController;
-use App\Http\Controllers\TerasController;
-use App\Models\AddKpi;
+use App\Http\Controllers\ResetPasswordController;
+use App\Http\Controllers\ForgotPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -33,6 +36,36 @@ Route::get('register', [AuthController::class, 'register'])->name('register');
 Route::post('register', [AuthController::class, 'registerPost'])->name('register.post');
 Route::get('login', [AuthController::class, 'login'])->name('login');
 Route::post('login', [AuthController::class, 'loginPost'])->name('login.post');
+
+Route::get('password/reset', function () {
+    return view('auth.passwords.email');
+})->name('password.request');
+
+Route::post('password/email', function () {
+    $response = Password::sendResetLink(request()->only('email'));
+
+    return $response == Password::RESET_LINK_SENT
+        ? back()->with('status', __($response))
+        : back()->withErrors(['email' => __($response)]);
+})->name('password.email');
+
+Route::get('password/reset/{token}', function ($token) {
+    return view('auth.passwords.reset', ['token' => $token, 'email' => request()->email]);
+})->name('password.reset');
+
+Route::post('password/reset', function () {
+    $response = Password::reset(
+        request()->only('email', 'password', 'password_confirmation', 'token'),
+        function ($user, $password) {
+            $user->password = bcrypt($password);
+            $user->save();
+        }
+    );
+
+    return $response == Password::PASSWORD_RESET
+        ? redirect()->route('login')->with('status', __($response))
+        : back()->withErrors(['email' => [__($response)]]);
+})->name('password.update');
 
 // ===================== SUPER ADMIN ======================
 Route::group(['middleware' => ['role:super admin']], function () {
@@ -87,7 +120,7 @@ Route::middleware(['role:user'])->group(function () {
 
 
 
-    // Route::get('/user/KPI/IndexKPI', [UserKpiController::class, 'charts'])->name('user.kpi.charts');
+   
 });
 
 // ===================== LOGOUT ======================
