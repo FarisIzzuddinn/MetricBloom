@@ -16,7 +16,7 @@ class RoleController extends Controller
         $roles = Role::get();
         return view('superAdmin.role.index', [
             'roles' => $roles,
-            'user' => Auth::user(),
+            'username' => Auth::user(),
         ]);
     }
 

@@ -11,8 +11,8 @@ class SoController extends Controller
     public function index()
     {
         $so = So::all(); // Retrieve all SO records
-        $user = Auth::User();
-        return view('admin.SO.index', compact('so', 'user'));
+        $username = Auth::User();
+        return view('admin.SO.index', compact('so', 'username'));
     }
 
     public function renumberItems()

@@ -42,9 +42,9 @@ class AdminController extends Controller
          $labels = $kpis->pluck('kpi')->toArray();
          $data = $kpis->pluck('peratus_pencapaian')->toArray();
     
-         $user = Auth::User();
+         $username  = Auth::User();
          // Hantar data ke view
-         return view('admin.dashboard.index', compact('addKpis', 'averageAchievement', 'pendingKpis', 'totalKpis', 'achievedKpis', 'user', 'status' , 'labels', 'data'));
+         return view('admin.dashboard.index', compact('addKpis', 'averageAchievement', 'pendingKpis', 'totalKpis', 'achievedKpis', 'username', 'status' , 'labels', 'data'));
     }
 
     public function addKpi()

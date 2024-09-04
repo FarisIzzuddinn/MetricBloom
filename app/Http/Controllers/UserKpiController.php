@@ -12,33 +12,31 @@ class UserKpiController extends Controller
     {
         // Dapatkan pengguna yang sedang login
         $user = Auth::user();
-      
-
+        $username = Auth::user();
+    
         // Total KPIs for the logged-in user
         $userTotalKpis = $user->addKpis()->count();
-        
+    
         // KPIs with achievement percentage >= 75% for the logged-in user
-        $userAchievedKpis = $user->addKpis()->where('peratus_pencapaian', '>=', '75')->count();
-        
+        $userAchievedKpis = $user->addKpis()->where('peratus_pencapaian', '>=', 75)->count();
+    
         // KPIs with achievement percentage < 75% for the logged-in user
-        $userPendingKpis = $user->addKpis()->where('peratus_pencapaian', '>=', 0)
-                                            ->where('peratus_pencapaian', '<', 75)
-                                            ->count();
-        
+        $userPendingKpis = $user->addKpis()->whereBetween('peratus_pencapaian', [0, 75])->count();
+    
         // Average achievement percentage for the logged-in user
         $userAverageAchievement = ($userTotalKpis > 0) ? round(($userAchievedKpis / $userTotalKpis) * 100) : 0;
-        
-
-        // Ambil KPI yang berkaitan dengan pengguna tersebut
-        $addKpis = AddKpi::where('user_id', $user->id)->get();
-
-        $kpis = AddKpi::where('user_id', $user->id)->get();
-        $labels = $kpis->pluck('kpi')->toArray();
-        $data = $kpis->pluck('peratus_pencapaian')->toArray();
-
+    
+        // Get all KPIs related to the logged-in user
+        $addKpis = $user->addKpis;
+    
+        // Prepare data for the chart
+        $labels = $addKpis->pluck('kpi')->toArray();
+        $data = $addKpis->pluck('peratus_pencapaian')->toArray();
+    
         // Paparkan ke view
-        return view('user.KPI.IndexKPI', compact('addKpis', 'labels','userTotalKpis','userAchievedKpis','userPendingKpis', 'userAverageAchievement', 'data', 'user'));
+        return view('user.KPI.IndexKPI', compact('addKpis', 'labels', 'userTotalKpis', 'userAchievedKpis', 'userPendingKpis', 'userAverageAchievement', 'data', 'user', 'username'));
     }
+    
     
 
     public function storeInput(Request $request)

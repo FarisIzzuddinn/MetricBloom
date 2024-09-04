@@ -88,7 +88,7 @@
 
                     {{-- user name --}}
                     <li class="nav-item text-white">
-                        <h4 class="mt-2 ms-3 mb-0"> {{ $user->name }} </h4>
+                        <h4 class="mt-2 ms-3 mb-0"> {{ $username->name }} </h4>
                     </li>
 
                     <!-- User Profile Dropdown -->

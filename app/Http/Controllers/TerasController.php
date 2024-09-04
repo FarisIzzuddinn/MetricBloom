@@ -11,8 +11,8 @@ class TerasController extends Controller
     public function index()
     {
         $teras = Teras::all(); // Retrieve all SO records
-        $user = Auth::User();
-        return view('admin.teras.index', compact('teras', 'user'));
+        $username = Auth::User();
+        return view('admin.teras.index', compact('teras', 'username'));
     }
 
     public function create()

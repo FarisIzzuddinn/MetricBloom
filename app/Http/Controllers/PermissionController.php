@@ -13,7 +13,7 @@ class PermissionController extends Controller
         $permissions = Permission::get();
         return view('superAdmin.permission.index', [
             'permissions' => $permissions,
-            'user' => Auth::user(),
+            'username' => Auth::user(),
         ]);
     }
 

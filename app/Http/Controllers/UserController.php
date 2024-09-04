@@ -33,7 +33,7 @@ class UserController extends Controller
         return view('superAdmin.user.index', [
             'users' => $users,
             'roles' => $roles,
-            'user' => Auth::user(),
+            'username' => Auth::user(),
         ]);
 
 
