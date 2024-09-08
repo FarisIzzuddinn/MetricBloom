@@ -97,7 +97,7 @@
                             <img src="{{ asset('picture/profil_picture.jpg') }}" alt="Profile" class="rounded-circle">
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Profile</a></li>
+                            <li><a class="dropdown-item" href="{{route('profileEdit.edit', 0)}}">Profile</a></li>
                             <li>@include('logout')</li>
                         </ul>
                     </li>

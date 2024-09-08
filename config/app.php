@@ -169,6 +169,9 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        //form
+        Collective\Html\HtmlServiceProvider::class,
+
         // laravel spatie
         Spatie\Permission\PermissionServiceProvider::class,
     ])->toArray(),
@@ -186,6 +189,9 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
+        //form
+        'Form' => Collective\Html\FormFacade::class,
+        'Html' => Collective\Html\HtmlFacade::class,
     ])->toArray(),
 
 ];

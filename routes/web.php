@@ -14,11 +14,6 @@ use App\Http\Controllers\Auth\ForgotPassController;
 use App\Http\Controllers\UserKpiController;
 use App\Http\Controllers\PermissionController;
 
-
-
-
-
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -44,6 +39,8 @@ Route::get('forget-password', [ForgotPassController::class, 'showForgetPasswordF
 Route::post('forget-password', [ForgotPassController::class, 'submitForgetPasswordForm'])->name('forget.password.post'); 
 Route::get('reset-password/{token}', [ForgotPassController::class, 'showResetPasswordForm'])->name('reset.password.get');
 Route::post('reset-password', [ForgotPassController::class, 'submitResetPasswordForm'])->name('reset.password.post');
+
+Route::resource('profileEdit', AuthController::class);
 
 // ===================== SUPER ADMIN ======================
 Route::group(['middleware' => ['role:super admin']], function () {
