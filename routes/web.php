@@ -43,26 +43,25 @@ Route::post('reset-password', [ForgotPassController::class, 'submitResetPassword
 Route::resource('profileEdit', AuthController::class);
 
 // ===================== SUPER ADMIN ======================
-Route::group(['middleware' => ['role:super admin']], function () {
+Route::group(['middleware' => ['role:super admin|admin']], function () {
     // Super admin permission 
     Route::resource('permissions', PermissionController::class);
     Route::get('permissions/{permissionId}/delete', [PermissionController::class, 'destroy']);
 
     // Super admin set roles 
     Route::resource('roles', RoleController::class);
-    Route::get('roles/{roleId}/delete', [RoleController::class, 'destroy']);
+    Route::get('roles/{roleId}/delete', [RoleController::class, 'destroy'])->middleware('permission:delete role');
     Route::get('roles/{roleId}/give-permission', [RoleController::class, 'addPermissionToRole']);
     Route::put('roles/{roleId}/give-permission', [RoleController::class, 'updatePermissionToRole']);
 
     // Super admin users
     Route::resource('users', UserController::class);
     Route::get('users/{userId}/delete', [UserController::class, 'destroy']);
-});
 
-// ===================== ADMIN ======================
-Route::group(['middleware' => ['role:admin']], function () {
-    // dashboard 
-    Route::get('/admin/dashboard/index', [AdminController::class, 'index'])->name('admin.index');
+    Route::group(['middleware' => ['permission:view dashboard']], function () {
+        Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+    });
+    
 
     // crud Kpi
     Route::get('/admin/kpi', [AddKpiController::class, 'index'])->name('admin.kpi');  
@@ -84,15 +83,23 @@ Route::group(['middleware' => ['role:admin']], function () {
     Route::post('/chartTitle/rename', [ChartController::class, 'create'])->name('chartRename');
     Route::get('/charts', [ChartController::class, 'showCharts'])->name('charts.show');
 
+    Route::get('/kpi-data/{state}', [AdminController::class, 'getKpiDataByState']);
 });
 
+// ===================== ADMIN ======================
+// Route::group(['middleware' => ['role:admin']], function () {
+    // dashboard 
+   
+
+// });
+
 // ===================== USER ======================
-Route::middleware(['role:user'])->group(function () {
+// Route::middleware(['role:user'])->group(function () {
     Route::put('/user/addKpi/update/{id}', [UserKpiController::class, 'update'])->name('user.update');
     Route::get('/user/{AddKPI}/edit', [UserKpiController::class, 'edit'])->name('user.edit');
     Route::post('/user/KPI/IndexKPI', [UserKpiController::class, 'storeInput'])->name('user.kpi.storeInput');
     Route::get('/user/KPI/IndexKPI', [UserKpiController::class, 'index'])->name('user.kpi.input'); 
-});
+// });
 
 // ===================== LOGOUT ======================
 Route::delete('/logout', [AuthController::class, 'logout'])->name('logout');

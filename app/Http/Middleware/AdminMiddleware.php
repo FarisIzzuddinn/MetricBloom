@@ -22,7 +22,7 @@ class AdminMiddleware
             /** @var App\Models\User */
 
             $user = Auth::user();
-            if($user->hasRole('Admin') ){
+            if($user->hasRole('admin') ){
                 return $next($request);
             }
             abort(403, "User does not have correct ROLE");

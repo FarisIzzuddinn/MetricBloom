@@ -16,14 +16,6 @@ class Authenticate extends Middleware
         if (! $request->expectsJson() && ! $request->user()) {
             return route('login');
         }
-
-        if ($request->user()->role === 'Admin') {
-            return route('admin.dashboard');
-        } elseif ($request->user()->role === 'superAdmin') {
-            return view('superAdmin.permission.index');
-        } else {
-            return route('user.dashboard');
-        }
     }
 }
 

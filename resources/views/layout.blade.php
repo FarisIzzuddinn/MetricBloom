@@ -7,7 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            padding-top: 56px; /* Adjust based on the height of the navbar */
+            padding-top: 56px;
+            font-family: sans-serif; /* Adjust based on the height of the navbar */
         }
 
         .sidebar {
@@ -91,6 +92,7 @@
                         <h4 class="mt-2 ms-3 mb-0"> {{ $username->name }} </h4>
                     </li>
 
+                    
                     <!-- User Profile Dropdown -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -126,7 +128,7 @@
                 </div>
             </div>
         </div>
-        <div class="d-none d-lg-block"> <!-- Only visible on large screens -->
+        <div class="d-none d-lg-block"> 
             <h5>KPI SYSTEM</h5>
             <ul class="list-group">
                 @include('sidebar')

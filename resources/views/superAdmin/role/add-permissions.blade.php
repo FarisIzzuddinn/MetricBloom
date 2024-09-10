@@ -1,58 +1,34 @@
-@extends('layoutNoName')
-@section('title', 'Dashboard')
-@section('content')
-<div class="container">
-    <div class="row">
-        <div class="col-lg-12">
-            @if (session('status'))
-            <div class="alert alert-success">{{ session('status') }}</div>
-        @endif
+<a href="{{ url('roles/'.$role->id.'/give-permission') }}}" data-bs-toggle="modal" data-bs-target="#permissionModal-{{ $role->id }}" class="text-decoration-none">Add Permissions</a>
 
-        <div class="container-fluid">
-            <h3 class="fw-bold fs-4 ms-2 mb-3">Roles : {{ $role->name }}
-                <a href="{{ url('roles') }}" class="btn btn-danger float-end">back</a>
-            </h3>
-        </div>
 
-            <div class="card-body">
-                <form action="{{ url('roles/'.$role->id.'/give-permission') }}" method="POST" class="d-inline">
-                    @csrf
-                    @method('PUT')
-
-                    <div class="mb-3">
-                        @error('permission')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-
-                        <label for="">Permissions</label>
-
-                        <div class="row">
-                            @foreach($permissions as $permission)
-                            <div class="col-md-2">
-                                <label >
-                                    <input type="checkbox" name="permission[]" value="{{ $permission->name }}"
-                                    {{ in_array($permission->id, $rolePermissions) ? 'checked': '' }}
-                                    
-                                    >
-                                    {{ $permission->name }}
-                                </label>
-                            </div>
-                            @endforeach
+<div class="modal fade" id="permissionModal-{{ $role->id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ url('roles/'.$role->id.'/give-permission') }}}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Assign Permissions to {{ $role->name }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        @foreach($permissions as $permission)
+                        <div class="col-md-4">
+                            <label>
+                                <input type="checkbox" name="permission[]" value="{{ $permission->name }}"
+                                {{ in_array($permission->id, $rolePermissions) ? 'checked': '' }}>
+                                {{ $permission->name }}
+                            </label>
                         </div>
+                        @endforeach
                     </div>
-                    <div class="mb-3">
-                        <button type="submit" class="btn btn-primary">Update</button>
-                    </div>
-                </form>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
-
-
-
-@endsection
-
-
-
-

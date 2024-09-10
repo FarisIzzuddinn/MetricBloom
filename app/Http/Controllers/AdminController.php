@@ -10,9 +10,10 @@ use Illuminate\Support\Facades\Auth;
 class AdminController extends Controller
 {
     public function __construct()
-{
-    $this->middleware('role:admin');
-}
+    {
+        $this->middleware('permission:view dashboard');
+    }
+    
     public function index()
     {
         // Retrieve data from the Kpi model
@@ -41,15 +42,34 @@ class AdminController extends Controller
          $kpis = AddKpi::all();
          $labels = $kpis->pluck('kpi')->toArray();
          $data = $kpis->pluck('peratus_pencapaian')->toArray();
+
+         $states = AddKpi::distinct()->pluck('negeri'); 
     
          $username  = Auth::User();
          // Hantar data ke view
-         return view('admin.dashboard.index', compact('addKpis', 'averageAchievement', 'pendingKpis', 'totalKpis', 'achievedKpis', 'username', 'status' , 'labels', 'data'));
+         return view('admin.dashboard.index', compact('addKpis', 'averageAchievement', 'pendingKpis', 'totalKpis', 'achievedKpis', 'username', 'status' , 'labels', 'states', 'data'));
     }
 
     public function addKpi()
     {
         return view('admin.add-kpi');
     }
+
+    public function getKpiDataByState($state)
+    {
+        // Fetch KPIs based on the selected state
+        $kpis = AddKpi::where('negeri', $state)->get();
+        
+        // Prepare labels and data
+        $labels = $kpis->pluck('kpi')->toArray();
+        $data = $kpis->pluck('peratus_pencapaian')->toArray();
+        
+        // Return the data in JSON format
+        return response()->json([
+            'labels' => $labels,
+            'data' => $data
+        ]);
+    }
+
 }
  

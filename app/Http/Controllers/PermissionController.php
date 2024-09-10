@@ -61,9 +61,18 @@ class PermissionController extends Controller
         return redirect()->route('permissions.index')->with('status', 'Permission updated successfully.');
     }
 
+    public function renumberItems()
+    {
+        $items = Permission::orderBy('created_at')->get();
+        foreach ($items as $index => $item) {
+            $item->update(['position' => $index + 1]);
+        }
+    }
+
     public function destroy($permissionId){
         $permission = Permission::find($permissionId);
         $permission->delete();
+        $this->renumberItems();
 
         return redirect()->route('permissions.index')->with("status", "Permission Delete Successfully");
     }

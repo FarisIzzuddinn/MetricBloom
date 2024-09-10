@@ -1,3 +1,4 @@
+@can('view dashboard')
 @extends('layout')
 @section('title', 'Dashboard')
 @section('content')
@@ -72,6 +73,12 @@
         <div class="card">
             <div class="card-header">KPI Performance Over Time</div>
             <div class="card-body chart-container">
+                <label for="stateSelector">Select State:</label>
+                <select id="stateSelector">
+                    @foreach($states as $state)
+                        <option value="{{ $state }}">{{ $state }}</option>
+                    @endforeach
+                </select>
                 <canvas id="performanceChart"></canvas>
             </div>
         </div>
@@ -248,8 +255,36 @@
         ctx.fillStyle = "#666"; // Grey color for the text
         ctx.fillText("No Data Available", ctx.canvas.width / 2, ctx.canvas.height / 2);
     }
+
+    function fetchKpiData(state) {
+        fetch(`/kpi-data/${state}`)
+            .then(response => response.json())
+            .then(data => {
+                const labels = data.labels;
+                const values = data.data;
+
+                // Update Performance Chart
+                chart1.data.labels = labels;
+                chart1.data.datasets[0].data = values;
+                chart1.update();
+
+                // Update KPI Status Distribution Chart
+                chart2.data.labels = labels;
+                chart2.data.datasets[0].data = values;
+                chart2.update();
+            })
+            .catch(error => {
+                console.error('Error fetching KPI data:', error);
+            });
+    }
+
+    document.getElementById('stateSelector').addEventListener('change', function() {
+        fetchKpiData(this.value);
+    });
+
+
 </script>
 @endsection
 
-
+@endcan
 

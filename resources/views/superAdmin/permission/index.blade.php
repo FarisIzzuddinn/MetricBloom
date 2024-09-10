@@ -68,9 +68,9 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($permissions as $permission)
+                        @foreach($permissions as $index => $permission)
                         <tr>
-                            <td>{{ $permission->id }}</td>
+                            <td>{{ $index + 1 }}</td>
                             <td>{{ $permission->name }}</td>
                             <td>
                                 <!-- Button trigger edit modal -->

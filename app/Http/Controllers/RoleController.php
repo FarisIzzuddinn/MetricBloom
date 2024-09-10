@@ -3,23 +3,32 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Spatie\Permission\Models\Permission;
 
 
 class RoleController extends Controller
 {
     public function index()
     {
-        $roles = Role::get();
-        return view('superAdmin.role.index', [
-            'roles' => $roles,
-            'username' => Auth::user(),
-        ]);
+        $roles = Role::withCount('users')->get();
+        $permissions = Permission::all();
+        $username = Auth::user();
+    
+        // Initialize an array to store role permissions
+        $rolePermissions = [];
+    
+        foreach ($roles as $role) {
+            // Fetch the permissions for each role
+            $rolePermissions[$role->id] = $role->permissions->pluck('id')->toArray();
+        }
+    
+        return view('superAdmin.role.index', compact('roles', 'permissions', 'rolePermissions'  , 'username'));
     }
-
+    
     public function create(){
         return view('superAdmin.role.create');
     }
@@ -66,19 +75,20 @@ class RoleController extends Controller
 
     public function destroy($roleId){
         $role = Role::find($roleId);
-        $role->delete();
 
+        if (!Gate::allows('delete role', $role)) {
+            return redirect()->route('roles.index')->withErrors('Admin does not have access to delete user.');
+        }
+    
+        $role->delete();
         return redirect()->route('roles.index')->with("status", "Roles Delete Successfully");
     }
 
-    public function addPermissionToRole($roleId){
-        $permissions = Permission::get();
+    public function addPermissionToRole($roleId)
+    {
+        $permissions = Permission::all();
         $role = Role::findOrFail($roleId);
-        $rolePermissions = DB::table('role_has_permissions')
-                            ->where('role_has_permissions.role_id', $roleId)        
-                            ->pluck('role_has_permissions.permission_id', 'role_has_permissions.permission_id')
-                            ->all();
-
+        $rolePermissions = $role->permissions->pluck('id')->toArray();
 
         return view('superAdmin.role.add-permissions', [
             'role' => $role,
