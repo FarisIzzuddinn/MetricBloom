@@ -9,10 +9,10 @@ class Institution extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'state'];
+    protected $fillable = ['name', 'state_id', 'description'];
 
-    public function kpis()
+    public function state()
     {
-        return $this->hasMany(KPI::class);
+        return $this->belongsTo(State::class);
     }
 }

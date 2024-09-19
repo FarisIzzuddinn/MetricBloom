@@ -8,13 +8,13 @@ class CreateKpisTable extends Migration
 {
     public function up()
     {
-        Schema::create('kpis', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('institution_id')->constrained('institutions')->onDelete('cascade');
-            $table->string('name');
-            $table->text('description');
-            $table->timestamps();
-        });
+        // Schema::create('kpis', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->foreignId('institution_id')->constrained('institutions')->onDelete('cascade');
+        //     $table->string('name');
+        //     $table->text('description');
+        //     $table->timestamps();
+        // });
     }
 
     public function down()

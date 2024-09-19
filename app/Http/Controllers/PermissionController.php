@@ -10,7 +10,8 @@ class PermissionController extends Controller
 {
     public function index()
     {
-        $permissions = Permission::get();
+        $permissions = Permission::paginate(15);
+
         return view('superAdmin.permission.index', [
             'permissions' => $permissions,
             'username' => Auth::user(),

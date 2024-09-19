@@ -8,11 +8,14 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Password;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ChartController;
+use App\Http\Controllers\StateController;
 use App\Http\Controllers\TerasController;
 use App\Http\Controllers\AddKpiController;
-use App\Http\Controllers\Auth\ForgotPassController;
 use App\Http\Controllers\UserKpiController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\SuperAdminController;
+use App\Http\Controllers\InstitutionController;
+use App\Http\Controllers\Auth\ForgotPassController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,6 +47,13 @@ Route::resource('profileEdit', AuthController::class);
 
 // ===================== SUPER ADMIN ======================
 Route::group(['middleware' => ['role:super admin|admin']], function () {
+    // Super Admin Dashboard 
+    Route::get('/Dashboard/SuperAdmin', [SuperAdminController::class, 'index'])->name('superAdminDashboard');
+    
+    // Manage State and Institution
+    Route::resource('states', StateController::class);
+    Route::resource('institutions', InstitutionController::class);
+
     // Super admin permission 
     Route::resource('permissions', PermissionController::class);
     Route::get('permissions/{permissionId}/delete', [PermissionController::class, 'destroy']);

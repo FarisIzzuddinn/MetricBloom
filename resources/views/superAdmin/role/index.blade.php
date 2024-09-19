@@ -14,10 +14,10 @@
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h6 class="fw-normal mb-0">Total users: {{ $role->users_count ?? 4 }}</h6>
                         <div class="d-flex">
-                            {{-- <img src="https://randomuser.me/api/portraits/men/32.jpg" class="rounded-circle" alt="user1" width="30" height="30" style="margin-right: -10px;">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" class="rounded-circle" alt="user1" width="30" height="30" style="margin-right: -10px;">
                             <img src="https://randomuser.me/api/portraits/women/32.jpg" class="rounded-circle" alt="user2" width="30" height="30" style="margin-right: -10px;">
                             <img src="https://randomuser.me/api/portraits/men/33.jpg" class="rounded-circle" alt="user3" width="30" height="30" style="margin-right: -10px;">
-                            <img src="https://randomuser.me/api/portraits/women/33.jpg" class="rounded-circle" alt="user4" width="30" height="30"> --}}
+                            <img src="https://randomuser.me/api/portraits/women/33.jpg" class="rounded-circle" alt="user4" width="30" height="30">
                         </div>
                     </div>
 

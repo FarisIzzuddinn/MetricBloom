@@ -28,6 +28,9 @@ class RolesAndPermissionsSeeder extends Seeder
             'view user dashboard',
             'view so',
             'view teras',
+            'Super Admin Dashboard',
+            'Manage State',
+            'Manage Institution',
         ];
 
         foreach ($permissions as $permission) {
@@ -47,7 +50,10 @@ class RolesAndPermissionsSeeder extends Seeder
         $superadminRole->givePermissionTo([
             'view permissions',
             'view roles',
-            'view users'
+            'view users',
+            'Super Admin Dashboard',
+            'Manage State',
+            'Manage Institution'
         ]);
 
         $userRole = Role::create(['name' => 'user']);
@@ -61,14 +67,18 @@ class RolesAndPermissionsSeeder extends Seeder
                 'name' => 'Super Admin',
                 'password' => Hash::make('password123'), 
             ],
+        );
+
+        $superadmin1 = User::updateOrCreate(
             ['email' => 'adminSuper@gmail.com'],
             [
                 'name' => 'Super Admin',
                 'password' => Hash::make('adminSuper@123'), 
             ]
-        );
+            );
 
         $superadmin->assignRole($superadminRole);
+        $superadmin1->assignRole($superadminRole);
        
         $admin = User::updateOrCreate(
             ['email' => 'admin@example.com'],
@@ -76,15 +86,29 @@ class RolesAndPermissionsSeeder extends Seeder
                 'name' => 'Admin',
                 'password' => Hash::make('password123'), // Use a secure password
             ],
+        );
+
+        $admin1 = User::updateOrCreate(
             ['email' => 'adminBiasa@gmail.com'],
             [
                 'name' => 'Admin',
                 'password' => Hash::make('adminBiasa@123'), 
             ]
-
         );
 
         $admin->assignRole($adminRole);
+        $admin1->assignRole($adminRole);
+
+        $user1 = User::updateOrCreate(
+            ['email' => 'userBiasa@gmail.com'],
+            [
+                'name' => 'user',
+                'password' => Hash::make('userBiasa@123'), 
+            ]
+        );
+
+        $user1->assignRole($userRole);
+
 
         // Generate 100 users
         $faker = Faker::create();

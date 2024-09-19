@@ -19,18 +19,23 @@
         border-bottom-left-radius: 12px;
     }
 
+    .badge-administrator {
+        background-color: #4e5af7;  /* Custom Blue */
+        color: rgb(0, 0, 0);
+    }
+
     .badge-admin {
         background-color: #f5a623;  /* Custom Orange */
         color: rgb(0, 0, 0);
     }
 
     .badge-superadmin {
-        background-color: #da58da;  /* Custom Red */
+        background-color: #e74c3c;  /* Custom Red */
         color: rgb(0, 0, 0);
     }
 
     .badge-user {
-        background-color: #1acfc9;  /* Custom Green */
+        background-color: #2ecc71;  /* Custom Green */
         color: rgb(3, 0, 0);
     }
 </style>
@@ -40,35 +45,32 @@
         <div class="col-lg-12">
             <div class="container-fluid mt-3">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="mb-0">Permissions</h4>
-                    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPermissionModal">
+                    <h4 class="mb-0">Manage State</h4>
+                    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStateModal">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
                         </svg>
-                        Add New Permissions
+                        Add New State
                     </a>
                 </div>                
             </div>
 
-            <!-- Add Permission Modal -->
-            <div class="modal fade" id="addPermissionModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addPermissionModalLabel" aria-hidden="true">
+            {{-- Add State Modal --}}
+            <div class="modal fade" id="addStateModal" tabindex="-1" aria-labelledby="addStateModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title fs-5" id="addPermissionModalLabel">Add Permission</h5>
+                            <h5 class="modal-title" id="addStateModalLabel">Add New State</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <!-- Borang tambah permission -->
-                            <form action="/permissions" method="POST">
+                            <form action="{{ route('states.store') }}" method="POST">
                                 @csrf
                                 <div class="mb-3">
-                                    <label for="permissionName" class="form-label">Permission Name</label>
-                                    <input type="text" class="form-control" id="permissionName" name="name" placeholder="Enter permission name">
+                                    <label for="name" class="form-label">State Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary">Save</button>
-                                </div>
+                                <button type="submit" class="btn btn-primary">Add State</button>
                             </form>
                         </div>
                     </div>
@@ -79,65 +81,51 @@
                 <table class="table table-responsive">
                     <thead>
                         <tr class="table-secondary">
-                            <th>NAME</th>
-                            <th>ASSIGNED TO</th>
-                            <th>ACTION</th>
+                            <th>Bil</th>
+                            <th>Name</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($permissions as $index => $permission)
+                        @foreach($states as $index => $state)
                         <tr>
-                            <td>{{ $permission->name }}</td>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $state->name }}</td>
                             <td>
-                                @foreach($permission->roles as $role)
-                                <span class="badge badge-{{ strtolower(str_replace(' ', '', $role->name)) }}">
-                                    {{ $role->name }}
-                                </span>
-                                @endforeach
-                            </td>
-                            <td>
-                                <!-- Button trigger edit modal -->
-                                <button type="button" class="btn btn-success edit-btn" data-bs-toggle="modal"
-                                    data-bs-target="#editModal" data-permission-id="{{ $permission->id }}"
-                                    data-permission-name="{{ $permission->name }}">
-                                    Edit
-                                </button>
-
-                                <!-- Button trigger delete modal -->
+                                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editStateModal{{ $state->id }}">Edit</button>
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                    data-bs-target="#deleteModal" data-permission-id="{{ $permission->id }}"
-                                    data-permission-name="{{ $permission->name }}">
+                                    data-bs-target="#deleteModal" data-permission-id="{{ $state->id }}"
+                                    data-permission-name="{{ $state->name }}">
                                     Delete
                                 </button>
                             </td>
                         </tr>
+    
+                        {{-- Edit State Modal --}}
+                        <div class="modal fade" id="editStateModal{{ $state->id }}" tabindex="-1" aria-labelledby="editStateModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="editStateModalLabel">Edit State</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="{{ route('states.update', $state->id) }}" method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <div class="mb-3">
+                                                <label for="name" class="form-label">State Name</label>
+                                                <input type="text" class="form-control" id="name" name="name" value="{{ $state->name }}" required>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         @endforeach
                     </tbody>
                 </table>
-                <div class="mt-2">{{ $permissions ->links() }}</div>
-            </div>
-
-            <!-- Edit Permission Modal -->
-            <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="editModalLabel">Edit Permission</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="editForm" action="" method="POST">
-                                @csrf
-                                @method('PUT')
-                                <div class="mb-3">
-                                    <label for="editPermissionName" class="form-label">Permission Name</label>
-                                    <input type="text" class="form-control" id="editPermissionName" name="name">
-                                </div>
-                                <button type="submit" class="btn btn-primary">Save changes</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
             </div>
 
            <!-- Delete Permission Modal -->
@@ -153,7 +141,7 @@
                             <h5 class="modal-title mb-0" id="deleteModalLabel">Confirm Deletion</h5>
                         </div>
                         <div class="modal-body text-center">
-                            <p>Are you sure you want to delete the permission:</p>
+                            <p>Are you sure you want to delete the state:</p>
                             <b><span id="deletePermissionName" style="font-weight: bold; text-transform: uppercase;"></span></b>?
                         </div>
                         <div class="modal-footer">
@@ -167,8 +155,6 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
     </div>
 </div>
@@ -188,19 +174,6 @@
 
             form.action = '/permissions/' + permissionId; // Set the form action dynamically
             nameSpan.textContent = permissionName; // Set the permission name in the modal
-        });
-
-        // Edit Modal Configuration
-        var editModal = document.getElementById('editModal');
-        editModal.addEventListener('show.bs.modal', function (event) {
-            var button = event.relatedTarget;
-            var permissionId = button.getAttribute('data-permission-id');
-            var permissionName = button.getAttribute('data-permission-name');
-            var form = document.getElementById('editForm');
-            var nameInput = document.getElementById('editPermissionName');
-
-            form.action = '/permissions/' + permissionId;
-            nameInput.value = permissionName;
         });
     });
 </script>
