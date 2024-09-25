@@ -33,6 +33,21 @@
     @endphp
 @endif
 
+<div class="head-title">
+    <div class="left">
+        <h1>Dashboard</h1>
+        <ul class="breadcrumb">
+            <li>
+                <a href="#">Dashboard</a>
+            </li>
+        </ul>
+    </div>
+    {{-- <a href="#" class="btn-download">
+        <i class='bx bxs-cloud-download' ></i>
+        <span class="text">Download PDF</span>
+    </a> --}}
+</div>
+
 <div class="row">
     <div class="col-lg-3 col-md-6 mt-1">
         <div class="card bg-primary text-white">

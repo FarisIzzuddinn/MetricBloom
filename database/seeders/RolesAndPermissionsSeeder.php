@@ -66,7 +66,7 @@ class RolesAndPermissionsSeeder extends Seeder
             [
                 'name' => 'Super Admin',
                 'password' => Hash::make('password123'), 
-            ],
+            ]
         );
 
         $superadmin1 = User::updateOrCreate(
@@ -75,7 +75,7 @@ class RolesAndPermissionsSeeder extends Seeder
                 'name' => 'Super Admin',
                 'password' => Hash::make('adminSuper@123'), 
             ]
-            );
+        );
 
         $superadmin->assignRole($superadminRole);
         $superadmin1->assignRole($superadminRole);
@@ -84,18 +84,18 @@ class RolesAndPermissionsSeeder extends Seeder
             ['email' => 'admin@example.com'],
             [
                 'name' => 'Admin',
-                'password' => Hash::make('password123'), // Use a secure password
-            ],
+                'password' => Hash::make('password123'), 
+            ]
         );
-
+        
         $admin1 = User::updateOrCreate(
             ['email' => 'adminBiasa@gmail.com'],
             [
                 'name' => 'Admin',
-                'password' => Hash::make('adminBiasa@123'), 
+                'password' => Hash::make('adminBiasa@123'),
             ]
         );
-
+        
         $admin->assignRole($adminRole);
         $admin1->assignRole($adminRole);
 
