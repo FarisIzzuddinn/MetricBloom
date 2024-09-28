@@ -3,10 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Faker\Factory as Faker;
-use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
@@ -108,28 +105,5 @@ class RolesAndPermissionsSeeder extends Seeder
         );
 
         $user1->assignRole($userRole);
-
-
-        // Generate 100 users
-        $faker = Faker::create();
-
-        for ($i = 0; $i < 100; $i++) {
-            $user = User::create([
-                'name' => $faker->name,
-                'email' => $faker->unique()->safeEmail,
-                'password' => Hash::make('87654321'),
-            ]);
-
-            // Assign roles randomly
-            if ($i < 10) {
-                $user->assignRole($superadminRole);
-            } elseif ($i < 40) {
-                $user->assignRole($adminRole);
-            } else {
-                $user->assignRole($userRole);
-            }
-        }
-
-        
     }
 }

@@ -29,17 +29,20 @@
         <div class="col-lg-12">
             {{-- <div class="container-fluid">
                 <a href="{{ url('teras/create') }}" class="btn btn-danger float-end mb-3">Add Teras</a>
+
             </div> --}}
 
             <div class="container-fluid mt-3">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4 class="mb-0">Teras</h4>
-                    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPermissionModal">
+                    {{-- <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPermissionModal">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
                         </svg>
                         Add Teras
-                    </a>
+                    </a> --}}
+                    <a href="{{ url('teras/create') }}" class="btn btn-danger float-end mb-3">Add Teras</a>
+
                 </div>                
             </div>
 
@@ -80,6 +83,30 @@
         </div>
     </div>
 </div>
+
+{{-- <div class="modal fade" id="addPermissionModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addPermissionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fs-5" id="addPermissionModalLabel">Add Permission</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Borang tambah teras -->
+                <form action="{{ url('teras') }}" method="POST">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="teras" class="form-label">Teras Name</label>
+                        <input type="text" class="form-control" id="teras" name="name" placeholder="Enter teras name">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div> --}}
 
 <!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">

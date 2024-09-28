@@ -129,7 +129,7 @@
             <div class="card-header">KPI OVERVIEW</div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table">
+                    <table class="table table-responsive">
                         <thead>
                             <tr class="table-secondary text-secondary small-text">
                                 <th >BIL</th>
@@ -150,10 +150,12 @@
 
                                 <tr>
                                     <td class="small-text text-secondary">{{ $index + 1 }}</td>
-                                    <td class="small-text">{{ $addkpi->teras ? $addkpi->teras->id : 'No Teras Found' }}</td>
-                                    <td class="small-text kpi-statement">{{$addkpi->so ? $addkpi->so->id : 'No SO Found'}}</td> 
+                                    <td class="small-text">{{ $addkpi->teras ? $addkpi->teras->id : 'Teras has been deleted' }}</td>
+                                    <td class="small-text kpi-statement">{{$addkpi->so ? $addkpi->so->id : 'SO has been deleted'}}</td> 
                                     <td class="small-text">{{ $addkpi->negeri }}</td>
-                                    <td class="small-text">{{ $addkpi->user->name }}</td>
+                                    <td class="small-text">
+                                        {{ $addkpi->user ? $addkpi->user->name : 'User has been deleted' }}
+                                    </td>
                                     <td class="small-text">{{ $addkpi->kpi }}</td>
                                     <td class="small-text kpi-statement">{{ $addkpi->pernyataan_kpi }}</td>
                                     <td class="small-text">{{ $addkpi->sasaran }}</td>
@@ -228,7 +230,7 @@
     // KPI Status Distribution Chart
     const ctx2 = document.getElementById('statusDistributionChart').getContext('2d');
     const chart2 = new Chart(ctx2, {
-        type: 'doughnut', // Change to 'pie' or 'doughnut' if appropriate
+        type: 'pie', // Change to 'pie' or 'doughnut' if appropriate
         data: {
             labels: labels, // Ensure this is correct for pie chart
             datasets: [{

@@ -43,7 +43,9 @@
                             <td class="small-text">{{ $addKpi->teras ? $addKpi->teras->id : 'No Teras Found' }}</td>
                             <td class="small-text">{{ $addKpi->so ? $addKpi->so->id : 'No SO found' }}</td> 
                             <td class="small-text">{{ $addKpi->negeri }}</td>
-                            <td class="small-text">{{ $addKpi->user->name }}</td>
+                            <td class="small-text">
+                                {{ $addKpi->user ? $addKpi->user->name : 'User has been deleted' }}
+                            </td>
                             <td class="small-text">{{ $addKpi->kpi }}</td>
                             <td class="small-text kpi-statement">{{ $addKpi->pernyataan_kpi }}</td>
                             <td class="small-text">{{ $addKpi->sasaran }}</td>
