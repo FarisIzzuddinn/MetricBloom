@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('layoutNoName')
 @section('title', 'Dashboard')
 @section('body')
 <style>
@@ -55,37 +55,18 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($kpis as $index => $kpi)
+                                @foreach ($addKpis as $index => $addKpi)
                                 <tr class="border table-light border-dark">
-                                        {{-- <td>{{ $index + 1 }}</td> --}}
-                                        {{-- <td>{{ $kpi->teras }}</td> --}}
-                                        {{-- <td>{{ $kpi->so }}</td> --}}
-                                        <td>{{ $kpi->negeri }}</td>
-                                        <td>{{ $kpi->pemilik }}</td>
-                                        <td>{{ $kpi->kpi }}</td>
-                                        <td class="kpi-statement">{{ $kpi->penyataan_kpi }}</td>
-                                        <td>{{ $kpi->sasaran }}</td>
-                                        <td>{{ $kpi->jenis_sasaran }}</td>
-                                        <td>{{ $kpi->pencapaian }}</td>
-                                        <td>{{ number_format($kpi->peratus_pencapaian, 2) }}</td>
-                                        <td class="status-{{ strtolower($kpi->status) }}">{{ $kpi->status }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                            <tbody>
-                                @foreach ($addKpis as $addKpi)
-                                    <tr class="border table-light border-dark">
-                                        {{-- <td>{{ $addKpi->teras }}</td> --}}
-                                        {{-- <td>{{ $addKpi->SO }}</td> --}}
-                                        <td>{{ $addKpi->negeri }}</td>
-                                        <td>{{ $addKpi->pemilik }}</td>
-                                        <td>{{ $addKpi->pernyataan_kpi }}</td>
-                                        <td>{{ $addKpi->sasaran }}</td>
-                                        <td>{{ $addKpi->jenis_sasaran }}</td>
-                                        <td>{{ $addKpi->pencapaian }}</td>
-                                        <td>{{ number_format($addKpi->peratus_pencapaian, 2) }}</td>
-                                        <td class="status-{{ strtolower($addKpi->status) }}">{{ $addKpi->status }}</td>
-                                    </tr>
+                                    <td>{{ $addKpi->negeri }}</td>
+                                    <td>{{ $addKpi->pemilik }}</td>
+                                    <td>{{ $addKpi->kpi }}</td>
+                                    <td class="kpi-statement">{{ $addKpi->penyataan_kpi }}</td>
+                                    <td>{{ $addKpi->sasaran }}</td>
+                                    <td>{{ $addKpi->jenis_sasaran }}</td>
+                                    <td>{{ $addKpi->pencapaian }}</td>
+                                    <td>{{ number_format($addKpi->peratus_pencapaian, 2) }}</td>
+                                    <td class="status-{{ strtolower($addKpi->status) }}">{{ $addKpi->status }}</td>
+                                </tr>
                                 @endforeach
                             </tbody>
                         </table>

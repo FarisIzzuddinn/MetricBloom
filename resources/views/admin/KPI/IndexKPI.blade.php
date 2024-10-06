@@ -27,8 +27,7 @@
                         <th class="text-secondary small-text">BIL</th>
                         <th class="text-secondary small-text">TERAS</th>
                         <th class="text-secondary small-text">SO</th>                          
-                        <th class="text-secondary small-text">NEGERI</th>                          
-                        <th class="text-secondary small-text">PEMILIK</th>                          
+                        <th class="text-secondary small-text">NEGERI</th>                                                                                           
                         <th class="text-secondary small-text">KPI</th>
                         <th class="text-secondary small-text">PERNYATAAN KPI</th>
                         <th class="text-secondary small-text">SASARAN</th>
@@ -42,10 +41,18 @@
                             <td class="text-secondary small-text">{{ $loop->iteration }}</td>
                             <td class="small-text">{{ $addKpi->teras ? $addKpi->teras->id : 'No Teras Found' }}</td>
                             <td class="small-text">{{ $addKpi->so ? $addKpi->so->id : 'No SO found' }}</td> 
-                            <td class="small-text">{{ $addKpi->negeri }}</td>
                             <td class="small-text">
-                                {{ $addKpi->user ? $addKpi->user->name : 'User has been deleted' }}
+                                @if ($addKpi->states->isNotEmpty())
+                                    @foreach ($addKpi->states as $state)
+                                        {{ $state->name }} @if (!$loop->last), @endif
+                                    @endforeach
+                                @else
+                                    No State Found
+                                @endif
                             </td>
+                            {{-- <td class="small-text">
+                                {{ $addKpi->user ? $addKpi->user->name : 'User has been deleted' }}
+                            </td> --}}
                             <td class="small-text">{{ $addKpi->kpi }}</td>
                             <td class="small-text kpi-statement">{{ $addKpi->pernyataan_kpi }}</td>
                             <td class="small-text">{{ $addKpi->sasaran }}</td>
@@ -101,32 +108,47 @@
                                 </div>
                             </div>
                             
+                            {{-- <div class="row mb-3">
+                                <label for="editNegeri" class="col-sm-5 col-form-label">NEGERI</label>
+                                <div class="col-sm-7">
+                                    <select name="states[]" id="editNegeri" multiple>
+                                        @foreach($states as $state)
+                                            <option value="{{ $state->id }}">{{ $state->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div> --}}
+
                             <div class="row mb-3">
                                 <label for="editNegeri" class="col-sm-5 col-form-label">NEGERI</label>
                                 <div class="col-sm-7">
-                                    <select id="editNegeri" name="negeri" class="form-select" required>
-                                        <option value="" disabled selected>Select Negeri</option>
-                                        <option value="Johor">Johor</option>
-                                        <option value="Kedah">Kedah</option>
-                                        <option value="Kelantan">Kelantan</option>
-                                        <option value="Melaka">Melaka</option>
-                                        <option value="Negeri Sembilan">Negeri Sembilan</option>
-                                        <option value="Pahang">Pahang</option>
-                                        <option value="Perak">Perak</option>
-                                        <option value="Perlis">Perlis</option>
-                                        <option value="Pulau Pinang">Pulau Pinang</option>
-                                        <option value="Sabah">Sabah</option>
-                                        <option value="Sarawak">Sarawak</option>
-                                        <option value="Selangor">Selangor</option>
-                                        <option value="Terengganu">Terengganu</option>
-                                        <option value="Wilayah Persekutuan Kuala Lumpur">Wilayah Persekutuan Kuala Lumpur</option>
-                                        <option value="Wilayah Persekutuan Labuan">Wilayah Persekutuan Labuan</option>
-                                        <option value="Wilayah Persekutuan Putrajaya">Wilayah Persekutuan Putrajaya</option>
-                                    </select>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" id="dropdownMenuButtonEdit" data-bs-toggle="dropdown" aria-expanded="false">
+                                            Select States
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end w-100" aria-labelledby="dropdownMenuButtonEdit">
+                                            @foreach($states as $state)
+                                                <li>
+                                                    <div class="form-check px-3">
+                                                        <input 
+                                                            class="form-check-input" 
+                                                            type="checkbox" 
+                                                            name="states[]" 
+                                                            id="edit_state_{{ $state->id }}" 
+                                                            value="{{ $state->id }}">
+                                                        <label class="form-check-label" for="edit_state_{{ $state->id }}">
+                                                            {{ $state->name }}
+                                                        </label>
+                                                    </div>
+                                                </li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                             
-                            <div class="row mb-3">
+
+                            {{-- <div class="row mb-3">
                                 <label for="editPemilik" class="col-sm-5 col-form-label">PEMILIK</label>
                                 <div class="col-sm-7">
                                     <select id="editPemilik" name="user_id" class="form-select" required>
@@ -136,7 +158,7 @@
                                         @endforeach
                                     </select>
                                 </div>
-                            </div>
+                            </div> --}}
                             
                             
                             
@@ -183,8 +205,10 @@
         document.getElementById('editKpiForm').action = `/admin/addKpi/update/${addKpi.id}`;
         document.getElementById('editTeras').value = addKpi.teras.id;
         document.getElementById('editSO').value = addKpi.so.id;
-        document.getElementById('editNegeri').value = addKpi.negeri;
-        document.getElementById('editPemilik').value = addKpi.user.id;
+        addKpi.states.forEach(state => {
+            document.getElementById(`edit_state_${state.id}`).checked = true;
+        });
+        // document.getElementById('editPemilik').value = addKpi.user.id;
         document.getElementById('editPernyataanKpi').value = addKpi.pernyataan_kpi;
         document.getElementById('editSasaran').value = addKpi.sasaran;
         document.getElementById('editJenisSasaran').value = addKpi.jenis_sasaran;

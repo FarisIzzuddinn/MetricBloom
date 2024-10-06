@@ -9,11 +9,12 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
-        Schema::create('states', function (Blueprint $table) {
+        Schema::create('kpi_state', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->foreignId('kpi_id')->constrained('add_kpis')->onDelete('cascade'); // Correct column name
+            $table->foreignId('state_id')->constrained('states')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -23,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('states');
+        Schema::dropIfExists('kpi_state');
     }
 };

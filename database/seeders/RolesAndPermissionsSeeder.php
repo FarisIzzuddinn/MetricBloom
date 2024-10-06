@@ -28,6 +28,11 @@ class RolesAndPermissionsSeeder extends Seeder
             'Super Admin Dashboard',
             'Manage State',
             'Manage Institution',
+            'view stateAdmin dashboard',
+            'kpi management',
+            'user state management',
+            'view institutionAdmin dashboard',
+            'kpi management institution',
         ];
 
         foreach ($permissions as $permission) {
@@ -51,6 +56,12 @@ class RolesAndPermissionsSeeder extends Seeder
             'Super Admin Dashboard',
             'Manage State',
             'Manage Institution'
+        ]);
+
+        $AdminState = Role::create(['name' => 'Admin State']);
+        $AdminState->givePermissionTo([
+            'view stateAdmin dashboard',
+            'kpi management',
         ]);
 
         $userRole = Role::create(['name' => 'user']);

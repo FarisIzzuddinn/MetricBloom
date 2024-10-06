@@ -6,6 +6,7 @@ use App\Models\So;
 use App\Models\User;
 use App\Models\Teras;
 use App\Models\AddKpi;
+use App\Models\State;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 // use Illuminate\Support\Facades\Log;
@@ -17,11 +18,11 @@ class AddKpiController extends Controller
     {
         $so = So::all();
         $teras = Teras::all();
-        $users = User::all();
         $addKpis = AddKpi::with('teras')->orderBy('bil')->get(); 
         $username = Auth::User();
-
-        return view('admin.KPI.IndexKPI', compact('addKpis', 'users', 'teras', 'username', 'so'));
+        $states = State::all();
+        
+        return view('admin.KPI.IndexKPI', compact('addKpis', 'teras', 'username', 'so', 'states'));
     }
 
     public function create()
@@ -29,38 +30,64 @@ class AddKpiController extends Controller
         return view('kpi.add');
     }
 
-    public function store(Request $request)
+     // Store a new KPI
+     public function store(Request $request)
     {
+        // Validate the incoming request data
         $this->validateKpi($request);
-
+      
+        // Generate a unique bil number for the KPI
         $bil = AddKpi::count() + 1;
 
+        // Prepare data for creating the KPI
         $data = $request->except(['_token']);
-        $data['bil'] = $bil;
-        $data['kpi'] = 'KPI ' . $bil;
-        $data['pencapaian'] = $request->input('pencapaian', 0); // Default value of 0
+        $data['bil'] = $bil; // Set the bil number
+        $data['kpi'] = 'KPI ' . $bil; // Set the KPI name
+        $data['pencapaian'] = $request->input('pencapaian', 0); // Default value of 0 if not provided
 
-        AddKpi::create($data);
+        // Create the KPI and get the instance
+        $kpi = AddKpi::create($data);
 
+        // Sync the states with the newly created KPI
+        if ($request->has('states')) {
+            $kpi->states()->sync($request['states']);
+        }
+
+        // Redirect back with a success message
         return redirect()->route('admin.kpi')->with('success', 'KPI created successfully.');
     }
 
+
     public function edit($id)
     {
-        $addKpi = AddKpi::findOrFail($id);
-        return view('kpi.edit', compact('addKpi'));
+        
+        $addKpi = AddKpi::with('states')->findOrFail($id);
+        $states = State::all(); // Fetch all states
+
+        return view('kpi.edit', compact('addKpi', 'states'));
     }
 
     public function update(Request $request, $id)
     {
+        // Validate the incoming request data
         $this->validateKpi($request);
-
-        $addKpi = AddKpi::findOrFail($id);
+    
+        // Find the existing AddKpi by ID
+        $addKpi = AddKpi::with('states')->findOrFail($id);
+        
+        // Fill the AddKpi model with the request data, excluding the _token
         $addKpi->fill($request->except(['_token'])); 
         $addKpi->save();
-
+    
+        // Sync the states with the incoming states from the request
+        // This will add new states and remove any states not included in the request
+        if ($request->has('states')) {
+            $addKpi->states()->sync($request['states']);
+        }
+    
         return redirect()->route('admin.kpi')->with('success', 'KPI updated successfully.');
     }
+    
 
     public function destroy(AddKpi $addKpi)
     {
@@ -86,8 +113,9 @@ class AddKpiController extends Controller
         $request->validate([
             'teras_id' => 'required|exists:teras,id',
             'so_id' => 'required|string|max:255',
-            'negeri' => 'required|string|max:255',
-            'user_id' => 'required|exists:users,id',
+            'states' => 'required|array',
+            'states.*' => 'exists:states,id',
+            'user_id' => 'nullable|exists:users,id',
             'pernyataan_kpi' => 'required|string|max:255',
             'sasaran' => 'required|numeric',
             'jenis_sasaran' => 'required|string|max:255',

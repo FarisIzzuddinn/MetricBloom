@@ -27,7 +27,7 @@ class UserKpiController extends Controller
         $userAverageAchievement = ($userTotalKpis > 0) ? round(($userAchievedKpis / $userTotalKpis) * 100) : 0;
     
         // Get all KPIs related to the logged-in user
-        $addKpis = $user->addKpis;
+       $addKpis = $user->kpis;
     
         // Prepare data for the chart
         $labels = $addKpis->pluck('kpi')->toArray();

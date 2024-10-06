@@ -16,6 +16,8 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\Auth\ForgotPassController;
+use App\Http\Controllers\institutionAdminController;
+use App\Http\Controllers\StateAdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,6 +69,7 @@ Route::group(['middleware' => ['role:super admin|admin']], function () {
     // Super admin users
     Route::resource('users', UserController::class);
     Route::get('users/{userId}/delete', [UserController::class, 'destroy']);
+    Route::get('/get-institutions/{stateId}', [UserController::class, 'getInstitutions']);
 
     Route::group(['middleware' => ['permission:view dashboard']], function () {
         Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
@@ -96,12 +99,22 @@ Route::group(['middleware' => ['role:super admin|admin']], function () {
     Route::get('/kpi-data/{state}', [AdminController::class, 'getKpiDataByState']);
 });
 
-// ===================== ADMIN ======================
-// Route::group(['middleware' => ['role:admin']], function () {
-    // dashboard 
-   
+// Admin State
+Route::middleware(['auth', 'role:Admin State'])->group(function () {
+    Route::resource('admin-state-kpis', StateAdminController::class);
+    Route::get('/state-admin/dashboard', [StateAdminController::class, 'index'])->name('stateAdmin.dashboard');
+    Route::get('/state-admin/kpi-management', [StateAdminController::class, 'manageKPI'])->name('stateAdmin.kpi');
+    Route::post('/admin-state-kpis', [StateAdminController::class, 'store'])->name('stateAdmin.store');
+});
 
-// });
+// Admin Institution
+Route::middleware(['auth', 'role:Institution Admin'])->group(function () {
+    Route::resource('admin-institution-kpis', institutionAdminController::class);
+    Route::get('/institution-admin/dashboard', [institutionAdminController::class, 'index'])->name('institutionAdmin.dashboard');
+    Route::get('/institution-admin/kpi-management', [institutionAdminController::class, 'manageKPI'])->name('institutionAdmin.kpi');
+    Route::post('/institution-admin/kpi/assign', [institutionAdminController::class, 'assignKpi'])->name('institutionAdmin.kpi.assign');
+});
+
 
 // ===================== USER ======================
 // Route::middleware(['role:user'])->group(function () {

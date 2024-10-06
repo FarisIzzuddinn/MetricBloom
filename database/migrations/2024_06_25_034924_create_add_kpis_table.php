@@ -16,7 +16,7 @@ return new class extends Migration
             $table->integer('bil')->nullable();
             $table->unsignedBigInteger('teras_id');
             $table->unsignedBigInteger('so_id'); 
-            $table->string('negeri'); 
+            // $table->string('negeri')->nullable(); 
             // $table->string('pemilik'); 
             $table->unsignedBigInteger('user_id');
             $table->string('kpi'); 

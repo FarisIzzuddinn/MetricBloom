@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Log;
 use App\Models\User;
+use App\Models\State;
+use App\Models\Institution;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -15,7 +18,9 @@ class UserController extends Controller
     {
         $search = $request->input('search');
         $role = $request->input('role');
-
+      $states = State::All();
+      
+       
         $users = User::query()
             ->when($search, function ($query, $search) {
                 return $query->where('name', 'like', "%{$search}%")
@@ -27,6 +32,7 @@ class UserController extends Controller
                 });
             })
             ->get();
+            
 
         $roles = Role::all()->pluck('name'); // Dapatkan senarai peranan untuk dropdown
 
@@ -34,9 +40,10 @@ class UserController extends Controller
             'users' => $users,
             'roles' => $roles,
             'username' => Auth::user(),
+            'states' => $states
+         
+            // Pass states to the view
         ]);
-
-
     }
 
     // Menampilkan borang untuk membuat pengguna baharu
@@ -48,71 +55,82 @@ class UserController extends Controller
         ]);
     }
 
-    // Menyimpan pengguna baharu ke dalam pangkalan data
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'email'=> 'required|max:255|unique:users,email',
             'password' => 'required|string|min:8|max:20',
-            'roles' => 'required'
+            'roles' => 'required',
+            'state_id' => 'nullable|exists:states,id', // Validate state_id
+            'institution_id' => 'nullable|exists:institutions,id', // Validate institution_id
         ]);
-
+    
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password'=> Hash::make($request->password),
+            'state_id' => $request->state_id, // Store state_id
+            'institution_id' => $request->institution_id, // Store institution_id
         ]);
-
+    
         $user->syncRoles($request->roles);
-
+    
         return redirect('/users')->with("status", "User created successfully with roles");
     }
-
-    // public function renumberItems()
-    // {
-    //     $items = User::orderBy('created_at')->get();
-    //     foreach ($items as $index => $item) {
-    //         $item->position = $index + 1;
-    //         $item->save();
-    //     }
-    // }
-
-
+    
     // Menampilkan borang untuk mengedit pengguna
     public function edit(User $user)
     {
         $roles = Role::pluck('name', 'name')->all();
+        $states = State::all(); // Fetch states
+        $institutions = Institution::all();
+
         $userRoles = $user->roles->pluck('name', 'name')->all();
         return view('superAdmin.user.edit', [
             'user' => $user,
             'roles' => $roles,
-            'userRoles' => $userRoles
+            'userRoles' => $userRoles,
+            'states' => $states, 
+            'institutions' => $institutions
         ]);
     }
 
     // Mengemaskini maklumat pengguna
-    public function update(Request $request, User $user)
+    public function update(Request $request, $id)
     {
+        // Validate the request, including the institution_id
         $request->validate([
             'name' => 'required|string|max:255',
             'password' => 'nullable|string|min:8|max:20',
-            'roles' => 'required'
+            'roles' => 'required',
+            'state_id' => 'nullable|exists:states,id', // State ID validation
+            'institutions_id' => 'nullable|exists:institutions,id',// Institution ID validation
         ]);
 
-        $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-        ];
+        // Find the user by ID
+        $user = User::find($id);
 
-        if (!empty($request->password)) {
-            $data['password'] = Hash::make($request->password);
+        // Update the user's data
+        $user->name = $request->name;
+        
+        // If a new password is entered, hash and update it
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
         }
 
-        $user->update($data);
+        // Update state and institution IDs
+        $user->state_id = $request->state_id;
+        $user->institution_id = $request->institutions_id;// Make sure institution_id is saved
+
+        // Sync roles
         $user->syncRoles($request->roles);
 
-        return redirect('/users')->with("status", "User updated successfully with the roles");
+        // Save the changes
+        $user->save();
+
+        // Redirect with a success message
+        return redirect('users')->with('status', 'User updated successfully');
     }
 
     public function renumberItems()
@@ -133,4 +151,10 @@ class UserController extends Controller
         return redirect('/users')->with("status", "User deleted successfully");
     }
 
+    public function getInstitutions($stateId)
+    {
+        // Fetch institutions based on the state ID
+        $institutions = Institution::where('state_id', $stateId)->get();
+        return response()->json($institutions);
+    }
 }

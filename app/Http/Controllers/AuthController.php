@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Log;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Spatie\Permission\Models\Role;
 
 class AuthController extends Controller
 {
@@ -60,6 +61,10 @@ class AuthController extends Controller
                 return redirect()->route('permissions.index')->with('success', 'Login Success');
             } elseif ($user->hasRole('admin')) {
                 return redirect()->route('admin.index')->with('success', 'Login Success');
+            } elseif ($user->hasRole('Admin State')) {
+                return redirect()->route('stateAdmin.dashboard')->with('success', 'Login Success');
+            } elseif ($user->hasRole('Institution Admin')) {
+                return redirect()->route('institutionAdmin.dashboard')->with('success', 'Login Success');
             } else {
                 return redirect()->route('user.kpi.input')->with('success', 'Login Success');
             }

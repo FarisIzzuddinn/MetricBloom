@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('states', function (Blueprint $table) {
+        Schema::create('kpi_institution', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->foreignId('kpi_id')->constrained('add_kpis')->onDelete('cascade'); // Correct reference to 'add_kpis'
+            $table->foreignId('institution_id')->constrained('institutions')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -23,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('states');
+        Schema::dropIfExists('kpi_institution');
     }
 };

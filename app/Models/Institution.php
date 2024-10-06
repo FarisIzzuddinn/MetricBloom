@@ -15,4 +15,26 @@ class Institution extends Model
     {
         return $this->belongsTo(State::class);
     }
+
+    public function addkpis()
+    {
+        return $this->hasMany(AddKpi::class);
+    }
+
+    public function kpis()
+    {
+        return $this->belongsToMany(AddKpi::class, 'kpi_institution', 'institution_id', 'kpi_id');
+    }
+    
+
+    public function addkpi()
+    {
+        return $this->belongsToMany(KPI::class, 'kpi_institution');
+    }
+
+
+    public function users()
+    {
+        return $this->hasMany(User::class);
+    }
 }

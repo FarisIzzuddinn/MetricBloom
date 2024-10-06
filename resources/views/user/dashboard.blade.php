@@ -1,4 +1,4 @@
-@extends('layout')
+@extends('layoutNoName')
 @section('title', 'Admin Dashboard')
 @section('body')
     @include('sidebar')

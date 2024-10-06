@@ -88,12 +88,7 @@
         <div class="card">
             <div class="card-header">KPI Performance Over Time</div>
             <div class="card-body chart-container">
-                <label for="stateSelector">Select State:</label>
-                <select id="stateSelector">
-                    @foreach($states as $state)
-                        <option value="{{ $state }}">{{ $state }}</option>
-                    @endforeach
-                </select>
+               
                 <canvas id="performanceChart"></canvas>
             </div>
         </div>
@@ -171,10 +166,7 @@
                                         @endif
                                     </td>
                                 </tr>
-                            
-                            
                                 @endforeach
-
                         </tbody>
                     </table>
                 </div>

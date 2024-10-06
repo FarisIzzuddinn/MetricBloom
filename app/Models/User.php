@@ -52,4 +52,37 @@ class User extends Authenticatable
     {
         return $this->hasMany(AddKpi::class);
     }
+
+    public function state()
+    {
+        return $this->belongsTo(State::class, 'kpi_state', 'user_id', 'state_id');
+    }
+
+    public function institution()
+    {
+        return $this->belongsTo(Institution::class);
+    }
+
+    // public function kpis()
+    // {
+    //     return $this->belongsToMany(AddKpi::class, 'institution_add_kpi', 'institution_id', 'kpi_id');
+    // }
+
+    
+
+    public function addkpi()
+    {
+        return $this->belongsToMany(AddKpi::class, 'kpi_user');
+    }
+
+    public function kpi()
+    {
+        return $this->belongsToMany(AddKpi::class, 'institution_add_kpi', 'institution_id', 'add_kpi_id');
+    }
+
+    // Institution Admin 
+    public function kpis()
+    {
+        return $this->belongsToMany(AddKpi::class, 'kpi_user', 'user_id', 'kpi_id');
+    }
 }
