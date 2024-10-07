@@ -49,30 +49,31 @@ class AuthController extends Controller
     }
 
     public function loginPost(Request $request)
-    {
-        $credentials = $request->only('email', 'password');
+{
+    $credentials = $request->only('email', 'password');
 
-        if (Auth::attempt($credentials)) {
-            /** @var \App\Models\User */
-            $user = Auth::user();
+    if (Auth::attempt($credentials)) {
+        /** @var \App\Models\User */
+        $user = Auth::user();
 
-            // Check user role and redirect accordingly
-            if ($user->hasRole('super admin')) {
-                return redirect()->route('permissions.index')->with('success', 'Login Success');
-            } elseif ($user->hasRole('admin')) {
-                return redirect()->route('admin.index')->with('success', 'Login Success');
-            } elseif ($user->hasRole('Admin State')) {
-                return redirect()->route('stateAdmin.dashboard')->with('success', 'Login Success');
-            } elseif ($user->hasRole('Institution Admin')) {
-                return redirect()->route('institutionAdmin.dashboard')->with('success', 'Login Success');
-            } else {
-                return redirect()->route('user.kpi.input')->with('success', 'Login Success');
-            }
+        // Check user role and redirect accordingly
+        if ($user->hasRole('super admin')) {
+            return redirect()->route('permissions.index')->with('success', 'Login Success');
+        } elseif ($user->hasRole('admin')) {
+            return redirect()->route('admin.index')->with('success', 'Login Success');
+        } elseif ($user->hasRole('Admin State')) {
+            return redirect()->route('stateAdmin.dashboard')->with('success', 'Login Success');
+        } elseif ($user->hasRole('Institution Admin')) {
+            return redirect()->route('institutionAdmin.dashboard')->with('success', 'Login Success');
+        } else {
+            return redirect()->route('user.kpi.input')->with('success', 'Login Success');
         }
-
-        // Authentication failed
-        return redirect()->back()->withErrors(['email' => 'Invalid credentials'])->withInput();
     }
+
+    // Authentication failed
+    return redirect()->back()->withErrors(['email' => 'wrong email or password'])->withInput();
+}
+
 
     public function edit($id) {
         // $user = auth()->user();

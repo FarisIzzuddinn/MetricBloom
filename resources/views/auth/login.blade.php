@@ -14,17 +14,10 @@
             background: #ececec;
         }
 
-        /*------------ Login container ------------*/
         .box-area {
             width: 930px;
         }
 
-        /*------------ Right box ------------*/
-        .right-box {
-            padding: 40px 30px 40px 40px;
-        }
-
-        /*------------ Custom Placeholder ------------*/
         ::placeholder {
             font-size: 16px;
         }
@@ -37,7 +30,21 @@
             border-radius: 30px;
         }
 
-        /*------------ For small screens------------*/
+        .custom-alert {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .custom-alert svg {
+            margin-right: 10px;
+        }
+
         @media only screen and (max-width: 768px) {
             .box-area {
                 width: 100%;
@@ -53,35 +60,26 @@
             }
 
             .header-text h2 {
-                font-size: 1.5rem; /* Mengubah saiz font untuk tajuk */
+                font-size: 1.5rem;
             }
 
             .header-text p {
-                font-size: 0.9rem; /* Mengubah saiz font untuk keterangan */
+                font-size: 0.9rem;
             }
         }
     </style>
 </head>
 
 <body>
-    <!----------------------- Main Container -------------------------->
-
     <div class="container d-flex justify-content-center align-items-center min-vh-100">
-
-        <!----------------------- Login Container -------------------------->
-
         <div class="row border rounded-5 p-3 bg-white shadow box-area">
-
-            <!--------------------------- Left Box ----------------------------->
 
             <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box" style="background: #1b8659;">
                 <div class="featured-image mb-3">
                     <img src="{{ asset('picture/penjara_logo.png') }}" class="img-fluid" style="width: 250px;">
                 </div>
-                <small class="text-white text-wrap text-center" style="width: 17rem; font-family: 'Courier New', Courier, monospace;">JABATAN PENJARA MALAYSIA</small>
+                <p class="text-white text-center fs-2" style="font-family: 'Courier New', Courier, monospace; font-weight: 600;">JABATAN PENJARA MALAYSIA</p>
             </div>
-
-            <!-------------------- ------ Right Box ---------------------------->
 
             <div class="col-md-6 right-box col-12">
                 <div class="row align-items-center">
@@ -89,13 +87,12 @@
                         <h2>Login</h2>
                         <p>Enter your email and password</p>
                     </div>
+
                     <form method="POST" action="{{ url('login') }}">
                         @csrf
-
                         <div class="input-group mb-3">
                             <input type="email" class="form-control" id="email" name="email" placeholder="Email address" value="{{ old('email') }}" required autocomplete="off">
                         </div>
-
                         <div class="position-relative mb-3">
                             <input type="password" class="form-control pr-5" id="password" name="password" placeholder="Password" required autocomplete="off">
                             <span class="position-absolute" style="right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer;" id="togglePassword">
@@ -115,10 +112,22 @@
                         </div>
                     </form>
 
+                    <!-- Alert untuk kesilapan -->
+                    @if ($errors->any())
+                        <div class="custom-alert" role="alert">
+                            <div>
+                                <ul class="mb-0">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        </div>
+                    @endif
+
                     <div class="row">
                         <small>Don't have an account? <a href="{{ route('register') }}">Sign Up</a></small>
                     </div>
-
                     <div class="form-group row">
                         <div class="col-md-6 offset-md-4">
                             <div class="checkbox">
