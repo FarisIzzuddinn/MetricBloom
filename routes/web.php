@@ -56,6 +56,7 @@ Route::group(['middleware' => ['role:super admin|admin']], function () {
     Route::resource('states', StateController::class);
     Route::resource('institutions', InstitutionController::class);
     
+    
 
     // Super admin permission 
     Route::resource('permissions', PermissionController::class);

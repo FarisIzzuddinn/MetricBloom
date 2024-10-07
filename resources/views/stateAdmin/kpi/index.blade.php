@@ -53,7 +53,9 @@
                 @endif
             </td>
             <td>
-                <a href="{{ route('admin-state-kpis.edit', $kpi->id) }}" class="btn btn-warning">Edit</a>
+                <a href="#" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal" data-id="{{ $kpi->id }}" data-name="{{ $kpi->pernyataan_kpi }}" data-institutions="{{ json_encode($kpi->institutions->pluck('id')) }}">
+                    Edit
+                </a>
                 <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-name="{{ $kpi->pernyataan_kpi }}" data-url="{{ route('admin-state-kpis.destroy', $kpi->id) }}">
                     Delete
                 </button>
@@ -89,6 +91,40 @@
     </div>
 </div>
 
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit KPI</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm" method="POST" action="">
+                    @csrf
+                    @method('PUT')
+                    <div class="mb-3">
+                        <label for="kpiName" class="form-label">KPI Name</label>
+                        <input type="text" class="form-control" id="kpiName" name="pernyataan_kpi" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="institutionSelect" class="form-label">Assign Institutions</label>
+                        <select multiple class="form-control" id="institutionSelect" name="institutions[]" required>
+                            @foreach ($institutions as $institution)
+                                <option value="{{ $institution->id }}">{{ $institution->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CANCEL</button>
+                        <button type="submit" class="btn btn-primary">SAVE CHANGES</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     // Script untuk mengatur modal delete
     var deleteModal = document.getElementById('deleteModal');
@@ -102,7 +138,39 @@
         var form = document.getElementById('deleteForm');
         form.action = button.getAttribute('data-url'); // Set URL untuk form delete
     });
-</script>
 
+    // Script untuk mengatur modal edit
+    var editModal = document.getElementById('editModal');
+    editModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget; // Tombol yang memicu modal
+        var itemId = button.getAttribute('data-id'); // Ambil ID KPI dari data-id
+        var itemName = button.getAttribute('data-name'); // Ambil nama KPI dari data-name
+        var assignedInstitutions = button.getAttribute('data-institutions'); // Ambil institusi yang telah ditetapkan
+
+        // Set nama KPI di dalam modal
+        var kpiNameInput = editModal.querySelector('#kpiName');
+        kpiNameInput.value = itemName;
+
+        // Set action URL untuk form edit secara dinamis
+        var form = document.getElementById('editForm');
+        form.action = '/admin-state-kpis/' + itemId; // Gantikan dengan route yang sesuai
+
+        // Set nilai untuk institusi yang telah ditetapkan
+        var institutionSelect = editModal.querySelector('#institutionSelect');
+        var selectedInstitutions = JSON.parse(assignedInstitutions);
+        
+        // Deselect all options first
+        for (var i = 0; i < institutionSelect.options.length; i++) {
+            institutionSelect.options[i].selected = false;
+        }
+
+        // Select the assigned institutions
+        for (var i = 0; i < institutionSelect.options.length; i++) {
+            if (selectedInstitutions.includes(parseInt(institutionSelect.options[i].value))) {
+                institutionSelect.options[i].selected = true;
+            }
+        }
+    });
+</script>
 
 @endsection
