@@ -62,7 +62,7 @@
                         </div>
                     </div>
 
-                    {{-- <div class="row mb-3">
+                    <!-- {{-- <div class="row mb-3">
                         <label for="addPemilik" class="col-sm-5 col-form-label">PEMILIK</label>
                         <div class="col-sm-7">
                             <select id="addPemilik" name="user_id" class="form-select" required>
@@ -71,7 +71,7 @@
                                 @endforeach
                             </select>
                         </div>
-                    </div> --}}
+                    </div> --}} -->
 
                     <div class="row mb-3">
                         <label for="pernyataan_kpi" class="col-sm-5 col-form-label">PERNYATAAN KPI</label>

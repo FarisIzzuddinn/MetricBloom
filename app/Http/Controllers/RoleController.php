@@ -73,16 +73,13 @@ class RoleController extends Controller
         return redirect()->route('roles.index')->with('status', 'Roles updated successfully.');
     }
 
-    public function destroy($roleId){
-        $role = Role::find($roleId);
-
-        if (!Gate::allows('delete role', $role)) {
-            return redirect()->route('roles.index')->withErrors('Admin does not have access to delete user.');
-        }
+    public function destroy($id)
+{
+    $role = Role::findOrFail($id);
+    $role->delete();
     
-        $role->delete();
-        return redirect()->route('roles.index')->with("status", "Roles Delete Successfully");
-    }
+    return redirect()->back()->with('success', 'Role deleted successfully.');
+}
 
     public function addPermissionToRole($roleId)
     {

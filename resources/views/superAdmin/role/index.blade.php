@@ -127,7 +127,7 @@
                             <p>Are you sure you want to delete the role <strong>{{ $role->name }}</strong>?</p>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
                             <form action="{{ url('roles/'.$role->id) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
@@ -137,6 +137,7 @@
                     </div>
                 </div>
             </div>
+
         @endforeach
 
         <!-- Add Role Modal -->

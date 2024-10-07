@@ -148,11 +148,19 @@
         </div>
     </div>
 
+<<<<<<< HEAD
     <!-- KPI Overview Cards with equal height -->
     <div class="row mb-4 d-flex align-items-stretch"> <!-- Added d-flex and align-items-stretch -->
         <div class="col-sm-6 col-md-3 mb-3">
             <div class="card h-100"> <!-- h-100 ensures card takes full height -->
                 <div class="card-body d-flex flex-column"> <!-- Flexbox for card content -->
+=======
+    <!-- KPI Overview Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+>>>>>>> 77b3b4a8cdc8f1d0812e9f5f21db3590b4e25a53
                     <h5 class="card-title">Total KPIs</h5>
                     <p class="card-text display-4 mt-auto">{{ $totalKpis }}</p> <!-- mt-auto pushes content down -->
                 </div>
@@ -183,6 +191,61 @@
             </div>
         </div>
     </div>
+<<<<<<< HEAD
+=======
+
+    <!-- KPI List with Details -->
+    <h4 class="mb-4">Detailed KPI Overview for State</h4>
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>BIL</th>
+                            <th>KPI DESCRIPTION</th>
+                            <th>TARGET</th>
+                            <th>INSTITUTION ASSIGN</th>
+                            <th>Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($kpis->unique('pernyataan_kpi') as $index => $kpi)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $kpi->pernyataan_kpi }}</td>
+                            <td>{{ $kpi->sasaran }}</td>
+                            <td>
+                                @if ($kpi->institutions->isNotEmpty())
+                                    {{ $kpi->institutions->unique('name')->pluck('name')->implode(', ') }} <!-- Use unique to avoid duplicates -->
+                                @else
+                                    No Institution Assigned
+                                @endif
+                            </td>
+                            <td>
+                                <div class="progress tooltip-custom" data-toggle="tooltip" title="{{ $kpi->peratus_pencapaian }}% achieved">
+                                    <div class="progress-bar 
+                                        @if($kpi->status == 'completed') bg-success
+                                        @elseif($kpi->status == 'in_progress') bg-warning
+                                        @elseif($kpi->status == 'overdue') bg-danger
+                                        @endif" 
+                                        role="progressbar" 
+                                        style="width: {{ $kpi->peratus_pencapaian }}%;" 
+                                        aria-valuenow="{{ $kpi->peratus_pencapaian }}" 
+                                        aria-valuemin="0" 
+                                        aria-valuemax="100">
+                                        {{ $kpi->peratus_pencapaian }}%
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+>>>>>>> 77b3b4a8cdc8f1d0812e9f5f21db3590b4e25a53
 </div>
 
     <!-- Charts Section -->
