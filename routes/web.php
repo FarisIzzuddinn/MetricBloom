@@ -55,16 +55,19 @@ Route::group(['middleware' => ['role:super admin|admin']], function () {
     // Manage State and Institution
     Route::resource('states', StateController::class);
     Route::resource('institutions', InstitutionController::class);
+    
 
     // Super admin permission 
     Route::resource('permissions', PermissionController::class);
     Route::get('permissions/{permissionId}/delete', [PermissionController::class, 'destroy']);
+    
 
     // Super admin set roles 
     Route::resource('roles', RoleController::class);
     Route::get('roles/{roleId}/delete', [RoleController::class, 'destroy'])->middleware('permission:delete role');
     Route::get('roles/{roleId}/give-permission', [RoleController::class, 'addPermissionToRole']);
     Route::put('roles/{roleId}/give-permission', [RoleController::class, 'updatePermissionToRole']);
+    Route::delete('/roles/{id}', [RoleController::class, 'destroy'])->name('roles.destroy');
 
     // Super admin users
     Route::resource('users', UserController::class);

@@ -64,7 +64,6 @@
         </div>
     </div>
 
- 
     <!-- KPI Overview Cards -->
     <div class="row mb-4">
         <div class="col-md-3">
@@ -117,16 +116,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($kpis as $index => $kpi)
+                        @foreach($kpis->unique('pernyataan_kpi') as $index => $kpi)
                         <tr>
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $kpi->pernyataan_kpi }}</td>
                             <td>{{ $kpi->sasaran }}</td>
                             <td>
                                 @if ($kpi->institutions->isNotEmpty())
-                                    @foreach ($kpi->institutions as $institution)
-                                        {{ $institution->name }}<br> <!-- Display each institution name -->
-                                    @endforeach
+                                    {{ $kpi->institutions->unique('name')->pluck('name')->implode(', ') }} <!-- Use unique to avoid duplicates -->
                                 @else
                                     No Institution Assigned
                                 @endif
