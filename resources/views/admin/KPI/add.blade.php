@@ -52,15 +52,8 @@
                                     @foreach($states as $state)
                                         <li>
                                             <div class="form-check px-3">
-                                                <input 
-                                                    class="form-check-input" 
-                                                    type="checkbox" 
-                                                    name="states[]" 
-                                                    id="state_{{ $state->id }}" 
-                                                    value="{{ $state->id }}">
-                                                <label class="form-check-label" for="state_{{ $state->id }}">
-                                                    {{ $state->name }}
-                                                </label>
+                                                <input class="form-check-input" type="checkbox" name="states[]" id="state_{{ $state->id }}" value="{{ $state->id }}">
+                                                <label class="form-check-label" for="state_{{ $state->id }}">{{ $state->name }}</label>
                                             </div>
                                         </li>
                                     @endforeach

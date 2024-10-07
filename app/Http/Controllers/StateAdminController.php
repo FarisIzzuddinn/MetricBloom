@@ -14,27 +14,63 @@ class StateAdminController extends Controller
 {
     public function index()
     {
-        $stateId = auth()->user()->state_id; // Assuming user has a state_id attribute
-        $state = State::with('kpis')->find($stateId);
-
+        // Retrieve the state ID of the logged-in user
+        $stateId = auth()->user()->state_id; 
+    
+        // Retrieve the state and its associated KPIs using eager loading
+        $state = State::with('kpis.institutions')->find($stateId);
         $kpis = $state->kpis; // Fetching KPIs linked to the state
-
-        // Additional data for KPI summary
+    
+        // Calculate the total number of KPIs for the given state
         $totalKpis = AddKpi::where('state_id', $stateId)->count();
-
+    
+        // Calculate the number of KPIs that have been achieved (progress >= 75%)
         $achievedKpis = AddKpi::where('state_id', $stateId)
                               ->where('peratus_pencapaian', '>=', 75)
                               ->count();
     
+        // Calculate the number of KPIs that are still pending (0% <= progress < 75%)
         $pendingKpis = AddKpi::where('state_id', $stateId)
-                             ->where('peratus_pencapaian', '>=', 0)
                              ->where('peratus_pencapaian', '<', 75)
                              ->count();
     
-        $averageAchievement = ($totalKpis > 0) ? round(($achievedKpis / $totalKpis) * 100) : 0;
-
-        return view('stateAdmin.dashboard.index', compact('totalKpis', 'achievedKpis', 'pendingKpis', 'averageAchievement', 'kpis'));
+        // Calculate the average achievement percentage for all KPIs
+        $totalProgress = AddKpi::where('state_id', $stateId)->sum('peratus_pencapaian');
+        $averageAchievement = ($totalKpis > 0) ? round($totalProgress / $totalKpis, 2) : 0;
+    
+        // Calculate KPI progress per institution
+        $institutionNames = [];
+        $kpiAchievements = [];
+        $financialPerformance = [];
+        $operationalEfficiency = [];
+        $customerSatisfaction = [];
+    
+        foreach ($state->kpis->groupBy('institution_id') as $institutionId => $kpisGroup) {
+            // Extract the institution name
+            $institutionName = $kpisGroup->first()->institutions->first()->name ?? 'Unknown';
+            $institutionNames[] = $institutionName;
+    
+            // Calculate average KPI achievement for each institution
+            $averageProgress = round($kpisGroup->avg('peratus_pencapaian'), 2);
+            $kpiAchievements[] = $averageProgress;
+    
+            // Group KPIs by category
+            $financialKpis = $kpisGroup->where('category', 'financial_performance');
+            $operationalKpis = $kpisGroup->where('category', 'operational_efficiency');
+            $customerKpis = $kpisGroup->where('category', 'customer_satisfaction');
+    
+            // Calculate average achievement for each category
+            $financialPerformance[] = $financialKpis->count() > 0 ? round($financialKpis->avg('peratus_pencapaian'), 2) : 0;
+            $operationalEfficiency[] = $operationalKpis->count() > 0 ? round($operationalKpis->avg('peratus_pencapaian'), 2) : 0;
+            $customerSatisfaction[] = $customerKpis->count() > 0 ? round($customerKpis->avg('peratus_pencapaian'), 2) : 0;
+        }
+    
+        return view('stateAdmin.dashboard.index', compact('totalKpis', 'achievedKpis', 'pendingKpis', 'averageAchievement', 'institutionNames', 'kpiAchievements', 'financialPerformance', 'operationalEfficiency', 'customerSatisfaction'));
     }
+    
+
+    
+
 
     public function manageKPI()
     {

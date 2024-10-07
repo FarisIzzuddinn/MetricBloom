@@ -131,7 +131,7 @@
                                 <th >TERAS</th>
                                 <th >SO</th>
                                 <th >NEGERI</th>
-                                <th >PEMILIK</th>
+                                {{-- <th >PEMILIK</th> --}}
                                 <th >KPI</th>
                                 <th >PERNYATAAN KPI</th>
                                 <th >SASARAN</th>
@@ -147,10 +147,16 @@
                                     <td class="small-text text-secondary">{{ $index + 1 }}</td>
                                     <td class="small-text">{{ $addkpi->teras ? $addkpi->teras->id : 'Teras has been deleted' }}</td>
                                     <td class="small-text kpi-statement">{{$addkpi->so ? $addkpi->so->id : 'SO has been deleted'}}</td> 
-                                    <td class="small-text">{{ $addkpi->negeri }}</td>
-                                    <td class="small-text">
+                                    <td class="small-text">  @if ($addkpi->states->isNotEmpty())
+                                        @foreach ($addkpi->states as $state)
+                                            {{ $state->name }} @if (!$loop->last), @endif
+                                        @endforeach
+                                    @else
+                                        No State Found
+                                    @endif</td>
+                                    {{-- <td class="small-text">
                                         {{ $addkpi->user ? $addkpi->user->name : 'User has been deleted' }}
-                                    </td>
+                                    </td> --}}
                                     <td class="small-text">{{ $addkpi->kpi }}</td>
                                     <td class="small-text kpi-statement">{{ $addkpi->pernyataan_kpi }}</td>
                                     <td class="small-text">{{ $addkpi->sasaran }}</td>
