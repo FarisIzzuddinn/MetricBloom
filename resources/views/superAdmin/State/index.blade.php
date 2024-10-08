@@ -159,23 +159,21 @@
     </div>
 </div>
 
-
-
 <script>
         document.addEventListener('DOMContentLoaded', function () {
-        // Delete Modal Configuration
-        var deleteModal = document.getElementById('deleteModal');
-        deleteModal.addEventListener('show.bs.modal', function (event) {
-            var button = event.relatedTarget;
-            var permissionId = button.getAttribute('data-permission-id');
-            var permissionName = button.getAttribute('data-permission-name');
-            var form = document.getElementById('deleteForm');
-            var nameSpan = document.getElementById('deletePermissionName'); // Corrected span ID
+            // Delete Modal Configuration
+            var deleteModal = document.getElementById('deleteModal');
+            deleteModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var permissionId = button.getAttribute('data-permission-id');
+                var permissionName = button.getAttribute('data-permission-name');
+                var form = document.getElementById('deleteForm');
+                var nameSpan = document.getElementById('deletePermissionName'); // Corrected span ID
 
-            form.action = '/permissions/' + permissionId; // Set the form action dynamically
-            nameSpan.textContent = permissionName; // Set the permission name in the modal
+                form.action = '/state/' + permissionId; // Set the form action dynamically
+                nameSpan.textContent = permissionName; // Set the permission name in the modal
+            });
         });
-    });
 </script>
 
 @endsection

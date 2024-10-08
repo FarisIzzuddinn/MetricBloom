@@ -120,6 +120,7 @@
                                 <th >SASARAN</th>
                                 <th >JENIS SASARAN</th>
                                 <th >PENCAPAIAN</th>
+                                <th >REASON</th>
                                 <th >PERATUS PENCAPAIAN</th>
                                 <th></th>
                             </tr>
@@ -135,6 +136,7 @@
                                     <td class="small-text">{{ $addKpi->sasaran }}</td>
                                     <td class="small-text">{{ $addKpi->jenis_sasaran }}</td>
                                     <td class="small-text">{{ $addKpi->pencapaian }}</td>
+                                    <td class="small-text">{{ $addKpi->reason }}</td>
                                     <td class="small-text">{{ $addKpi->peratus_pencapaian }}</td>
                                     <td>
                                         <button onclick="openEditPopup({{ json_encode($addKpi) }})" class="btn btn-warning small-button">
@@ -219,10 +221,17 @@
                         <label for="editPeratusPencapaian" class="col-sm-5 col-form-label">PERATUS PENCAPAIAN</label>
                         <div class="col-sm-7">
                             <input type="text" id="editPeratusPencapaian" name="peratus_pencapaian" class="form-control" readonly>
-                            {{-- <input type="hidden" id="editPeratusPencapaian" name="peratus_pencapaian"> --}}
                         </div>
                     </div>
                     
+                    <!-- Reason for not achieving KPI -->
+                    <div class="row mb-3" id="reason-container">
+                        <label for="reason" class="col-sm-5 col-form-label">Reason for Not Achieving KPI</label>
+                        <div class="col-sm-7">
+                            <textarea id="reason" name="reason" class="form-control" rows="3">{{ old('reason', $addKpi->reason) }}</textarea>
+                        </div>
+                    </div>
+
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                         <button type="submit" class="btn btn-primary">Save</button>
@@ -233,8 +242,29 @@
     </div>
 </div>
 
+
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const peratusPencapaianInput = document.getElementById('editPencapaian');
+        const reasonContainer = document.getElementById('reason-container');
+
+        // Listen for changes on the PENCAPAIAN input
+        peratusPencapaianInput.addEventListener('input', function() {
+            const peratusPencapaian = parseFloat(peratusPencapaianInput.value);
+            
+            if (peratusPencapaian < 100) {
+                reasonContainer.style.display = 'block'; // Show the reason container
+                reasonContainer.querySelector('textarea').setAttribute('required', 'required'); // Make the textarea required
+            } else {
+                reasonContainer.style.display = 'none'; // Hide the reason container
+                reasonContainer.querySelector('textarea').removeAttribute('required'); // Remove the required attribute
+            }
+        });
+    });
+
+
     const labels = @json($labels);
     const data = @json($data);
     const chartTitle = @json($chartTitle);

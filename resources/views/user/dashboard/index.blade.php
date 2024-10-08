@@ -51,6 +51,7 @@
                                     <th>Jenis Sasaran</th>
                                     <th>Pencapaian</th>
                                     <th>Peratus Pencapaian</th>
+                                    <th>Reason</th>
                                     <th>Status</th>
                                 </tr>
                             </thead>
@@ -65,6 +66,7 @@
                                     <td>{{ $addKpi->jenis_sasaran }}</td>
                                     <td>{{ $addKpi->pencapaian }}</td>
                                     <td>{{ number_format($addKpi->peratus_pencapaian, 2) }}</td>
+                                    <td>{{ $addKpi->reason }}</td>
                                     <td class="status-{{ strtolower($addKpi->status) }}">{{ $addKpi->status }}</td>
                                 </tr>
                                 @endforeach

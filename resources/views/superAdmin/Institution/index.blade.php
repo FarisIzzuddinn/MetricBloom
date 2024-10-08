@@ -183,8 +183,6 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
     </div>
 </div>
@@ -202,7 +200,7 @@
             var form = document.getElementById('deleteForm');
             var nameSpan = document.getElementById('deletePermissionName'); // Corrected span ID
 
-            form.action = '/permissions/' + permissionId; // Set the form action dynamically
+            form.action = '/institutions/' + permissionId; // Set the form action dynamically
             nameSpan.textContent = permissionName; // Set the permission name in the modal
         });
     });

@@ -138,6 +138,7 @@
                                 <th >PENCAPAIAN</th>
                                 <th >PERATUS PENCAPAIAN</th>
                                 <th >STATUS</th>
+                                <th >SEBAB</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -171,6 +172,7 @@
                                             <span class="badge text-bg-danger">Rendah</span>
                                         @endif
                                     </td>
+                                    <td class="small-text">{{ $addkpi->reason }}</td>
                                 </tr>
                                 @endforeach
                         </tbody>

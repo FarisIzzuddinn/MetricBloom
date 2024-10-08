@@ -67,6 +67,18 @@
                         </select>
                     </div>
 
+                    <div class="mb-3" id="sector-container" style="display: none;">
+                        <label for="sector_id">Select Sector:</label>
+                        <select name="sector_id" id="sector_id" class="form-control">
+                            <option value="">Select Sector</option>
+                            @foreach($sectors as $sector)
+                                <option value="{{ $sector->id }}" {{ $user->sector_id == $sector->id ? 'selected' : '' }}>
+                                    {{ $sector->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
                     <div class="mb-3">
                         <button type="submit" class="btn btn-primary">Update</button>
                     </div>
@@ -82,31 +94,41 @@
         const rolesSelect = document.getElementById('roles');
         const stateContainer = document.getElementById('state-container');
         const institutionContainer = document.getElementById('institution-container');
+        const sectorContainer = document.getElementById('sector-container');
         const stateSelect = document.getElementById('state_id');
         const institutionSelect = document.getElementById('institutions_id');
+        const sectorSelect = document.getElementById('sector_id');
 
-        // Function to check selected roles
+        // Function to check selected roles and control display of fields
         function checkRoles() {
             const selectedRoles = Array.from(rolesSelect.selectedOptions).map(option => option.value);
 
-            // Show the state container if 'Admin State' is selected
-            stateContainer.style.display = selectedRoles.includes('Admin State') ? 'block' : 'none';
-
-            // Show both containers if 'Institution Admin' is selected
-            if (selectedRoles.includes('Institution Admin')) {
-                stateContainer.style.display = 'block'; // Also show the state container
-                institutionContainer.style.display = 'block'; // Show the institution container
+            // Display fields based on role selections
+            if (selectedRoles.includes('user')) {
+                // Display all relevant containers for 'User' role
+                stateContainer.style.display = 'block';
+                institutionContainer.style.display = 'block';
+                sectorContainer.style.display = 'block';
             } else {
-                institutionContainer.style.display = 'none'; // Hide the institution container
+                // Hide all containers and clear their values if 'User' is not selected
+                stateContainer.style.display = 'none';
+                institutionContainer.style.display = 'none';
+                sectorContainer.style.display = 'none';
+
+                stateSelect.value = "";
+                institutionSelect.value = "";
+                sectorSelect.value = "";
             }
 
-            // Clear selections if hidden
-            if (!selectedRoles.includes('Admin State')) {
-                stateSelect.value = "";
-                institutionSelect.innerHTML = ''; // Clear institution options
+            // Specific case for 'Admin State' role
+            if (selectedRoles.includes('Admin State')) {
+                stateContainer.style.display = 'block';
             }
-            if (!selectedRoles.includes('Institution Admin')) {
-                institutionSelect.value = "";
+
+            // Specific case for 'Institution Admin' role
+            if (selectedRoles.includes('Institution Admin')) {
+                stateContainer.style.display = 'block';
+                institutionContainer.style.display = 'block';
             }
         }
 
@@ -146,6 +168,7 @@
         rolesSelect.addEventListener('change', checkRoles);
     });
 </script>
+
 
 
 @endsection

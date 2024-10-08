@@ -15,6 +15,11 @@ class AddKpi extends Model
         'sasaran', 'jenis_sasaran', 'pencapaian', 'peratus_pencapaian', 'status', 'institution_admin_id'
     ];
 
+    public function addKpis()
+    {
+        return $this->belongsToMany(AddKpi::class, 'user_kpi'); // Assuming 'user_kpi' is the pivot table
+    }
+
     // Institution Admin
     public function users()
     {
@@ -32,11 +37,6 @@ class AddKpi extends Model
         return $this->belongsToMany(User::class, 'institution_add_kpi', 'add_kpi_id', 'institution_id');
     }
 
-    // public function users()
-    // {
-    //     return $this->belongsToMany(User::class, 'kpi_state')
-    //                 ->withPivot('state_id'); // Assuming state_id is in the pivot table
-    // }
 
     public function teras()
     {
@@ -61,5 +61,10 @@ class AddKpi extends Model
     public function userSector()
     {
         return $this->belongsToMany(User::class, 'institution_add_kpi', 'add_kpi_id');
+    }
+
+    public function sectors()
+    {
+        return $this->belongsToMany(Sector::class, 'kpi_sector');
     }
 }

@@ -103,12 +103,16 @@
             font-size: 1.1em;
         }
 
-        .card-text.display-4 {
-            font-size: 2em;
+        .card-text {
+            font-size: 1.8em;
         }
 
         .head-title h1 {
             font-size: 1.5em;
+        }
+
+        .breadcrumb {
+            font-size: 0.9em;
         }
     }
 
@@ -117,8 +121,8 @@
             font-size: 1em;
         }
 
-        .card-text.display-4 {
-            font-size: 1.8em;
+        .card-text {
+            font-size: 1.6em;
         }
 
         .head-title h1 {
@@ -126,14 +130,13 @@
         }
 
         .container-fluid {
-            padding: 0 15px;
+            padding: 0 10px;
         }
 
         .breadcrumb {
             font-size: 0.85em;
         }
     }
-
 </style>
 
 <div class="container-fluid">
@@ -148,25 +151,17 @@
         </div>
     </div>
 
-<<<<<<< HEAD
     <!-- KPI Overview Cards with equal height -->
-    <div class="row mb-4 d-flex align-items-stretch"> <!-- Added d-flex and align-items-stretch -->
-        <div class="col-sm-6 col-md-3 mb-3">
-            <div class="card h-100"> <!-- h-100 ensures card takes full height -->
-                <div class="card-body d-flex flex-column"> <!-- Flexbox for card content -->
-=======
-    <!-- KPI Overview Cards -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card text-white bg-primary">
-                <div class="card-body">
->>>>>>> 77b3b4a8cdc8f1d0812e9f5f21db3590b4e25a53
-                    <h5 class="card-title">Total KPIs</h5>
-                    <p class="card-text display-4 mt-auto">{{ $totalKpis }}</p> <!-- mt-auto pushes content down -->
+    <div class="row mb-4 g-3 d-flex align-items-stretch"> <!-- Added g-3 for better spacing between columns -->
+        <div class="col-sm-6 col-md-3">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">Total KPI Assign</h5>
+                    <p class="card-text display-4 mt-auto">{{ $totalKpis }}</p>
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 col-md-3 mb-3">
+        <div class="col-sm-6 col-md-3">
             <div class="card h-100">
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">Achieved KPI</h5>
@@ -174,7 +169,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 col-md-3 mb-3">
+        <div class="col-sm-6 col-md-3">
             <div class="card h-100">
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">Pending KPI</h5>
@@ -182,7 +177,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 col-md-3 mb-3">
+        <div class="col-sm-6 col-md-3">
             <div class="card h-100">
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">Average Achievement</h5>
@@ -191,12 +186,10 @@
             </div>
         </div>
     </div>
-<<<<<<< HEAD
-=======
 
     <!-- KPI List with Details -->
     <h4 class="mb-4">Detailed KPI Overview for State</h4>
-    <div class="card">
+    <div class="card mb-3">
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover">
@@ -205,6 +198,7 @@
                             <th>BIL</th>
                             <th>KPI DESCRIPTION</th>
                             <th>TARGET</th>
+                            <th>REASON</th>
                             <th>INSTITUTION ASSIGN</th>
                             <th>Progress</th>
                         </tr>
@@ -215,9 +209,10 @@
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $kpi->pernyataan_kpi }}</td>
                             <td>{{ $kpi->sasaran }}</td>
+                            <td>{{ $kpi->reason }}</td>
                             <td>
                                 @if ($kpi->institutions->isNotEmpty())
-                                    {{ $kpi->institutions->unique('name')->pluck('name')->implode(', ') }} <!-- Use unique to avoid duplicates -->
+                                    {{ $kpi->institutions->unique('name')->pluck('name')->implode(', ') }}
                                 @else
                                     No Institution Assigned
                                 @endif
@@ -245,8 +240,6 @@
             </div>
         </div>
     </div>
->>>>>>> 77b3b4a8cdc8f1d0812e9f5f21db3590b4e25a53
-</div>
 
     <!-- Charts Section -->
     <div class="row mb-4 gx-4">
@@ -271,9 +264,9 @@
                     <span class="text-sm mb-2 mb-md-0">KPI Achievement by Institution</span>
                     <div>
                         <select id="kpiFilter" class="form-select form-select-sm" style="min-width: 150px;">
-                            <option value="financialPerformance">Financial Performance</option>
-                            <option value="operationalEfficiency">Operational Efficiency</option>
-                            <option value="customerSatisfaction">Customer Satisfaction</option>
+                            @foreach ($kpiCategories as $category)
+                                <option value="{{ $category }}">{{ ucfirst(str_replace('_', ' ', $category)) }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
@@ -285,183 +278,176 @@
             </div>
         </div>
     </div>
-    
-    
-
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-window.addEventListener('load', function() {
-    console.log('Window is loaded, initializing charts.');
-
+    window.addEventListener('load', function() {
         // Data passed from the backend
-    var institutionNames = @json($institutionNames);
-    var kpiAchievements = @json($kpiAchievements);
+        var institutionNames = @json($institutionNames); // Institution names
+        var kpiAchievements = @json($kpiAchievements);  // Average KPI achievements
 
-    // Bar Chart for Institution-wise KPI Progress
-    var ctxDummyBar = document.getElementById('dummyBarChart').getContext('2d');
-    console.log('Initializing Dummy Bar Chart');
-    var dummyBarChart = new Chart(ctxDummyBar, {
-        type: 'bar',
-        data: {
-            labels: institutionNames,
-            datasets: [{
-                label: 'KPI Achievement (%)',
-                data: kpiAchievements,
-                backgroundColor: 'rgba(54, 162, 235, 0.7)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 2,
-                borderRadius: 5, // Rounded corners for bars
-                hoverBackgroundColor: 'rgba(54, 162, 235, 0.9)'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top',
-                    labels: {
-                        font: {
-                            size: 14
-                        }
-                    }
-                },
-                tooltip: {
-                    enabled: true,
-                    backgroundColor: '#f8f9fa',
-                    titleColor: '#333',
-                    bodyColor: '#333',
-                    borderColor: '#ccc',
-                    borderWidth: 1
-                }
+        // Bar Chart for Institution-wise KPI Progress
+        var ctxDummyBar = document.getElementById('dummyBarChart').getContext('2d');
+        var dummyBarChart = new Chart(ctxDummyBar, {
+            type: 'bar',
+            data: {
+                labels: institutionNames,
+                datasets: [{
+                    label: 'Average KPI Achievement (%)',
+                    data: kpiAchievements,
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2,
+                    borderRadius: 5,
+                    hoverBackgroundColor: 'rgba(54, 162, 235, 0.9)'
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(200, 200, 200, 0.2)' // Light grid lines
-                    },
-                    title: {
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
                         display: true,
-                        text: 'Achievement (%)',
-                        font: {
-                            size: 14
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 14
+                            }
                         }
+                    },
+                    tooltip: {
+                        enabled: true,
+                        backgroundColor: '#f8f9fa',
+                        titleColor: '#333',
+                        bodyColor: '#333',
+                        borderColor: '#ccc',
+                        borderWidth: 1
                     }
                 },
-                x: {
-                    grid: {
-                        display: false // No grid lines on the x-axis for a cleaner look
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,  // Ensure the Y-axis goes from 0% to 100%
+                        grid: {
+                            color: 'rgba(200, 200, 200, 0.2)'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Achievement (%)',
+                            font: {
+                                size: 14
+                            }
+                        }
                     },
-                    title: {
-                        display: true,
-                        text: 'Institutions',
-                        font: {
-                            size: 14
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Institutions',
+                            font: {
+                                size: 14
+                            }
                         }
                     }
                 }
             }
-        }
-    });
+        });
 
-    var institutionNames = @json($institutionNames);
-    var financialPerformance = @json($financialPerformance);
-    var operationalEfficiency = @json($operationalEfficiency);
-    var customerSatisfaction = @json($customerSatisfaction);
+        // KPI Data for Pie Chart
+        var financialPerformance = @json($financialPerformance);
+        var operationalEfficiency = @json($operationalEfficiency);
+        var customerSatisfaction = @json($customerSatisfaction);
 
-    // Initial data setup
-    var kpiData = {
-        financialPerformance: financialPerformance,
-        operationalEfficiency: operationalEfficiency,
-        customerSatisfaction: customerSatisfaction
-    };
+        // Initial data setup for KPI Categories
+        var kpiData = {
+            financialPerformance: financialPerformance,
+            operationalEfficiency: operationalEfficiency,
+            customerSatisfaction: customerSatisfaction
+        };
 
-    // Get the dropdown and canvas context
-    var kpiFilterDropdown = document.getElementById('kpiFilter');
-    var ctx = document.getElementById('dummyPieChart').getContext('2d');
+        // Get filter dropdown and chart context
+        var kpiFilterDropdown = document.getElementById('kpiFilter');
+        var ctx = document.getElementById('dummyPieChart').getContext('2d');
 
-    // Function to update the chart with the selected KPI
-    function updateChart(selectedKPI) {
-        dummyPieChart.data.datasets[0].data = kpiData[selectedKPI];
-        dummyPieChart.update();
-    }
-
-    // Initialize the bar chart
-    var dummyPieChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: institutionNames,
-            datasets: [{
-                label: 'KPI Achievement (%)',
-                data: kpiData[kpiFilterDropdown.value],
-                backgroundColor: 'rgba(54, 162, 235, 0.7)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 2,
-                borderRadius: 5, // Rounded corners for bars
-                hoverBackgroundColor: 'rgba(54, 162, 235, 0.9)'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top',
-                    labels: {
-                        font: {
-                            size: 14
-                        }
-                    }
-                },
-                tooltip: {
-                    enabled: true,
-                    backgroundColor: '#f8f9fa',
-                    titleColor: '#333',
-                    bodyColor: '#333',
-                    borderColor: '#ccc',
-                    borderWidth: 1
-                }
+        // Initialize the Bar Chart for filtered KPI data
+        var dummyPieChart = new Chart(ctx, {
+            type: 'bar',  // If you want a pie chart, change this to 'pie'
+            data: {
+                labels: institutionNames,
+                datasets: [{
+                    label: 'KPI Achievement (%)',
+                    data: kpiData[kpiFilterDropdown.value],
+                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 2,
+                    borderRadius: 5,
+                    hoverBackgroundColor: 'rgba(54, 162, 235, 0.9)'
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(200, 200, 200, 0.2)' // Light grid lines
-                    },
-                    title: {
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
                         display: true,
-                        text: 'Achievement (%)',
-                        font: {
-                            size: 14
+                        position: 'top',
+                        labels: {
+                            font: {
+                                size: 14
+                            }
                         }
+                    },
+                    tooltip: {
+                        enabled: true,
+                        backgroundColor: '#f8f9fa',
+                        titleColor: '#333',
+                        bodyColor: '#333',
+                        borderColor: '#ccc',
+                        borderWidth: 1
                     }
                 },
-                x: {
-                    grid: {
-                        display: false // No grid lines on the x-axis for a cleaner look
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(200, 200, 200, 0.2)'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Achievement (%)',
+                            font: {
+                                size: 14
+                            }
+                        }
                     },
-                    title: {
-                        display: true,
-                        text: 'Institutions',
-                        font: {
-                            size: 14
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Institutions',
+                            font: {
+                                size: 14
+                            }
                         }
                     }
                 }
             }
-        }
-    });
+        });
 
-    // Add event listener to dropdown to update chart when KPI selection changes
-    kpiFilterDropdown.addEventListener('change', function() {
-        var selectedKPI = this.value;
-        updateChart(selectedKPI);
+        // Event listener to update the chart when the filter changes
+        kpiFilterDropdown.addEventListener('change', function() {
+            var selectedKPI = this.value;
+            dummyPieChart.data.datasets[0].data = kpiData[selectedKPI];
+            dummyPieChart.update();
+        });
     });
-});
 </script>
+
+    
 @endsection

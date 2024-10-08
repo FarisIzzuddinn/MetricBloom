@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Log;
 use App\Models\User;
 use App\Models\State;
+use App\Models\Sector;
 use App\Models\Institution;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
@@ -18,7 +19,7 @@ class UserController extends Controller
     {
         $search = $request->input('search');
         $role = $request->input('role');
-      $states = State::All();
+        $states = State::All();
       
        
         $users = User::query()
@@ -85,6 +86,7 @@ class UserController extends Controller
         $roles = Role::pluck('name', 'name')->all();
         $states = State::all(); // Fetch states
         $institutions = Institution::all();
+        $sectors = Sector::all();
 
         $userRoles = $user->roles->pluck('name', 'name')->all();
         return view('superAdmin.user.edit', [
@@ -92,7 +94,8 @@ class UserController extends Controller
             'roles' => $roles,
             'userRoles' => $userRoles,
             'states' => $states, 
-            'institutions' => $institutions
+            'institutions' => $institutions,
+            'sectors' => $sectors,
         ]);
     }
 
@@ -106,6 +109,7 @@ class UserController extends Controller
             'roles' => 'required',
             'state_id' => 'nullable|exists:states,id', // State ID validation
             'institutions_id' => 'nullable|exists:institutions,id',// Institution ID validation
+            'sector_id' => 'nullable|in:1,2,3',
         ]);
 
         // Find the user by ID
@@ -122,6 +126,7 @@ class UserController extends Controller
         // Update state and institution IDs
         $user->state_id = $request->state_id;
         $user->institution_id = $request->institutions_id;// Make sure institution_id is saved
+        $user->sector_id = $request->sector_id;
 
         // Sync roles
         $user->syncRoles($request->roles);

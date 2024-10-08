@@ -56,7 +56,6 @@
                             <th>NO</th>
                             <th>Name</th>
                             <th>Email</th>
-                          
                             <th>Roles</th>
                             <th>Action</th>
                         </tr>
@@ -67,7 +66,6 @@
                             <td>{{ $user->id }}</td>
                             <td>{{ $user->name }}</td>
                             <td>{{ $user->email }}</td>
-                         
                             <td>
                                 @if(!empty($user->getRoleNames()))
                                     @foreach($user->getRoleNames() as $rolename)
