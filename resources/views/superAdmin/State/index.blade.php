@@ -205,6 +205,7 @@
 
 <script>
         document.addEventListener('DOMContentLoaded', function () {
+<<<<<<< HEAD
         // Delete Modal Configuration
         var deleteModal = document.getElementById('deleteModal');
         deleteModal.addEventListener('show.bs.modal', function (event) {
@@ -216,8 +217,21 @@
 
             form.action = '/states/' + states; 
             nameSpan.textContent = permissionName; 
+=======
+            // Delete Modal Configuration
+            var deleteModal = document.getElementById('deleteModal');
+            deleteModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var permissionId = button.getAttribute('data-permission-id');
+                var permissionName = button.getAttribute('data-permission-name');
+                var form = document.getElementById('deleteForm');
+                var nameSpan = document.getElementById('deletePermissionName'); // Corrected span ID
+
+                form.action = '/state/' + permissionId; // Set the form action dynamically
+                nameSpan.textContent = permissionName; // Set the permission name in the modal
+            });
+>>>>>>> cc7f49b234897ee785ab1fe9b4366b45a7eabab3
         });
-    });
 </script>
 
 @endsection

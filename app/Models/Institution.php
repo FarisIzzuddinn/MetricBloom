@@ -37,4 +37,11 @@ class Institution extends Model
     {
         return $this->hasMany(User::class);
     }
+
+    public function sectors()
+    {
+        return $this->hasMany(Sector::class);
+    }
+
+   
 }

@@ -31,14 +31,21 @@
             </select>
         </div>
 
-        <div class="form-group">
-            <label for="user_id">Select Users</label>
-            <select multiple class="form-control" name="user_id[]">
-                @foreach ($users as $user)
-                    <option value="{{ $user->id }}">{{ $user->name }}</option>
+        <div class="form-group mb-3">
+            <label for="user_id">Select User (Grouped by Sector)</label>
+            <select class="form-control" name="user_id" id="user_id" required>
+                <option value="">Select a User</option>
+                @foreach ($usersGroupedBySector as $sectorName => $users)
+                    <optgroup label="{{ $sectorName }}">
+                        @foreach ($users as $user)
+                            <option value="{{ $user->id }}">
+                                {{ $user->name }} 
+                            </option>
+                        @endforeach
+                    </optgroup>
                 @endforeach
             </select>
-        </div>
+        </div>        
 
         <button type="submit" class="btn btn-primary" id="assignKpiButton">Assign KPI To Sector User</button>
     </form>

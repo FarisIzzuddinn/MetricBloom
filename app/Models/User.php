@@ -68,8 +68,6 @@ class User extends Authenticatable
     //     return $this->belongsToMany(AddKpi::class, 'institution_add_kpi', 'institution_id', 'kpi_id');
     // }
 
-    
-
     public function addkpi()
     {
         return $this->belongsToMany(AddKpi::class, 'kpi_user');
@@ -84,5 +82,10 @@ class User extends Authenticatable
     public function kpis()
     {
         return $this->belongsToMany(AddKpi::class, 'kpi_user', 'user_id', 'kpi_id');
+    }
+
+    public function sector()
+    {
+        return $this->belongsTo(Sector::class);
     }
 }

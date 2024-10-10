@@ -40,25 +40,34 @@ class UserKpiController extends Controller
     
 
     public function storeInput(Request $request)
-{
-    // Validate the request data
-    $request->validate([
-        'kpi_id' => 'required|exists:add_kpis,id',
-        'pencapaian' => 'required|numeric',
-        'peratus_pencapaian' => 'required|numeric'
-    ]);
+    {
+        // Validate the request data
+        $request->validate([
+            'kpi_id' => 'required|exists:add_kpis,id',
+            'pencapaian' => 'required|numeric',
+            'peratus_pencapaian' => 'required|numeric',
+            'reason' => 'nullable|string'
+        ]);
 
-    // Find the KPI entry
-    $kpi = AddKpi::find($request->kpi_id);
+        // Find the KPI entry
+        $kpi = AddKpi::find($request->kpi_id);
 
-    // Update the KPI data
-    $kpi->pencapaian = $request->pencapaian;
-    $kpi->peratus_pencapaian = $request->peratus_pencapaian;
-    $kpi->save();
+        // Update the KPI data
+        $kpi->pencapaian = $request->pencapaian;
+        $kpi->peratus_pencapaian = $request->peratus_pencapaian;
 
-    // Redirect or return response
-    return redirect()->back()->with('success', 'KPI updated successfully!');
-}
+        // If `peratus_pencapaian` is below the threshold, save the reason
+        if ($request->peratus_pencapaian < 75) {
+            $kpi->reason = $request->reason;
+        } else {
+            $kpi->reason = null; // Clear the reason if the KPI is achieved
+        }
+
+        $kpi->save();
+
+        // Redirect or return response
+        return redirect()->back()->with('success', 'KPI updated successfully!');
+    }
 
 
     public function edit($id)
@@ -66,20 +75,31 @@ class UserKpiController extends Controller
         $addKpis = AddKpi::findOrFail($id);
         return view('user.edit', compact('addKpis'));
     }
-
+    
     public function update(Request $request, $id)
     {
         $request->validate([
-            'pencapaian' => 'required|string',
+            'pencapaian' => 'required|numeric',
+            'peratus_pencapaian' => 'required|numeric',
+            'reason' => 'nullable|string'
         ]);
 
         $addKpi = AddKpi::findOrFail($id);
         $addKpi->pencapaian = $request->input('pencapaian');
         $addKpi->peratus_pencapaian = $request->input('peratus_pencapaian');
+
+        // If `peratus_pencapaian` is below the threshold, save the reason
+        if ($request->peratus_pencapaian < 75) {
+            $addKpi->reason = $request->input('reason');
+        } else {
+            $addKpi->reason = null; // Clear the reason if the KPI is achieved
+        }
+
         $addKpi->save();
 
         return redirect()->back()->with('success', 'KPI updated successfully');
     }
+
 
     // public function charts() {
 

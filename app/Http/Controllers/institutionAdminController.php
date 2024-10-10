@@ -17,34 +17,45 @@ class institutionAdminController extends Controller
         $user = Auth::user(); // Get the authenticated user
         $stateId = $user->state_id; // Get the state ID of the logged-in user
         $institutionId = $user->institution_id; // Get the institution ID of the logged-in user
-    
+
         // Get state details
         $state = State::find($stateId); 
-
-        $username = Auth::user();
     
         // Fetch KPIs assigned to the institution by State Admin
         $kpis = AddKpi::whereHas('institutions', function ($query) use ($institutionId) {
             $query->where('institution_id', $institutionId);
         })->get();
-    
+
         // Fetch users (end users) in the institution to whom KPIs can be assigned
         $users = User::where('institution_id', $institutionId)->get(); // Get users of the same institution
-    
+
         // Count KPIs for the institution
         $totalKPIs = $kpis->count(); // Count of retrieved KPIs
         $achievedKPIs = $kpis->where('status', 'Achieved')->count(); // Count of achieved KPIs
-        $underReviewKPIs = $kpis->where('status', 'Under Review')->count(); // Count of KPIs under review
-    
+        $notStartedKPIs = $kpis->where('status', 'Not Started')->count(); // Count of not started KPIs
+
         // Custom method to calculate overall performance
         $overallPerformance = $this->calculateOverallPerformance($institutionId);
-    
+
         // User statistics
         $totalUsers = User::count(); // Total number of users
         $activeUsers = $user->institution->users()->where('active', true)->count(); // Count of active users
         $inactiveUsers = $user->institution->users()->where('active', false)->count(); // Count of inactive users
-    
-        // Return view with all necessary data, including users
+
+        // Prepare data for Sector-wise KPI Breakdown (Bar Chart)
+        // $sectors = Sector::where('institution_id', $institutionId)->get(); // Assuming you have a 'Sector' model
+        // $sectorKpiData = [];
+        // foreach ($sectors as $sector) {
+        //     $sectorKpis = $sector->kpis()->where('institution_id', $institutionId)->get(); // Assuming a relationship between Sector and KPIs
+        //     $sectorKpiData[] = [
+        //         'sector_name' => $sector->name,
+        //         'achieved' => $sectorKpis->where('status', 'Achieved')->count(),
+        //         'in_progress' => $sectorKpis->where('status', 'In Progress')->count(),
+        //         'not_started' => $sectorKpis->where('status', 'Not Started')->count(),
+        //     ];
+        // }
+
+        // Return view with all necessary data, including users and chart data
         return view('institutionAdmin.dashboard.index', compact(
             'institutionId', 
             'kpis', 
@@ -52,14 +63,12 @@ class institutionAdminController extends Controller
             'state', 
             'totalKPIs', 
             'achievedKPIs', 
-            'underReviewKPIs', 
+            'notStartedKPIs', 
             'overallPerformance', 
             'totalUsers', 
             'activeUsers', 
             'inactiveUsers', 
-            'username',
-            'users'
-             // Add users to the view
+            'users' // Add users to the view
         ));
     }
 
@@ -72,17 +81,15 @@ class institutionAdminController extends Controller
         'user_id.*' => 'exists:users,id', // Validate each user ID
     ]);
 
-    $username = Auth::user();
+        // Find the selected KPI
+        $kpi = AddKpi::find($request->kpi_id);
 
-    // Find the selected KPI
-    $kpi = AddKpi::find($request->kpi_id);
-
-    // Attach the selected users to the KPI
-    $kpi->users()->attach($request->user_id);
+        // Attach the selected user to the KPI
+        $kpi->users()->attach($request->user_id);
 
     // Redirect back with a success message
     return redirect()->route('institutionAdmin.kpi') // Change to your desired route
-        ->with('success', 'KPI assigned successfully to the selected users.','username');
+        ->with('success', 'KPI assigned successfully to the selected users.');
 }
     
     public function manageKPI()
@@ -110,9 +117,30 @@ class institutionAdminController extends Controller
     
     private function calculateOverallPerformance()
     {
-        // Logic to calculate overall performance based on your KPI framework
-        return 75; // Example static value
+        // Get the authenticated user
+        $user = Auth::user();
+
+        // Get all KPIs assigned to the user
+        $addKpis = $user->addKpis;
+
+        // Calculate the total number of KPIs
+        $totalKpis = $addKpis->count();
+
+        // If no KPIs are assigned, return 0 to avoid division by zero
+        if ($totalKpis === 0) {
+            return 0;
+        }
+
+        // Calculate the sum of achievement percentages for all KPIs
+        $totalAchievement = $addKpis->sum('peratus_pencapaian');
+
+        // Calculate the average performance
+        $averagePerformance = $totalAchievement / $totalKpis;
+
+        // Round to 2 decimal places if desired
+        return round($averagePerformance, 2);
     }
+
 
   
     
@@ -129,24 +157,19 @@ class institutionAdminController extends Controller
     {
         // Fetch all users
         $users = User::all(); 
-        $username = Auth::user();
-
 
         // Fetch KPIs associated with the user's state
-        $stateId = Auth::user()->state_id;
         $kpis = AddKpi::with('states')
             ->whereHas('states', function ($query) use ($stateId) {
                 $query->where('states.id', $stateId);
             })
             ->get();
 
-        return view('institutionAdmin.kpi.create', compact('users', 'kpis','username'));
+        return view('institutionAdmin.kpi.create', compact('users', 'kpis'));
     }
     
 
     
-
-
     public function storeUserKpiAssignment(Request $request, $kpiId)
     {
         $request->validate([
@@ -159,5 +182,4 @@ class institutionAdminController extends Controller
 
         return redirect()->route('kpis.index')->with('success', 'KPI assigned to users successfully.');
     }
-   
 }

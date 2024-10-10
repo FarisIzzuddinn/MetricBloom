@@ -64,6 +64,12 @@ class RolesAndPermissionsSeeder extends Seeder
             'kpi management',
         ]);
 
+        $InstitutionAdmin = Role::create(['name' => 'Institution Admin']);
+        $InstitutionAdmin->givePermissionTo([
+           ' view institutionAdmin dashboard',
+            'kpi management institution'
+        ]);
+
         $userRole = Role::create(['name' => 'user']);
         $userRole->givePermissionTo([
             'view user dashboard',

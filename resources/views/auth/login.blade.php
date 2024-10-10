@@ -26,7 +26,19 @@
         }
 
         .box-area {
-            width: 100%;
+            width: 100%;<video autoplay muted loop id="myVideo">
+        <source src="{{ asset('picture/green.mp4') }}" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="row border rounded-5 p-3 shadow box-area">
+            <div class="col-md-6 left-box rounded-4 d-flex justify-content-center align-items-center flex-column">
+                <div class="featured-image mb-3">
+                    <img src="{{ asset('picture/penjara_logo.png') }}" class="img-fluid" style="max-width: 250px; width: 100%;">
+                </div>
+                <p class="text-white text-center fs-2" style="font-family: 'Courier New', Courier, monospace; font-weight: 600;">JABATAN PENJARA MALAYSIA</p>
+            </div>
             max-width: 930px;
             border-radius: 20px;
             background: rgba(0, 0, 0, 0.6);
@@ -88,19 +100,7 @@
 </head>
 
 <body>
-    <video autoplay muted loop id="myVideo">
-        <source src="{{ asset('picture/green.mp4') }}" type="video/mp4">
-        Your browser does not support HTML5 video.
-    </video>
-
-    <div class="container d-flex justify-content-center align-items-center min-vh-100">
-        <div class="row border rounded-5 p-3 shadow box-area">
-            <div class="col-md-6 left-box rounded-4 d-flex justify-content-center align-items-center flex-column">
-                <div class="featured-image mb-3">
-                    <img src="{{ asset('picture/penjara_logo.png') }}" class="img-fluid" style="max-width: 250px; width: 100%;">
-                </div>
-                <p class="text-white text-center fs-2" style="font-family: 'Courier New', Courier, monospace; font-weight: 600;">JABATAN PENJARA MALAYSIA</p>
-            </div>
+    
 
             <div class="col-md-6">
                 <div class="row align-items-center">
