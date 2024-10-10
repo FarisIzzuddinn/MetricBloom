@@ -20,6 +20,8 @@ class institutionAdminController extends Controller
     
         // Get state details
         $state = State::find($stateId); 
+
+        $username = Auth::user();
     
         // Fetch KPIs assigned to the institution by State Admin
         $kpis = AddKpi::whereHas('institutions', function ($query) use ($institutionId) {
@@ -55,7 +57,9 @@ class institutionAdminController extends Controller
             'totalUsers', 
             'activeUsers', 
             'inactiveUsers', 
-            'users' // Add users to the view
+            'username',
+            'users'
+             // Add users to the view
         ));
     }
 
@@ -68,6 +72,8 @@ class institutionAdminController extends Controller
         'user_id.*' => 'exists:users,id', // Validate each user ID
     ]);
 
+    $username = Auth::user();
+
     // Find the selected KPI
     $kpi = AddKpi::find($request->kpi_id);
 
@@ -76,7 +82,7 @@ class institutionAdminController extends Controller
 
     // Redirect back with a success message
     return redirect()->route('institutionAdmin.kpi') // Change to your desired route
-        ->with('success', 'KPI assigned successfully to the selected users.');
+        ->with('success', 'KPI assigned successfully to the selected users.','username');
 }
     
     public function manageKPI()
@@ -96,8 +102,10 @@ class institutionAdminController extends Controller
         $user = Auth::user();
         $institutionId = $user->institution_id; 
         $users = User::All();
+        $username = Auth::user();
+
     
-        return view('institutionAdmin.kpi.index', compact( 'kpis', 'institutions', 'users'));
+        return view('institutionAdmin.kpi.index', compact( 'kpis', 'institutions', 'users','username'));
     }
     
     private function calculateOverallPerformance()
@@ -121,6 +129,8 @@ class institutionAdminController extends Controller
     {
         // Fetch all users
         $users = User::all(); 
+        $username = Auth::user();
+
 
         // Fetch KPIs associated with the user's state
         $stateId = Auth::user()->state_id;
@@ -130,7 +140,7 @@ class institutionAdminController extends Controller
             })
             ->get();
 
-        return view('institutionAdmin.kpi.create', compact('users', 'kpis'));
+        return view('institutionAdmin.kpi.create', compact('users', 'kpis','username'));
     }
     
 

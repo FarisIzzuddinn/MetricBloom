@@ -12,7 +12,7 @@
             </div>
 
             <div class="card-body">
-                <form action="{{ url('teras/'.$teras->id) }}" method="POST" class="d-inline">
+            <form action="{{ route('teras.update', $teras->id) }}" method="POST">
                     @csrf
                     @method('PUT')
 

@@ -3,40 +3,84 @@
 @section('content')
 
 <style>
+    /* Konsistenkan Reka Bentuk Jadual */
     .table {
         margin-bottom: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        overflow: hidden;
     }
 
-    .table th:first-child {
-        border-top-left-radius: 12px;
+    .table thead th {
+        background-color: #f8f9fa; /* Light grey for header */
+        color: #495057; /* Dark grey for text */
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        padding: 12px 16px;
     }
 
-    .table th:last-child {
-        border-top-right-radius: 12px;
+    .table tbody tr {
+        border-bottom: 1px solid #dee2e6; /* Light grey border */
     }
 
-    .table tbody tr:last-child td:first-child {
-        border-bottom-left-radius: 12px;
+    .table tbody tr:hover {
+        background-color: #f1f3f5; /* Hover effect */
     }
 
-    .badge-administrator {
-        background-color: #4e5af7;  /* Custom Blue */
-        color: rgb(0, 0, 0);
+    .table tbody td {
+        padding: 12px 16px;
+        vertical-align: middle;
     }
 
-    .badge-admin {
-        background-color: #f5a623;  /* Custom Orange */
-        color: rgb(0, 0, 0);
+    .table tbody td:first-child {
+        font-weight: bold;
     }
 
-    .badge-superadmin {
-        background-color: #e74c3c;  /* Custom Red */
-        color: rgb(0, 0, 0);
+    /* Butang Gaya Konsisten */
+    .btn {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.875rem;
     }
 
-    .badge-user {
-        background-color: #2ecc71;  /* Custom Green */
-        color: rgb(3, 0, 0);
+
+    .btn-danger {
+        background-color: #e3342f; /* Custom red */
+        border-color: #e3342f;
+    }
+
+    /* Modal Reka Bentuk Konsisten */
+    .modal-content {
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #dee2e6;
+        background-color: #f8f9fa;
+    }
+
+    .modal-title {
+        font-weight: bold;
+        color: #495057;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #dee2e6;
+    }
+
+    .btn-close {
+        background: none;
+        border: none;
+    }
+
+    /* Tajuk Konsisten */
+    h4 {
+        font-size: rem; /* Standardize font size */
+        color: #343a40; /* Darker text color */
+        margin-bottom: 16px;
     }
 </style>
 
@@ -45,7 +89,7 @@
         <div class="col-lg-12">
             <div class="container-fluid mt-3">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="mb-0">Manage State</h4>
+                    <h4 class="mb-0"style="font-size: 3rem;">Manage State</h4>
                     <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStateModal">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
@@ -142,11 +186,11 @@
                         </div>
                         <div class="modal-body text-center">
                             <p>Are you sure you want to delete the state:</p>
-                            <b><span id="deletePermissionName" style="font-weight: bold; text-transform: uppercase;"></span></b>?
+                            <span id="permission-name"></span>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background:blue">Cancel</button>
-                            <form id="deleteForm" action="" method="POST" class="d-inline">
+                        <div class="modal-footer justify-content-center">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <form method="POST" action="" id="deleteForm">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger">Delete</button>
@@ -159,21 +203,19 @@
     </div>
 </div>
 
-
-
 <script>
         document.addEventListener('DOMContentLoaded', function () {
         // Delete Modal Configuration
         var deleteModal = document.getElementById('deleteModal');
         deleteModal.addEventListener('show.bs.modal', function (event) {
             var button = event.relatedTarget;
-            var permissionId = button.getAttribute('data-permission-id');
+            var states = button.getAttribute('data-permission-id');
             var permissionName = button.getAttribute('data-permission-name');
             var form = document.getElementById('deleteForm');
             var nameSpan = document.getElementById('deletePermissionName'); // Corrected span ID
 
-            form.action = '/permissions/' + permissionId; // Set the form action dynamically
-            nameSpan.textContent = permissionName; // Set the permission name in the modal
+            form.action = '/states/' + states; 
+            nameSpan.textContent = permissionName; 
         });
     });
 </script>

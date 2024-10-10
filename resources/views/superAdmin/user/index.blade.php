@@ -11,26 +11,92 @@
 
 <style>
     .table {
-        margin-bottom: 0;
-    }
-    .table th:first-child {
-        border-top-left-radius: 12px;
-    }
-    .table th:last-child {
-        border-top-right-radius: 12px;
-    }
-    .table tbody tr:last-child td:first-child {
-        border-bottom-left-radius: 12px;
-    }
-    .cont {
-        position: sticky;
-    }
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0;
+}
+
+.table thead {
+    background-color: #007bff;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.table thead th {
+    padding: 12px 15px;
+    border: 1px solid #e1e1e1;
+}
+
+/* Corner Radius for Header */
+.table th:first-child {
+    border-top-left-radius: 12px;
+}
+
+.table th:last-child {
+    border-top-right-radius: 12px;
+}
+
+.table tbody tr {
+    border-bottom: 1px solid #e1e1e1;
+    transition: background-color 0.3s ease;
+}
+
+.table tbody tr:hover {
+    background-color: #e9ecef;
+}
+
+.table tbody td {
+    padding: 12px 15px;
+}
+
+/* Corner Radius for Bottom Row */
+.table tbody tr:last-child td:first-child {
+    border-bottom-left-radius: 12px;
+}
+
+.table tbody tr:last-child td:last-child {
+    border-bottom-right-radius: 12px;
+}
+
+.badge {
+    font-size: 0.85em;
+    padding: 5px 10px;
+    border-radius: 12px;
+}
+
+.btn {
+    padding: 8px 15px;
+    border-radius: 5px;
+}
+
+.btn-success {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.btn:hover {
+    opacity: 0.8;
+}
+
+/* Sticky Position */
+.cont {
+    position: sticky;
+}
+
 </style>
 
 <div class="container">
     <div class="row">
         <div class="cont sticky-top container-fluid">
-            <h4>Staff Directory</h4>
+            <h4 style="font-size: 3rem;">Staff Directory</h4>
             <!-- Search Bar and Select Role -->
             <div class="action-bar d-flex justify-content-between align-items-center mb-3">
                 <form id="searchForm" action="{{ url('users') }}" method="GET" class="d-flex align-items-center">
@@ -145,7 +211,6 @@
 
             // Kemas kini mesej modal dengan nama pengguna yang betul
             modalMessage.innerHTML = 'Are you sure you want to delete user <strong>' + userName + '</strong>?';
-            // Betulkan action URL pada form
             form.action = '{{ url('users') }}/' + userId;
         });
     });

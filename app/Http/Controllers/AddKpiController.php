@@ -22,6 +22,7 @@ class AddKpiController extends Controller
         $username = Auth::User();
         $states = State::all();
         
+        
         return view('admin.KPI.IndexKPI', compact('addKpis', 'teras', 'username', 'so', 'states'));
     }
 
@@ -58,14 +59,14 @@ class AddKpiController extends Controller
     }
 
 
-    public function edit($id)
-    {
+    // public function edit($id)
+    // {
         
-        $addKpi = AddKpi::with('states')->findOrFail($id);
-        $states = State::all(); // Fetch all states
+    //     $addKpi = AddKpi::with('states')->findOrFail($id);
+    //     $states = State::all(); // Fetch all states
 
-        return view('kpi.edit', compact('addKpi', 'states'));
-    }
+    //     return view('kpi.edit', compact('addKpi', 'states'));
+    // }
 
     public function update(Request $request, $id)
     {

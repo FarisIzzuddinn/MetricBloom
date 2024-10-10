@@ -1,4 +1,4 @@
-@extends('layoutNoName')
+@extends('layout')
 
 @section('title', 'Dashboard')
 
@@ -103,12 +103,16 @@
             font-size: 1.1em;
         }
 
-        .card-text.display-4 {
-            font-size: 2em;
+        .card-text {
+            font-size: 1.8em;
         }
 
         .head-title h1 {
             font-size: 1.5em;
+        }
+
+        .breadcrumb {
+            font-size: 0.9em;
         }
     }
 
@@ -117,8 +121,8 @@
             font-size: 1em;
         }
 
-        .card-text.display-4 {
-            font-size: 1.8em;
+        .card-text {
+            font-size: 1.6em;
         }
 
         .head-title h1 {
@@ -126,18 +130,17 @@
         }
 
         .container-fluid {
-            padding: 0 15px;
+            padding: 0 10px;
         }
 
         .breadcrumb {
             font-size: 0.85em;
         }
     }
-
 </style>
 
 <div class="container-fluid">
-    <div class="head-title">
+<div class="head-title">
         <div class="left">
             <h1>Dashboard</h1>
             <ul class="breadcrumb">
@@ -148,25 +151,17 @@
         </div>
     </div>
 
-<<<<<<< HEAD
     <!-- KPI Overview Cards with equal height -->
-    <div class="row mb-4 d-flex align-items-stretch"> <!-- Added d-flex and align-items-stretch -->
-        <div class="col-sm-6 col-md-3 mb-3">
-            <div class="card h-100"> <!-- h-100 ensures card takes full height -->
-                <div class="card-body d-flex flex-column"> <!-- Flexbox for card content -->
-=======
-    <!-- KPI Overview Cards -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card text-white bg-primary">
-                <div class="card-body">
->>>>>>> 77b3b4a8cdc8f1d0812e9f5f21db3590b4e25a53
+    <div class="row mb-4 g-3 d-flex align-items-stretch"> <!-- Added g-3 for better spacing between columns -->
+        <div class="col-sm-6 col-md-3">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
                     <h5 class="card-title">Total KPIs</h5>
-                    <p class="card-text display-4 mt-auto">{{ $totalKpis }}</p> <!-- mt-auto pushes content down -->
+                    <p class="card-text display-4 mt-auto">{{ $totalKpis }}</p>
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 col-md-3 mb-3">
+        <div class="col-sm-6 col-md-3">
             <div class="card h-100">
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">Achieved KPI</h5>
@@ -174,7 +169,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 col-md-3 mb-3">
+        <div class="col-sm-6 col-md-3">
             <div class="card h-100">
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">Pending KPI</h5>
@@ -182,7 +177,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6 col-md-3 mb-3">
+        <div class="col-sm-6 col-md-3">
             <div class="card h-100">
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">Average Achievement</h5>
@@ -191,12 +186,10 @@
             </div>
         </div>
     </div>
-<<<<<<< HEAD
-=======
 
     <!-- KPI List with Details -->
     <h4 class="mb-4">Detailed KPI Overview for State</h4>
-    <div class="card">
+    <div class="card mb-3">
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover">
@@ -217,7 +210,7 @@
                             <td>{{ $kpi->sasaran }}</td>
                             <td>
                                 @if ($kpi->institutions->isNotEmpty())
-                                    {{ $kpi->institutions->unique('name')->pluck('name')->implode(', ') }} <!-- Use unique to avoid duplicates -->
+                                    {{ $kpi->institutions->unique('name')->pluck('name')->implode(', ') }}
                                 @else
                                     No Institution Assigned
                                 @endif
@@ -245,8 +238,6 @@
             </div>
         </div>
     </div>
->>>>>>> 77b3b4a8cdc8f1d0812e9f5f21db3590b4e25a53
-</div>
 
     <!-- Charts Section -->
     <div class="row mb-4 gx-4">
@@ -285,9 +276,7 @@
             </div>
         </div>
     </div>
-    
-    
-
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -295,7 +284,7 @@
 window.addEventListener('load', function() {
     console.log('Window is loaded, initializing charts.');
 
-        // Data passed from the backend
+    // Data passed from the backend
     var institutionNames = @json($institutionNames);
     var kpiAchievements = @json($kpiAchievements);
 
@@ -312,7 +301,7 @@ window.addEventListener('load', function() {
                 backgroundColor: 'rgba(54, 162, 235, 0.7)',
                 borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 2,
-                borderRadius: 5, // Rounded corners for bars
+                borderRadius: 5,
                 hoverBackgroundColor: 'rgba(54, 162, 235, 0.9)'
             }]
         },
@@ -342,7 +331,7 @@ window.addEventListener('load', function() {
                 y: {
                     beginAtZero: true,
                     grid: {
-                        color: 'rgba(200, 200, 200, 0.2)' // Light grid lines
+                        color: 'rgba(200, 200, 200, 0.2)'
                     },
                     title: {
                         display: true,
@@ -354,7 +343,7 @@ window.addEventListener('load', function() {
                 },
                 x: {
                     grid: {
-                        display: false // No grid lines on the x-axis for a cleaner look
+                        display: false
                     },
                     title: {
                         display: true,
@@ -368,7 +357,7 @@ window.addEventListener('load', function() {
         }
     });
 
-    var institutionNames = @json($institutionNames);
+    // KPI Data for Pie Chart
     var financialPerformance = @json($financialPerformance);
     var operationalEfficiency = @json($operationalEfficiency);
     var customerSatisfaction = @json($customerSatisfaction);
@@ -380,17 +369,15 @@ window.addEventListener('load', function() {
         customerSatisfaction: customerSatisfaction
     };
 
-    // Get the dropdown and canvas context
     var kpiFilterDropdown = document.getElementById('kpiFilter');
     var ctx = document.getElementById('dummyPieChart').getContext('2d');
 
-    // Function to update the chart with the selected KPI
     function updateChart(selectedKPI) {
         dummyPieChart.data.datasets[0].data = kpiData[selectedKPI];
         dummyPieChart.update();
     }
 
-    // Initialize the bar chart
+    // Initialize the pie chart
     var dummyPieChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -401,7 +388,7 @@ window.addEventListener('load', function() {
                 backgroundColor: 'rgba(54, 162, 235, 0.7)',
                 borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 2,
-                borderRadius: 5, // Rounded corners for bars
+                borderRadius: 5,
                 hoverBackgroundColor: 'rgba(54, 162, 235, 0.9)'
             }]
         },
@@ -431,7 +418,7 @@ window.addEventListener('load', function() {
                 y: {
                     beginAtZero: true,
                     grid: {
-                        color: 'rgba(200, 200, 200, 0.2)' // Light grid lines
+                        color: 'rgba(200, 200, 200, 0.2)'
                     },
                     title: {
                         display: true,
@@ -443,7 +430,7 @@ window.addEventListener('load', function() {
                 },
                 x: {
                     grid: {
-                        display: false // No grid lines on the x-axis for a cleaner look
+                        display: false
                     },
                     title: {
                         display: true,
@@ -457,10 +444,9 @@ window.addEventListener('load', function() {
         }
     });
 
-    // Add event listener to dropdown to update chart when KPI selection changes
+    // Event listener to update the pie chart
     kpiFilterDropdown.addEventListener('change', function() {
-        var selectedKPI = this.value;
-        updateChart(selectedKPI);
+        updateChart(this.value);
     });
 });
 </script>

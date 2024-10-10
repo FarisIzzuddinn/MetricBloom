@@ -5,6 +5,28 @@
 <style>
     .table {
         margin-bottom: 0;
+        border-radius: 12px; /* Rounded corners for the table */
+        overflow: hidden; /* Ensures corners are rounded */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+    }
+
+    .table th {
+        background-color: #f8f9fa; /* Light background for header */
+        color: #333; /* Dark text for better readability */
+        font-weight: bold; /* Bold text for emphasis */
+        text-align: center; /* Center align header text */
+    }
+
+    .table td {
+        text-align: center; /* Center align table data */
+    }
+
+    .table tr:nth-child(even) {
+        background-color: #f2f2f2; /* Light grey for even rows */
+    }
+
+    .table tr:hover {
+        background-color: #e9ecef; /* Slightly darker grey on hover */
     }
 
     .table th:first-child {
@@ -33,6 +55,14 @@
         background-color: #1acfc9;  /* Custom Green */
         color: rgb(3, 0, 0);
     }
+
+    .btn {
+        transition: background-color 0.3s; /* Smooth transition for buttons */
+    }
+
+    .btn:hover {
+        background-color: #0056b3; /* Darker shade on hover */
+    }
 </style>
 
 <div class="container rounded-1">
@@ -40,7 +70,7 @@
         <div class="col-lg-12">
             <div class="container-fluid mt-3">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="mb-0">Permissions</h4>
+                    <h4 class="mb-0" style="font-size: 3rem;">Permissions</h4>
                     <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPermissionModal">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
@@ -59,7 +89,6 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <!-- Borang tambah permission -->
                             <form action="/permissions" method="POST">
                                 @csrf
                                 <div class="mb-3">
@@ -114,7 +143,7 @@
                         @endforeach
                     </tbody>
                 </table>
-                <div class="mt-2">{{ $permissions ->links() }}</div>
+                <div class="mt-2 text-center">{{ $permissions->links() }}</div>
             </div>
 
             <!-- Edit Permission Modal -->
@@ -133,14 +162,16 @@
                                     <label for="editPermissionName" class="form-label">Permission Name</label>
                                     <input type="text" class="form-control" id="editPermissionName" name="name">
                                 </div>
-                                <button type="submit" class="btn btn-primary">Save changes</button>
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Save changes</button>
+                                </div>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
 
-           <!-- Delete Permission Modal -->
+            <!-- Delete Permission Modal -->
             <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -156,7 +187,7 @@
                             <p>Are you sure you want to delete the permission:</p>
                             <b><span id="deletePermissionName" style="font-weight: bold; text-transform: uppercase;"></span></b>?
                         </div>
-                        <div class="modal-footer">
+                        <div class="modal-footer justify-content-center">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background:blue">Cancel</button>
                             <form id="deleteForm" action="" method="POST" class="d-inline">
                                 @csrf
@@ -168,15 +199,12 @@
                 </div>
             </div>
 
-
         </div>
     </div>
 </div>
 
-
-
 <script>
-        document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
         // Delete Modal Configuration
         var deleteModal = document.getElementById('deleteModal');
         deleteModal.addEventListener('show.bs.modal', function (event) {

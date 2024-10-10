@@ -6,18 +6,134 @@
 <link rel="stylesheet" href="{{ asset("css/table.css") }}">
 
 <style>
-    .chart-container {
-        position: relative;
-        width: 100%;
-        height: 100%;
-    }
+    /* Container for charts */
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
 
-    canvas {
-        width: 100% !important;
-        height: 300px !important; /* Adjust height as needed */
-        object-fit: contain; /* Maintain aspect ratio */
-    }
+/* Canvas settings */
+canvas {
+    width: 100% !important;
+    height: 300px !important; /* Adjust height as needed */
+    object-fit: contain; /* Maintain aspect ratio */
+}
+
+/* Table styles */
+.table {
+    border-collapse: collapse; /* Collapse borders for consistency */
+    width: 100%; /* Full width for better layout */
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table thead th {
+    background-color: #f8f9fa; /* Light grey for header */
+    color: #495057; /* Dark grey for text */
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 12px 16px;
+    border-bottom: 2px solid #dee2e6; /* Thicker border for header */
+}
+
+.table tbody tr {
+    border-bottom: 1px solid #dee2e6; /* Light grey border */
+}
+
+.table tbody tr:hover {
+    background-color: #f1f3f5; /* Hover effect */
+}
+
+.table tbody td {
+    padding: 12px 16px;
+    vertical-align: middle;
+    border: 1px solid #dee2e6; /* Added border for table cells */
+}
+
+.table tbody td:first-child {
+    font-weight: bold;
+    background-color: #f8f9fa; /* Highlight for first column */
+}
+
+/* Card styles */
+.card {
+    transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition for hover effects */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Add shadow */
+}
+
+.card:hover {
+    transform: translateY(-5px); /* Slight lift effect */
+    background-color: rgba(255, 255, 255, 0.8); /* Lighten background on hover */
+}
+
+.card-header {
+    font-weight: bold; /* Bold header */
+    text-transform: uppercase; /* Uppercase header */
+    text-align: center; /* Centered text */
+}
+
+.card-title {
+    font-size: 1.5rem; /* Larger title font size */
+    margin: 0; /* Remove default margin */
+    text-align: center; /* Centered text */
+}
+
+/* Button styles */
+.btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.btn-success {
+    background-color: #38c172; /* Custom green */
+    border-color: #38c172;
+}
+
+.btn-success:hover {
+    background-color: #32a852; /* Darker green on hover */
+}
+
+.btn-danger {
+    background-color: #e3342f; /* Custom red */
+    border-color: #e3342f;
+}
+
+.btn-danger:hover {
+    background-color: #c62828; /* Darker red on hover */
+}
+
+/* Modal styles */
+.modal-content {
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    border-bottom: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+}
+
+.modal-title {
+    font-weight: bold;
+    color: #495057;
+}
+
+.modal-footer {
+    border-top: 1px solid #dee2e6;
+}
+
+.btn-close {
+    background: none;
+    border: none;
+}
+
 </style>
+
+
 
 @php
     $chartConfiguration = App\Models\ChartConfiguration::first();
@@ -50,38 +166,40 @@
 
 <div class="row">
     <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card bg-primary text-white">
-            <div class="card-header">Total KPIs</div>
-            <div class="card-body">
+        <div class="card" style="background-color: #0f3e0f; color: white;">
+            <div class="card-header text-center">Total KPIs</div>
+            <div class="card-body text-center">
                 <h5 class="card-title">{{ $totalKpis }}</h5>
             </div>
         </div>
     </div>
     <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card bg-success text-white">
-            <div class="card-header">Achieved</div>
-            <div class="card-body">
+    <div class="card" style="background-color: #0f3e0f; color: white;">
+    <div class="card-header text-center">Achieved</div>
+            <div class="card-body text-center">
                 <h5 class="card-title">{{ $achievedKpis }}</h5>
             </div>
         </div>
     </div> 
     <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card bg-warning text-white">
-            <div class="card-header">Pending</div>
-            <div class="card-body">
+    <div class="card" style="background-color: #0f3e0f; color: white;">
+    <div class="card-header text-center">Pending</div>
+            <div class="card-body text-center">
                 <h5 class="card-title">{{ $pendingKpis }}</h5>
             </div>
         </div>
     </div>
     <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card bg-info text-white">
-            <div class="card-header">Average Achievement</div>
-            <div class="card-body">
+    <div class="card" style="background-color: #0f3e0f; color: white;">
+    <div class="card-header text-center">Average Achievement</div>
+            <div class="card-body text-center">
                 <h5 class="card-title">{{ $averageAchievement }}%</h5>
             </div>
         </div>
     </div>
 </div>
+
+
 
 <div class="row">
     <div class="col-lg-8 col-md-12 mt-3">
@@ -124,39 +242,36 @@
             <div class="card-header">KPI OVERVIEW</div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-responsive">
+                    <table class="table">
                         <thead>
                             <tr class="table-secondary text-secondary small-text">
-                                <th >BIL</th>
-                                <th >TERAS</th>
-                                <th >SO</th>
-                                <th >NEGERI</th>
-                                {{-- <th >PEMILIK</th> --}}
-                                <th >KPI</th>
-                                <th >PERNYATAAN KPI</th>
-                                <th >SASARAN</th>
-                                <th >PENCAPAIAN</th>
-                                <th >PERATUS PENCAPAIAN</th>
-                                <th >STATUS</th>
+                                <th>BIL</th>
+                                <th>TERAS</th>
+                                <th>SO</th>
+                                <th>NEGERI</th>
+                                <th>KPI</th>
+                                <th>PERNYATAAN KPI</th>
+                                <th>SASARAN</th>
+                                <th>PENCAPAIAN</th>
+                                <th>PERATUS PENCAPAIAN</th>
+                                <th>STATUS</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($addKpis as $index => $addkpi)
-
                                 <tr>
                                     <td class="small-text text-secondary">{{ $index + 1 }}</td>
                                     <td class="small-text">{{ $addkpi->teras ? $addkpi->teras->id : 'Teras has been deleted' }}</td>
-                                    <td class="small-text kpi-statement">{{$addkpi->so ? $addkpi->so->id : 'SO has been deleted'}}</td> 
-                                    <td class="small-text">  @if ($addkpi->states->isNotEmpty())
-                                        @foreach ($addkpi->states as $state)
-                                            {{ $state->name }} @if (!$loop->last), @endif
-                                        @endforeach
-                                    @else
-                                        No State Found
-                                    @endif</td>
-                                    {{-- <td class="small-text">
-                                        {{ $addkpi->user ? $addkpi->user->name : 'User has been deleted' }}
-                                    </td> --}}
+                                    <td class="small-text kpi-statement">{{ $addkpi->so ? $addkpi->so->id : 'SO has been deleted' }}</td> 
+                                    <td class="small-text">
+                                        @if ($addkpi->states->isNotEmpty())
+                                            @foreach ($addkpi->states as $state)
+                                                {{ $state->name }} @if (!$loop->last), @endif
+                                            @endforeach
+                                        @else
+                                            No State Found
+                                        @endif
+                                    </td>
                                     <td class="small-text">{{ $addkpi->kpi }}</td>
                                     <td class="small-text kpi-statement">{{ $addkpi->pernyataan_kpi }}</td>
                                     <td class="small-text">{{ $addkpi->sasaran }}</td>
@@ -172,7 +287,7 @@
                                         @endif
                                     </td>
                                 </tr>
-                                @endforeach
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
@@ -180,6 +295,7 @@
         </div>
     </div>
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>

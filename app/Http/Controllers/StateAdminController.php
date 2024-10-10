@@ -16,6 +16,7 @@ class StateAdminController extends Controller
     {
         // Retrieve the state ID of the logged-in user
         $stateId = auth()->user()->state_id; 
+        $username  = Auth::User();
     
         // Retrieve the state and its associated KPIs using eager loading
         $state = State::with('kpis.institutions')->find($stateId);
@@ -65,7 +66,7 @@ class StateAdminController extends Controller
             $customerSatisfaction[] = $customerKpis->count() > 0 ? round($customerKpis->avg('peratus_pencapaian'), 2) : 0;
         }
     
-        return view('stateAdmin.dashboard.index', compact('totalKpis', 'achievedKpis', 'pendingKpis', 'averageAchievement', 'institutionNames', 'kpiAchievements', 'financialPerformance', 'operationalEfficiency', 'customerSatisfaction'));
+        return view('stateAdmin.dashboard.index', compact('totalKpis','kpis','username' ,'achievedKpis', 'pendingKpis', 'averageAchievement', 'institutionNames', 'kpiAchievements', 'financialPerformance', 'operationalEfficiency', 'customerSatisfaction'));
     }
     
 
@@ -76,6 +77,9 @@ class StateAdminController extends Controller
     {
         // Get the state ID of the authenticated user
         $stateId = Auth::user()->state_id;
+
+        $username = Auth::user();
+
     
         // Fetch institutions related to the state
         $institutions = Institution::where('state_id', $stateId)->get();
@@ -85,7 +89,7 @@ class StateAdminController extends Controller
             $query->where('state_id', $stateId);
         })->get();
     
-        return view('stateAdmin.kpi.index', compact('kpis', 'institutions'));
+        return view('stateAdmin.kpi.index', compact('kpis', 'institutions','username'));
     }
     
 

@@ -34,7 +34,7 @@
                         </svg>
                         Add Sektor Operation
                     </a> --}}
-                <a href="{{ url('so/create') }}" class="btn btn-danger float-end mb-3">Add Teras</a>
+                <a href="{{ url('so/create') }}" class="btn btn-danger float-end mb-3">Add So</a>
 
                 </div>                
             </div>

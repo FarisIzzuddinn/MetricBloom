@@ -90,6 +90,7 @@ Route::group(['middleware' => ['role:super admin|admin']], function () {
 
     //crud teras 
     Route::resource('teras', TerasController::class);
+    Route::put('/teras/{teras}', [TerasController::class, 'update'])->name('teras.update');
     Route::get('teras/{terasID}/delete', [TerasController::class, 'destroy']);
 
     //crud so 
