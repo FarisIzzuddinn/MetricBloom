@@ -13,6 +13,8 @@ class UserKpiController extends Controller
         // Dapatkan pengguna yang sedang login
         $user = Auth::user();
         $username = Auth::user();
+
+        $addKpi = Auth::user();
     
         // Total KPIs for the logged-in user
         $userTotalKpis = $user->addKpis()->count();
@@ -34,7 +36,7 @@ class UserKpiController extends Controller
         $data = $addKpis->pluck('peratus_pencapaian')->toArray();
     
         // Paparkan ke view
-        return view('user.KPI.IndexKPI', compact('addKpis', 'labels', 'userTotalKpis', 'userAchievedKpis', 'userPendingKpis', 'userAverageAchievement', 'data', 'user', 'username'));
+        return view('user.KPI.IndexKPI', compact('addKpis','addKpi', 'labels', 'userTotalKpis', 'userAchievedKpis', 'userPendingKpis', 'userAverageAchievement', 'data', 'user', 'username'));
     }
     
     

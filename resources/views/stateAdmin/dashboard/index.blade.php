@@ -4,53 +4,82 @@
 
 @section('content')
 
+
 <style>
-    /* Formal styling for the dashboard */
-    .container-fluid {
-        padding: 15px;
-    }
+/* Gaya Umum */
+.container-fluid {
+    padding: 15px;
+}
 
-    .card {
-        border-radius: 5px; /* Subtle rounded corners for a professional look */
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        transition: box-shadow 0.2s;
-    }
+/* Kad (Card) */
+.card {
+    border-radius: 5px; /* Sudut bulat yang halus untuk penampilan profesional */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s; /* Transisi untuk hover */
+    background-color: #003300;
+}
 
-    .card-header {
-        background-color: #f8f9fa;
-        font-weight: 600;
-        border-bottom: 1px solid #dee2e6;
-    }
+.card:hover {
+    transform: translateY(-5px); /* Kesan sedikit mengangkat */
+}
 
-    .card-title {
-        font-size: 1.2rem;
-        color: #004085; /* Dark blue color for card titles */
-        margin-bottom: 0.5rem;
-    }
+.card-header {
+    background-color: #f8f9fa;
+    font-weight: bold; /* Bold header */
+    text-transform: uppercase; /* Header huruf besar */
+    text-align: center; /* Teks tengah */
+    border-bottom: 1px solid #dee2e6;
+}
 
-    .card-text {
-        font-size: 2rem;
-        font-weight: bold;
-    }
+.card-title {
+    font-size: 1.5rem; /* Saiz tajuk lebih besar */
+    font-weight: bold;
+    color: white; 
+    margin: 0; /* Hapus margin default */
+    text-align: center; /* Teks tengah */
+    
+}
 
-    /* Table Styling */
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
+.card-text {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center; /* Teks tengah */
+    color: white; 
 
-    table, th, td {
-        border: 1px solid #dee2e6;
-    }
+}
 
-    th, td {
-        padding: 8px;
-        text-align: left;
-    }
+/* Gaya Jadual */
+.table {
+    border-collapse: collapse; /* Gabungkan sempadan untuk konsistensi */
+    width: 100%; /* Lebar penuh untuk tata letak yang lebih baik */
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+}
 
-    .table-hover tbody tr:hover {
-        background-color: #e9ecef;  /* Subtle highlight for better readability */
-    }
+.table thead th {
+    background-color: #f8f9fa; /* Kelabu terang untuk header */
+    color: #495057; /* Kelabu gelap untuk teks */
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 12px 16px;
+    border-bottom: 2px solid #dee2e6; /* Sempadan lebih tebal untuk header */
+}
+
+.table tbody tr:hover {
+    background-color: #f1f3f5; /* Kesan hover */
+}
+
+.table tbody td {
+    padding: 12px 16px;
+    vertical-align: middle;
+    border: 1px solid #dee2e6; /* Tambah sempadan untuk sel jadual */
+}
+
+.table tbody td:first-child {
+    font-weight: bold;
+    background-color: #f8f9fa; /* Sorotan untuk kolum pertama */
+}
 
     /* Status background colors */
     .status-kuning {
@@ -155,12 +184,12 @@
     <div class="row mb-4 g-3 d-flex align-items-stretch"> <!-- Added g-3 for better spacing between columns -->
         <div class="col-sm-6 col-md-3">
             <div class="card h-100">
-                <div class="card-body d-flex flex-column">
-<<<<<<< HEAD
+                <div class="card-body d-flex flex-column" >
+
                     <h5 class="card-title">Total KPIs</h5>
-=======
+
                     <h5 class="card-title">Total KPI Assign</h5>
->>>>>>> cc7f49b234897ee785ab1fe9b4366b45a7eabab3
+
                     <p class="card-text display-4 mt-auto">{{ $totalKpis }}</p>
                 </div>
             </div>
@@ -193,7 +222,7 @@
 
     <!-- KPI List with Details -->
     <h4 class="mb-4">Detailed KPI Overview for State</h4>
-    <div class="card mb-3">
+    <div class="card mb-3"  style="background-color: white;">
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-hover">
@@ -246,48 +275,48 @@
     </div>
 
     <!-- Charts Section -->
-    <div class="row mb-4 gx-4">
-        <!-- Bar Chart for Institution-wise KPI Progress -->
-        <div class="col-12 col-md-6 mb-4 d-flex align-items-stretch">
-            <div class="card w-100">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <span>KPI Achievement Rates Across Institutions</span>
-                </div>
-                <div class="card-body">
-                    <div class="chart-container" style="position: relative; height: 100%; width: 100%;">
-                        <canvas id="dummyBarChart"></canvas>
-                    </div>
+<div class="row mb-4 gx-4">
+    <!-- Bar Chart for Institution-wise KPI Progress -->
+    <div class="col-12 col-md-6 mb-4 d-flex align-items-stretch">
+    <div class="card w-100" style="background-color: white;">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Institusi KPI Progress</span>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="position: relative; height: 100%; width: 100%;">
+                    <canvas id="dummyBarChart"></canvas>
                 </div>
             </div>
         </div>
-    
-        <!-- Pie Chart for KPI Achievements vs Pending -->
-        <div class="col-12 col-md-6 mb-4 d-flex align-items-stretch">
-            <div class="card w-100">
-                <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
-                    <span class="text-sm mb-2 mb-md-0">KPI Achievement by Institution</span>
-                    <div>
-                        <select id="kpiFilter" class="form-select form-select-sm" style="min-width: 150px;">
-                            @foreach ($kpiCategories as $category)
-                                <option value="{{ $category }}">{{ ucfirst(str_replace('_', ' ', $category)) }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+    </div>
+
+    <!-- Pie Chart for KPI Achievements vs Pending -->
+    <div class="col-12 col-md-6 mb-4 d-flex align-items-stretch">
+    <div class="card w-100" style="background-color: white;">
+            <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+                <span class="text-sm mb-2 mb-md-0">KPI Achievement Overview</span>
+                <div>
+                    <select id="kpiFilter" class="form-select form-select-sm" style="min-width: 150px;">
+                        @foreach ($kpiCategories as $category)
+                            <option value="{{ $category }}">{{ ucfirst(str_replace('_', ' ', $category)) }}</option>
+                        @endforeach
+                    </select>
                 </div>
-                <div class="card-body">
-                    <div class="chart-container" style="position: relative; height: 100%; width: 100%;">
-                        <canvas id="dummyPieChart"></canvas>
-                    </div>
+            </div>
+            <div class="card-body">
+                <div class="chart-container" style="position: relative; height: 100%; width: 100%;">
+                    <canvas id="dummyPieChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-<<<<<<< HEAD
+
 window.addEventListener('load', function() {
     console.log('Window is loaded, initializing charts.');
 
@@ -341,7 +370,7 @@ window.addEventListener('load', function() {
                         color: 'rgba(200, 200, 200, 0.2)'
                     },
                     title: {
-=======
+
     window.addEventListener('load', function() {
         // Data passed from the backend
         var institutionNames = @json($institutionNames); // Institution names
@@ -368,7 +397,7 @@ window.addEventListener('load', function() {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
->>>>>>> cc7f49b234897ee785ab1fe9b4366b45a7eabab3
+
                         display: true,
                         position: 'top',
                         labels: {
@@ -386,11 +415,10 @@ window.addEventListener('load', function() {
                         borderWidth: 1
                     }
                 },
-<<<<<<< HEAD
                 x: {
                     grid: {
                         display: false
-=======
+
                 scales: {
                     y: {
                         beginAtZero: true,
@@ -405,7 +433,7 @@ window.addEventListener('load', function() {
                                 size: 14
                             }
                         }
->>>>>>> cc7f49b234897ee785ab1fe9b4366b45a7eabab3
+
                     },
                     x: {
                         grid: {
@@ -423,17 +451,17 @@ window.addEventListener('load', function() {
             }
         });
 
-<<<<<<< HEAD
+
     // KPI Data for Pie Chart
     var financialPerformance = @json($financialPerformance);
     var operationalEfficiency = @json($operationalEfficiency);
     var customerSatisfaction = @json($customerSatisfaction);
-=======
+
         // KPI Data for Pie Chart
         var financialPerformance = @json($financialPerformance);
         var operationalEfficiency = @json($operationalEfficiency);
         var customerSatisfaction = @json($customerSatisfaction);
->>>>>>> cc7f49b234897ee785ab1fe9b4366b45a7eabab3
+
 
         // Initial data setup for KPI Categories
         var kpiData = {
@@ -442,7 +470,7 @@ window.addEventListener('load', function() {
             customerSatisfaction: customerSatisfaction
         };
 
-<<<<<<< HEAD
+
     var kpiFilterDropdown = document.getElementById('kpiFilter');
     var ctx = document.getElementById('dummyPieChart').getContext('2d');
 
@@ -495,7 +523,7 @@ window.addEventListener('load', function() {
                         color: 'rgba(200, 200, 200, 0.2)'
                     },
                     title: {
-=======
+
         // Get filter dropdown and chart context
         var kpiFilterDropdown = document.getElementById('kpiFilter');
         var ctx = document.getElementById('dummyPieChart').getContext('2d');
@@ -520,7 +548,7 @@ window.addEventListener('load', function() {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
->>>>>>> cc7f49b234897ee785ab1fe9b4366b45a7eabab3
+
                         display: true,
                         position: 'top',
                         labels: {
@@ -538,11 +566,11 @@ window.addEventListener('load', function() {
                         borderWidth: 1
                     }
                 },
-<<<<<<< HEAD
+
                 x: {
                     grid: {
                         display: false
-=======
+
                 scales: {
                     y: {
                         beginAtZero: true,
@@ -556,7 +584,7 @@ window.addEventListener('load', function() {
                                 size: 14
                             }
                         }
->>>>>>> cc7f49b234897ee785ab1fe9b4366b45a7eabab3
+
                     },
                     x: {
                         grid: {
@@ -574,24 +602,23 @@ window.addEventListener('load', function() {
             }
         });
 
-<<<<<<< HEAD
+
     // Event listener to update the pie chart
     kpiFilterDropdown.addEventListener('change', function() {
         updateChart(this.value);
-=======
+
         // Event listener to update the chart when the filter changes
         kpiFilterDropdown.addEventListener('change', function() {
             var selectedKPI = this.value;
             dummyPieChart.data.datasets[0].data = kpiData[selectedKPI];
             dummyPieChart.update();
         });
->>>>>>> cc7f49b234897ee785ab1fe9b4366b45a7eabab3
+
     });
 </script>
-<<<<<<< HEAD
+
 @endsection
-=======
+
 
     
-@endsection
->>>>>>> cc7f49b234897ee785ab1fe9b4366b45a7eabab3
+

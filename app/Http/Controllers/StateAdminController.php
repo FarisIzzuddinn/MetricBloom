@@ -17,6 +17,8 @@ class StateAdminController extends Controller
         // Retrieve the state ID of the logged-in user
         $stateId = auth()->user()->state_id; 
         $username  = Auth::User();
+
+        $chartData  = Auth::User();
     
         // Retrieve all institutions within the state
         $institutions = Institution::where('state_id', $stateId)->get();
@@ -42,7 +44,7 @@ class StateAdminController extends Controller
         $totalProgress = AddKpi::where('state_id', $stateId)->sum('peratus_pencapaian');
         $averageAchievement = ($totalKpis > 0) ? round($totalProgress / $totalKpis, 2) : 0;
 
-         $kpiCategories = $kpis->pluck('kpi')->unique();
+        $kpiCategories = $kpis->pluck('kpi')->unique();
     
         // Calculate KPI progress per institution
         $institutionNames = [];
@@ -63,6 +65,7 @@ class StateAdminController extends Controller
 
             $averageAchievement = $institution->kpis->avg('peratus_pencapaian');
             $kpiAchievements[] =  $averageAchievement ?: 0;
+            $chartData  = Auth::User();
 
     
             // Group KPIs by category
@@ -76,14 +79,8 @@ class StateAdminController extends Controller
             $customerSatisfaction[] = $customerKpis->count() > 0 ? round($customerKpis->avg('peratus_pencapaian'), 2) : 0;
         }
     
-<<<<<<< HEAD
-        return view('stateAdmin.dashboard.index', compact('totalKpis','kpis','username' ,'achievedKpis', 'pendingKpis', 'averageAchievement', 'institutionNames', 'kpiAchievements', 'financialPerformance', 'operationalEfficiency', 'customerSatisfaction'));
-=======
-        return view('stateAdmin.dashboard.index', compact(
-            'totalKpis', 'achievedKpis', 'pendingKpis', 'averageAchievement', 
-            'institutionNames', 'kpiAchievements', 'financialPerformance','kpiCategories','operationalEfficiency', 'customerSatisfaction', 'kpis'
-        ));
->>>>>>> cc7f49b234897ee785ab1fe9b4366b45a7eabab3
+
+        return view('stateAdmin.dashboard.index', compact('totalKpis','chartData','kpis','username','kpiCategories' ,'achievedKpis', 'pendingKpis', 'averageAchievement', 'institutionNames', 'kpiAchievements', 'financialPerformance', 'operationalEfficiency', 'customerSatisfaction'));
     }
     
 
@@ -139,6 +136,7 @@ class StateAdminController extends Controller
         // Fetch institutions for the state
         $institutions = Institution::where('state_id', auth()->user()->state_id)->get();
         $stateId = Auth::user()->state_id;
+        $username  = Auth::User();
 
         $kpis = AddKpi::with('states')
         ->whereHas('states', function ($query) use ($stateId) {
@@ -146,7 +144,7 @@ class StateAdminController extends Controller
         })
         ->get();
 
-        return view('stateAdmin.kpi.create', compact('institutions', 'kpis'));
+        return view('stateAdmin.kpi.create', compact('institutions','username', 'kpis'));
     }
 
     public function store(Request $request)

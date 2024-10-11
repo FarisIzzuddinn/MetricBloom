@@ -17,10 +17,11 @@ class institutionAdminController extends Controller
         $user = Auth::user(); // Get the authenticated user
         $stateId = $user->state_id; // Get the state ID of the logged-in user
         $institutionId = $user->institution_id; // Get the institution ID of the logged-in user
+        $username = Auth::user();
 
         // Get state details
         $state = State::find($stateId); 
-    
+
         // Fetch KPIs assigned to the institution by State Admin
         $kpis = AddKpi::whereHas('institutions', function ($query) use ($institutionId) {
             $query->where('institution_id', $institutionId);
@@ -68,7 +69,9 @@ class institutionAdminController extends Controller
             'totalUsers', 
             'activeUsers', 
             'inactiveUsers', 
-            'users' // Add users to the view
+            'username',
+            'users', 
+            // Add sector KPI data to the view
         ));
     }
 
@@ -76,21 +79,22 @@ class institutionAdminController extends Controller
 {
     // Validate the request
     $request->validate([
-        'kpi_id' => 'required|exists:add_kpis,id',
-        'user_id' => 'required|array',
-        'user_id.*' => 'exists:users,id', // Validate each user ID
+        'kpi_id' => 'required|exists:add_kpis,id', // Ensure the KPI exists
+        'user_id' => 'required|exists:users,id', // Ensure the user ID exists
     ]);
 
-        // Find the selected KPI
-        $kpi = AddKpi::find($request->kpi_id);
+    // Find the selected KPI
+    $kpi = AddKpi::find($request->kpi_id);
 
-        // Attach the selected user to the KPI
-        $kpi->users()->attach($request->user_id);
+    // Attach the selected user to the KPI
+    $kpi->users()->attach($request->user_id);
 
+    // Get the currently authenticated user
+   
     // Redirect back with a success message
-    return redirect()->route('institutionAdmin.kpi') // Change to your desired route
-        ->with('success', 'KPI assigned successfully to the selected users.');
+    return redirect()->route('institutionAdmin.kpi')->with('success', 'KPI assigned successfully to the selected user.');
 }
+
     
     public function manageKPI()
     {
@@ -110,6 +114,7 @@ class institutionAdminController extends Controller
         $institutionId = $user->institution_id; 
         $users = User::All();
         $username = Auth::user();
+        
 
     
         return view('institutionAdmin.kpi.index', compact( 'kpis', 'institutions', 'users','username'));
@@ -155,17 +160,29 @@ class institutionAdminController extends Controller
 
     public function create()
     {
-        // Fetch all users
-        $users = User::all(); 
+        $user = Auth::user(); // Get the authenticated user
+        $stateId = $user->state_id; // Get the state ID of the logged-in user
+        $institutionId = $user->institution_id; // Get the institution ID of the logged-in user
+        $username = Auth::user();
 
+    
         // Fetch KPIs associated with the user's state
         $kpis = AddKpi::with('states')
             ->whereHas('states', function ($query) use ($stateId) {
                 $query->where('states.id', $stateId);
             })
             ->get();
-
-        return view('institutionAdmin.kpi.create', compact('users', 'kpis'));
+    
+        // Fetch users who belong to the given institution and state and group them by sector
+        $usersGroupedBySector = User::where('state_id', $stateId)
+            ->where('institution_id', $institutionId)
+            ->with('sector') // Assuming a relationship between User and Sector
+            ->get()
+            ->groupBy(function ($user) {
+                return $user->sector ? $user->sector->name : 'Institution Admin'; // Group by sector name or 'No Sector' if not assigned
+            });
+    
+        return view('institutionAdmin.kpi.create', compact('usersGroupedBySector', 'kpis','username'));
     }
     
 

@@ -3,27 +3,25 @@
 
 <link rel="stylesheet" href="{{ asset("css/table.css") }}">
 
-<div class="container">
+<div class="">
     <div class="row">
         <div class="col-lg-12">
-            {{-- <div class="custom-bg-white border border-grey border-2 p-3 rounded shadow"> --}}
-                <div class="row align-items-center mb-3 mt-3">
-                    <div class="col-auto">
-                        <h5 class="ms-2">KPI TABLE</h5>
-                    </div>
-                    <div class="col d-flex justify-content-end">
-                        <div class="btn-group">
-                            @include('admin.KPI.add')
-                        </div>
+            <div class="row align-items-center mb-3 mt-3" >
+                <div class="col-auto">
+                    <h5 class="ms-2" style="font-size: 3rem;">KPI TABLE</h5>
+                </div>
+                <div class="col d-flex justify-content-end">
+                    <div class="btn-group">
+                        @include('admin.KPI.add')
                     </div>
                 </div>
-            {{-- </div>  --}}
+            </div>
         </div>
            
         <div class="table-responsive table-responsive-sm">
             <table class="table mt-3 p-3">
                 <thead>
-                    <tr class="table-secondary">
+                    <tr>
                         <th class="text-secondary small-text">BIL</th>
                         <th class="text-secondary small-text">TERAS</th>
                         <th class="text-secondary small-text">SO</th>                          
@@ -50,9 +48,6 @@
                                     No State Found
                                 @endif
                             </td>
-                            {{-- <td class="small-text">
-                                {{ $addKpi->user ? $addKpi->user->name : 'User has been deleted' }}
-                            </td> --}}
                             <td class="small-text">{{ $addKpi->kpi }}</td>
                             <td class="small-text kpi-statement">{{ $addKpi->pernyataan_kpi }}</td>
                             <td class="small-text">{{ $addKpi->sasaran }}</td>
@@ -73,127 +68,100 @@
         </div> 
     </div>
 
-        <div class="modal fade" id="editKpi" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">EDIT KPI</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="editKpiForm" action="" method="POST">
-                            @csrf
-                            @method('PUT')
-                            <!-- Form fields for editing KPI -->
-        
-                            <div class="row mb-3">
-                                <label for="teras" class="col-sm-5 col-form-label">Teras</label>
-                                <div class="col-sm-7">
-                                    <select id="editTeras" name="teras_id" class="form-select" required>
-                                        @foreach ($teras as $teras)
-                                            <option value="{{ $teras->id }}">{{ $teras->teras }}</option>   
-                                        @endforeach
-                                    </select>
-                                </div>
+    <div class="modal fade" id="editKpi" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">EDIT KPI</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editKpiForm" action="" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <!-- Form fields for editing KPI -->
+
+                        <div class="row mb-3">
+                            <label for="teras" class="col-sm-5 col-form-label">Teras</label>
+                            <div class="col-sm-7">
+                                <select id="editTeras" name="teras_id" class="form-select" required>
+                                    @foreach ($teras as $teras)
+                                        <option value="{{ $teras->id }}">{{ $teras->teras }}</option>   
+                                    @endforeach
+                                </select>
                             </div>
-        
-                            <div class="row mb-3">
-                                <label for="SO" class="col-sm-5 col-form-label">SO</label>
-                                <div class="col-sm-7">
-                                    <select id="editSO" name="so_id" class="form-select" required>
-                                        @foreach ($so as $so)
-                                            <option value="{{ $so->id }}">{{ $so->SO }}</option>   
-                                        @endforeach
-                                    </select>
-                                </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label for="SO" class="col-sm-5 col-form-label">SO</label>
+                            <div class="col-sm-7">
+                                <select id="editSO" name="so_id" class="form-select" required>
+                                    @foreach ($so as $so)
+                                        <option value="{{ $so->id }}">{{ $so->SO }}</option>   
+                                    @endforeach
+                                </select>
                             </div>
-                            
-                            {{-- <div class="row mb-3">
-                                <label for="editNegeri" class="col-sm-5 col-form-label">NEGERI</label>
-                                <div class="col-sm-7">
-                                    <select name="states[]" id="editNegeri" multiple>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label for="editNegeri" class="col-sm-5 col-form-label">NEGERI</label>
+                            <div class="col-sm-7">
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" id="dropdownMenuButtonEdit" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Select States
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end w-100" aria-labelledby="dropdownMenuButtonEdit">
                                         @foreach($states as $state)
-                                            <option value="{{ $state->id }}">{{ $state->name }}</option>
+                                            <li>
+                                                <div class="form-check px-3">
+                                                    <input 
+                                                        class="form-check-input" 
+                                                        type="checkbox" 
+                                                        name="states[]" 
+                                                        id="edit_state_{{ $state->id }}" 
+                                                        value="{{ $state->id }}">
+                                                    <label class="form-check-label" for="edit_state_{{ $state->id }}">
+                                                        {{ $state->name }}
+                                                    </label>
+                                                </div>
+                                            </li>
                                         @endforeach
-                                    </select>
+                                    </ul>
                                 </div>
-                            </div> --}}
+                            </div>
+                        </div>
 
-                            <div class="row mb-3">
-                                <label for="editNegeri" class="col-sm-5 col-form-label">NEGERI</label>
-                                <div class="col-sm-7">
-                                    <div class="dropdown">
-                                        <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" id="dropdownMenuButtonEdit" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Select States
-                                        </button>
-                                        <ul class="dropdown-menu dropdown-menu-end w-100" aria-labelledby="dropdownMenuButtonEdit">
-                                            @foreach($states as $state)
-                                                <li>
-                                                    <div class="form-check px-3">
-                                                        <input 
-                                                            class="form-check-input" 
-                                                            type="checkbox" 
-                                                            name="states[]" 
-                                                            id="edit_state_{{ $state->id }}" 
-                                                            value="{{ $state->id }}">
-                                                        <label class="form-check-label" for="edit_state_{{ $state->id }}">
-                                                            {{ $state->name }}
-                                                        </label>
-                                                    </div>
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    </div>
-                                </div>
+                        <div class="row mb-3">
+                            <label for="editPernyataanKpi" class="col-sm-5 col-form-label">PERNYATAAN KPI</label>
+                            <div class="col-sm-7">
+                                <input type="text" id="editPernyataanKpi" name="pernyataan_kpi" class="form-control" required>
                             </div>
-                            
+                        </div>
 
-                            {{-- <div class="row mb-3">
-                                <label for="editPemilik" class="col-sm-5 col-form-label">PEMILIK</label>
-                                <div class="col-sm-7">
-                                    <select id="editPemilik" name="user_id" class="form-select" required>
-                                        <option value="" disabled selected>Select Pemilik</option> <!-- Default option -->
-                                        @foreach ($users as $users)
-                                            <option value="{{ $users->id }}">{{ $users->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div> --}}
-                            
-                            
-                            
-                            <div class="row mb-3">
-                                <label for="editPernyataanKpi" class="col-sm-5 col-form-label">PERNYATAAN KPI</label>
-                                <div class="col-sm-7">
-                                    <input type="text" id="editPernyataanKpi" name="pernyataan_kpi" class="form-control" required>
-                                </div>
+                        <div class="row mb-3">
+                            <label for="editSasaran" class="col-sm-5 col-form-label">SASARAN</label>
+                            <div class="col-sm-7">
+                                <input type="number" inputmode="numeric" id="editSasaran" name="sasaran" class="form-control" required>
                             </div>
-                            
-                            <div class="row mb-3">
-                                <label for="editSasaran" class="col-sm-5 col-form-label">SASARAN</label>
-                                <div class="col-sm-7">
-                                    <input type="number" inputmode="numeric" id="editSasaran" name="sasaran" class="form-control" required>
-                                </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <label for="editJenisSasaran" class="col-sm-5 col-form-label">JENIS SASARAN</label>
+                            <div class="col-sm-7">
+                                <select id="editJenisSasaran" name="jenis_sasaran" class="form-select" required>
+                                    <option value="" disabled selected>Select Jenis Sasaran</option>
+                                    <option value="peratus">%</option>
+                                    <option value="bilangan">Bilangan</option>
+                                </select>
                             </div>
-                            
-                            <div class="row mb-3">
-                                <label for="editJenisSasaran" class="col-sm-5 col-form-label">JENIS SASARAN</label>
-                                <div class="col-sm-7">
-                                    <select id="editJenisSasaran" name="jenis_sasaran" class="form-select" required>
-                                        <option value="" disabled selected>Select Jenis Sasaran</option>
-                                        <option value="peratus">%</option>
-                                        <option value="bilangan">Bilangan</option>
-                                    </select>
-                                </div>
-                            </div>
-        
-                            <!-- Submit button -->
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CLOSE</button>
-                                <button type="submit" class="btn btn-primary">UPDATE</button>
-                            </div>
-                        </form>
-                    </div>
+                        </div>
+
+                        <!-- Submit button -->
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CLOSE</button>
+                            <button type="submit" class="btn btn-primary">SAVE</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -216,5 +184,9 @@
         editKpiModal.show();
     }
 </script>
+
 @endsection
+
+
+
 

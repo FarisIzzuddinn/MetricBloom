@@ -3,69 +3,117 @@
 @section('content')
 
 <style>
+    /* Konsistenkan Reka Bentuk Jadual */
     .table {
         margin-bottom: 0;
-        border-radius: 12px; /* Rounded corners for the table */
-        overflow: hidden; /* Ensures corners are rounded */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow for depth */
+        border-collapse: separate;
+        border-spacing: 0;
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        overflow: hidden;
+        background: linear-gradient(to bottom right, #ffffff, #f8f9fa);
     }
 
-    .table th {
-        background-color: #f8f9fa; /* Light background for header */
-        color: #333; /* Dark text for better readability */
-        font-weight: bold; /* Bold text for emphasis */
-        text-align: center; /* Center align header text */
+    .table thead th {
+        background-color: #f8f9fa;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        padding: 12px 16px;
+        color: #495057; /* Dark grey for text */
+
     }
 
-    .table td {
-        text-align: center; /* Center align table data */
+    .table tbody tr {
+        border-bottom: 1px solid #dee2e6; /* Light grey border */
+        transition: transform 0.2s, box-shadow 0.2s; /* Animation for hover */
     }
 
-    .table tr:nth-child(even) {
-        background-color: #f2f2f2; /* Light grey for even rows */
+    .table tbody tr:hover {
+        background-color: #f1f3f5; /* Hover effect */
+        transform: translateY(-2px); /* Lift effect */
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
     }
 
-    .table tr:hover {
-        background-color: #e9ecef; /* Slightly darker grey on hover */
+    .table tbody td {
+        padding: 12px 16px;
+        vertical-align: middle;
     }
 
-    .table th:first-child {
-        border-top-left-radius: 12px;
+    .table tbody td:first-child {
+        
     }
 
-    .table th:last-child {
-        border-top-right-radius: 12px;
+    /* Butang Gaya Konsisten */
+    .btn {
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease-in-out; /* Animation for button */
     }
 
-    .table tbody tr:last-child td:first-child {
-        border-bottom-left-radius: 12px;
+    .btn:hover {
+        transform: translateY(-2px); /* Lift effect */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-danger {
+        background-color: #e3342f; /* Custom red */
+        border-color: #e3342f;
     }
 
     .badge-admin {
-        background-color: #f5a623;  /* Custom Orange */
+        background-color: #f5a623; /* Custom Orange */
         color: rgb(0, 0, 0);
     }
 
     .badge-superadmin {
-        background-color: #da58da;  /* Custom Red */
+        background-color: #da58da; /* Custom Red */
         color: rgb(0, 0, 0);
     }
 
     .badge-user {
-        background-color: #1acfc9;  /* Custom Green */
+        background-color: #1acfc9; /* Custom Green */
         color: rgb(3, 0, 0);
     }
 
-    .btn {
-        transition: background-color 0.3s; /* Smooth transition for buttons */
+    /* Modal Reka Bentuk Konsisten */
+    .modal-content {
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(to bottom right, #ffffff, #f8f9fa);
     }
 
-    .btn:hover {
-        background-color: #0056b3; /* Darker shade on hover */
+    .modal-header {
+        border-bottom: 1px solid #dee2e6;
+        background-color: #f8f9fa;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
+
+    .modal-title {
+        font-weight: bold;
+        color: #495057;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #dee2e6;
+    }
+
+    .btn-close {
+        background: none;
+        border: none;
+    }
+
+    /* Tajuk Konsisten */
+    h4 {
+        color: #343a40; /* Darker text color */
+        margin-bottom: 16px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Text shadow */
+    }
+
 </style>
 
-<div class="container rounded-1">
+<div class="">
     <div class="row">
         <div class="col-lg-12">
             <div class="container-fluid mt-3">
@@ -77,7 +125,7 @@
                         </svg>
                         Add New Permissions
                     </a>
-                </div>                
+                </div>
             </div>
 
             <!-- Add Permission Modal -->
@@ -145,9 +193,8 @@
                 </table>
                 <div class="mt-2 text-center">{{ $permissions->links() }}</div>
             </div>
-
-            <!-- Edit Permission Modal -->
-            <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+ <!-- Edit Permission Modal -->
+ <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -234,3 +281,4 @@
 </script>
 
 @endsection
+

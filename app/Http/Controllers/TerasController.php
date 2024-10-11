@@ -33,27 +33,29 @@ class TerasController extends Controller
         return redirect()->route('teras.index')->with("status", "SO created successfully");
     }
 
-    public function edit(Teras $teras)
+    public function edit($id)
     {
+        $teras = Teras::findOrFail($id);
         return view('admin.teras.edit', compact('teras'));
+        
     }
 
-    public function update(Request $request, Teras $teras)
-    {
-        $request->validate([
-            'teras' => [
-                'required',
-                'string',
-                'unique:teras,teras,' . $teras->id // Ensure table name is correct
-            ]
-        ]);
+    public function update(Request $request, $id)
+{
+    // Validate the request
+    $request->validate([
+        'teras' => 'required|string|max:255',
+    ]);
 
-        $teras->update([
-            'teras' => $request->teras,
-        ]);
+    // Find the teras by ID and update it
+    $teras = Teras::findOrFail($id);
+    $teras->teras = $request->input('teras');
+    $teras->save();
 
-        return redirect()->route('teras.index')->with("status", "SO updated successfully");
-    }
+    // Redirect back to the index or desired location
+    return redirect()->route('teras.index')->with('success', 'Teras updated successfully.');
+}
+
 
     public function renumberItems()
     {

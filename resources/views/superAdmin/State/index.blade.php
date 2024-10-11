@@ -8,9 +8,10 @@
         margin-bottom: 0;
         border-collapse: separate;
         border-spacing: 0;
-        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
         border-radius: 12px;
         overflow: hidden;
+        background: linear-gradient(to bottom right, #ffffff, #f8f9fa);
     }
 
     .table thead th {
@@ -23,10 +24,13 @@
 
     .table tbody tr {
         border-bottom: 1px solid #dee2e6; /* Light grey border */
+        transition: transform 0.2s, box-shadow 0.2s; /* Animation for hover */
     }
 
     .table tbody tr:hover {
         background-color: #f1f3f5; /* Hover effect */
+        transform: translateY(-2px); /* Lift effect */
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
     }
 
     .table tbody td {
@@ -40,11 +44,17 @@
 
     /* Butang Gaya Konsisten */
     .btn {
-        padding: 6px 12px;
+        padding: 8px 16px;
         border-radius: 6px;
         font-size: 0.875rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s ease-in-out; /* Animation for button */
     }
 
+    .btn:hover {
+        transform: translateY(-2px); /* Lift effect */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
 
     .btn-danger {
         background-color: #e3342f; /* Custom red */
@@ -54,12 +64,14 @@
     /* Modal Reka Bentuk Konsisten */
     .modal-content {
         border-radius: 12px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        background: linear-gradient(to bottom right, #ffffff, #f8f9fa);
     }
 
     .modal-header {
         border-bottom: 1px solid #dee2e6;
         background-color: #f8f9fa;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .modal-title {
@@ -78,18 +90,19 @@
 
     /* Tajuk Konsisten */
     h4 {
-        font-size: rem; /* Standardize font size */
         color: #343a40; /* Darker text color */
         margin-bottom: 16px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Text shadow */
     }
 </style>
 
-<div class="container rounded-1">
+
+<div class="">
     <div class="row">
         <div class="col-lg-12">
             <div class="container-fluid mt-3">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="mb-0"style="font-size: 3rem;">Manage State</h4>
+                    <h4 class="mb-0" style="font-size: 3rem;">Manage State</h4>
                     <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStateModal">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
                             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
@@ -204,34 +217,20 @@
 </div>
 
 <script>
-        document.addEventListener('DOMContentLoaded', function () {
-<<<<<<< HEAD
+    document.addEventListener('DOMContentLoaded', function () {
         // Delete Modal Configuration
         var deleteModal = document.getElementById('deleteModal');
         deleteModal.addEventListener('show.bs.modal', function (event) {
             var button = event.relatedTarget;
-            var states = button.getAttribute('data-permission-id');
+            var permissionId = button.getAttribute('data-permission-id');
             var permissionName = button.getAttribute('data-permission-name');
             var form = document.getElementById('deleteForm');
-            var nameSpan = document.getElementById('deletePermissionName'); // Corrected span ID
+            var nameSpan = document.getElementById('permission-name'); // Corrected span ID
 
-            form.action = '/states/' + states; 
-            nameSpan.textContent = permissionName; 
-=======
-            // Delete Modal Configuration
-            var deleteModal = document.getElementById('deleteModal');
-            deleteModal.addEventListener('show.bs.modal', function (event) {
-                var button = event.relatedTarget;
-                var permissionId = button.getAttribute('data-permission-id');
-                var permissionName = button.getAttribute('data-permission-name');
-                var form = document.getElementById('deleteForm');
-                var nameSpan = document.getElementById('deletePermissionName'); // Corrected span ID
-
-                form.action = '/state/' + permissionId; // Set the form action dynamically
-                nameSpan.textContent = permissionName; // Set the permission name in the modal
-            });
->>>>>>> cc7f49b234897ee785ab1fe9b4366b45a7eabab3
+            form.action = '/states/' + permissionId; // Set the form action dynamically
+            nameSpan.textContent = permissionName; // Set the permission name in the modal
         });
+    });
 </script>
 
 @endsection

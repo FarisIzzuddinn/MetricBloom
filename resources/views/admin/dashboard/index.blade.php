@@ -245,7 +245,7 @@ canvas {
                     <table class="table">
                         <thead>
                             <tr class="table-secondary text-secondary small-text">
-<<<<<<< HEAD
+                                
                                 <th>BIL</th>
                                 <th>TERAS</th>
                                 <th>SO</th>
@@ -256,20 +256,7 @@ canvas {
                                 <th>PENCAPAIAN</th>
                                 <th>PERATUS PENCAPAIAN</th>
                                 <th>STATUS</th>
-=======
-                                <th >BIL</th>
-                                <th >TERAS</th>
-                                <th >SO</th>
-                                <th >NEGERI</th>
-                                {{-- <th >PEMILIK</th> --}}
-                                <th >KPI</th>
-                                <th >PERNYATAAN KPI</th>
-                                <th >SASARAN</th>
-                                <th >PENCAPAIAN</th>
-                                <th >PERATUS PENCAPAIAN</th>
-                                <th >STATUS</th>
-                                <th >SEBAB</th>
->>>>>>> cc7f49b234897ee785ab1fe9b4366b45a7eabab3
+
                             </tr>
                         </thead>
                         <tbody>

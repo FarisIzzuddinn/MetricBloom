@@ -2,7 +2,26 @@
 @section('title', 'Dashboard')
 @section('content')
 
-<div class="container my-4">
+<style>
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn {
+        transition: transform 0.3s ease;
+    }
+
+    .btn:hover {
+        transform: translateY(-3px); /* Menaikkan butang */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+</style>
+<div class="">
     <h4 class="mb-1"style="font-size: 3rem;">Roles List</h4>
     <p class="mb-6" style="text-align: justify;">A role provides access to predefined menus and features based on assigned roles. Administrators can manage user access depending on their assigned roles.</p>
     

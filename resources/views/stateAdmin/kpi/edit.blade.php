@@ -1,4 +1,4 @@
-@extends('layoutNoName')
+@extends('layout')
 
 @section('content')
 <h1>Edit KPI Assignment</h1>

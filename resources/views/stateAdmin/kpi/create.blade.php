@@ -1,9 +1,9 @@
-@extends('layoutNoName')
+@extends('layout')
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/table.css') }}">
 
-<div class="container">
+<div class="">
     <div class="head-title mb-3">
         <div class="left">
             <h1>KPI Management</h1>

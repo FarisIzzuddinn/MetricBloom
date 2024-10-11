@@ -110,6 +110,7 @@ Route::middleware(['auth', 'role:Admin State'])->group(function () {
     Route::get('/state-admin/dashboard', [StateAdminController::class, 'index'])->name('stateAdmin.dashboard');
     Route::get('/state-admin/kpi-management', [StateAdminController::class, 'manageKPI'])->name('stateAdmin.kpi');
     Route::post('/admin-state-kpis', [StateAdminController::class, 'store'])->name('stateAdmin.store');
+    
 });
 
 // Admin Institution

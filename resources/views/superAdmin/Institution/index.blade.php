@@ -3,12 +3,15 @@
 @section('content')
 
 <style>
+    /* Konsistenkan Reka Bentuk Jadual */
     .table {
+        margin-bottom: 0;
         border-collapse: separate;
         border-spacing: 0;
-        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); /* Kesan bayangan lebih ketara */
         border-radius: 12px;
         overflow: hidden;
+        background: linear-gradient(to bottom right, #ffffff, #f8f9fa);
     }
 
     .table thead th {
@@ -21,25 +24,32 @@
 
     .table tbody tr {
         border-bottom: 1px solid #dee2e6; /* Light grey border */
+        transition: transform 0.2s, box-shadow 0.2s; /* Animation for hover */
     }
 
     .table tbody tr:hover {
         background-color: #f1f3f5; /* Hover effect */
+        transform: translateY(-2px); /* Kesan angkat */
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); /* Bayangan lebih ketara pada hover */
     }
 
     .table tbody td {
         padding: 12px 16px;
         vertical-align: middle;
+        transition: all 0.2s ease; /* Transisi untuk kesan hover */
     }
 
     .table tbody td:first-child {
         font-weight: bold;
     }
 
+    /* Butang Gaya Konsisten */
     .btn {
-        padding: 6px 12px;
+        padding: 8px 16px;
         border-radius: 6px;
         font-size: 0.875rem;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Bayangan butang */
+        transition: all 0.2s ease-in-out; /* Animation for button */
     }
 
     .btn-success {
@@ -52,14 +62,22 @@
         border-color: #e3342f;
     }
 
+    .btn:hover {
+        transform: translateY(-2px); /* Kesan angkat pada hover */
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2); /* Bayangan lebih ketara pada hover */
+    }
+
+    /* Modal Reka Bentuk Konsisten */
     .modal-content {
         border-radius: 12px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Bayangan modal */
+        background: linear-gradient(to bottom right, #ffffff, #f8f9fa);
     }
 
     .modal-header {
         border-bottom: 1px solid #dee2e6;
         background-color: #f8f9fa;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Bayangan di bawah header modal */
     }
 
     .modal-title {
@@ -75,10 +93,27 @@
         background: none;
         border: none;
     }
+
+    /* Tajuk Konsisten */
+    h4 {
+        color: #343a40; /* Darker text color */
+        margin-bottom: 16px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Text shadow */
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+        .table {
+            width: 100%; /* Table takes full width on smaller screens */
+            overflow-x: auto; /* Allow horizontal scrolling */
+        }
+    }
 </style>
 
 
-<div class="container rounded-1">
+
+
+<div class="">
     <div class="row">
         <div class="col-lg-12">
             <div class="container-fluid mt-3">

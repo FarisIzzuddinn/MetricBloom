@@ -14,7 +14,7 @@
     </div>
 </div>
 
-<a href="{{ route('admin-state-kpis.create') }}" class="btn btn-primary mb-3" id="assignKPIButton">Assign New KPI</a>
+<a href="#" class="btn btn-primary mb-3" id="assignKPIButton" data-bs-toggle="modal" data-bs-target="#assignKpiModal">Assign New KPI</a>
 
 <!-- Display Success or Error Messages -->
 @if ($errors->any())
@@ -53,9 +53,6 @@
                 @endif
             </td>
             <td>
-                {{-- <a href="#" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal" data-id="{{ $kpi->id }}" data-name="{{ $kpi->pernyataan_kpi }}" data-institutions="{{ json_encode($kpi->institutions->pluck('id')) }}">
-                    Edit
-                </a> --}}
                 <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-name="{{ $kpi->pernyataan_kpi }}" data-url="{{ route('admin-state-kpis.destroy', $kpi->id) }}">
                     Delete
                 </button>
@@ -64,6 +61,43 @@
         @endforeach
     </tbody>
 </table>
+
+<!-- Assign New KPI Modal -->
+<div class="modal fade" id="assignKpiModal" tabindex="-1" aria-labelledby="assignKpiModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="assignKpiModalLabel">Assign New KPI</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="assignKpiForm" method="POST" action="{{ route('stateAdmin.store') }}">
+                    @csrf
+                    <div class="form-group mb-3">
+                        <label for="kpi">Select KPI:</label>
+                        <select name="kpi_id" class="form-control" required>
+                            @foreach($kpis as $kpi)
+                                <option value="{{ $kpi->id }}">{{ $kpi->pernyataan_kpi }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="institution">Select Institution:</label>
+                        <select name="institution_id" class="form-control" required>
+                            @foreach($institutions as $institution)
+                                <option value="{{ $institution->id }}">{{ $institution->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CANCEL</button>
+                        <button type="submit" class="btn btn-primary">ASSIGN KPI</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -91,40 +125,6 @@
     </div>
 </div>
 
-{{-- <!-- Edit Modal -->
-<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit KPI</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form id="editForm" method="POST" action="">
-                    @csrf
-                    @method('PUT')
-                    <div class="mb-3">
-                        <label for="kpiName" class="form-label">KPI Name</label>
-                        <input type="text" class="form-control" id="kpiName" name="pernyataan_kpi" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="institutionSelect" class="form-label">Assign Institutions</label>
-                        <select multiple class="form-control" id="institutionSelect" name="institutions[]" required>
-                            @foreach ($institutions as $institution)
-                                <option value="{{ $institution->id }}">{{ $institution->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CANCEL</button>
-                        <button type="submit" class="btn btn-primary">SAVE CHANGES</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div> --}}
-
 <script>
     // Script untuk mengatur modal delete
     var deleteModal = document.getElementById('deleteModal');
@@ -139,38 +139,113 @@
         form.action = button.getAttribute('data-url'); // Set URL untuk form delete
     });
 
-    // Script untuk mengatur modal edit
-    var editModal = document.getElementById('editModal');
-    editModal.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget; // Tombol yang memicu modal
-        var itemId = button.getAttribute('data-id'); // Ambil ID KPI dari data-id
-        var itemName = button.getAttribute('data-name'); // Ambil nama KPI dari data-name
-        var assignedInstitutions = button.getAttribute('data-institutions'); // Ambil institusi yang telah ditetapkan
-
-        // Set nama KPI di dalam modal
-        var kpiNameInput = editModal.querySelector('#kpiName');
-        kpiNameInput.value = itemName;
-
-        // Set action URL untuk form edit secara dinamis
-        var form = document.getElementById('editForm');
-        form.action = '/admin-state-kpis/' + itemId; // Gantikan dengan route yang sesuai
-
-        // Set nilai untuk institusi yang telah ditetapkan
-        var institutionSelect = editModal.querySelector('#institutionSelect');
-        var selectedInstitutions = JSON.parse(assignedInstitutions);
-        
-        // Deselect all options first
-        for (var i = 0; i < institutionSelect.options.length; i++) {
-            institutionSelect.options[i].selected = false;
-        }
-
-        // Select the assigned institutions
-        for (var i = 0; i < institutionSelect.options.length; i++) {
-            if (selectedInstitutions.includes(parseInt(institutionSelect.options[i].value))) {
-                institutionSelect.options[i].selected = true;
-            }
-        }
-    });
+   
 </script>
 
+<style>
+    /* Gaya Umum */
+body {
+}
+
+/* Gaya untuk jadual */
+.table {
+    margin-bottom: 0;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table th, .table td {
+    padding: 15px;
+    text-align: left;
+}
+
+.table th {
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #343a40; /* Warna teks header */
+}
+
+.table tbody tr {
+    border-bottom: 1px solid #dee2e6;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+}
+
+.table tbody tr:hover {
+    background-color: #f1f3f5;
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.table tbody td {
+    vertical-align: middle;
+}
+
+.table tbody td:first-child {
+    font-weight: bold;
+}
+
+/* Gaya untuk tajuk */
+h4 {
+    text-align: start;
+    color: #343a40;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Gaya Butang */
+.btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-primary {
+}
+
+.btn-success {
+    background-color: #38c172; /* Warna hijau */
+    border-color: #38c172;
+}
+
+.btn-danger {
+    background-color: #e3342f; /* Warna merah */
+    border-color: #e3342f;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Gaya Modal */
+.modal-content {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(to bottom right, #ffffff, #f8f9fa);
+}
+
+.modal-header {
+    border-bottom: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+}
+
+.modal-title {
+    font-weight: bold;
+    color: #495057;
+}
+
+.modal-footer {
+    border-top: 1px solid #dee2e6;
+}
+
+/* Responsif */
+@media (max-width: 768px) {
+    .table {
+        width: 100%;
+        overflow-x: auto;
+    }
+}
+</style>
 @endsection
