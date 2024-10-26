@@ -228,7 +228,16 @@
                     <div class="row mb-3" id="reason-container">
                         <label for="reason" class="col-sm-5 col-form-label">Reason for Not Achieving KPI</label>
                         <div class="col-sm-7">
-                            <textarea id="reason" name="reason" class="form-control" rows="3">{{ old('reason', $addKpi->reason) }}</textarea>
+                            {{-- <textarea id="reason" name="reason" class="form-control" rows="3">{{ old('reason', $addKpi->reason) }}</textarea> --}}
+                            <select id="reason" name="reason" class="form-control">
+                                @if(old('reason', $addKpi->reason) != '')
+                                    <option value="{{ old('reason', $addKpi->reason) }}">{{ old('reason', $addKpi->reason) }}</option>
+                                @endif
+                                <option value="">--- Select Reason ---</option>
+                                <option value="money">Money</option>
+                                <option value="manpower">Manpower</option>
+                                <option value="material">Material</option>
+                            </select>
                         </div>
                     </div>
 

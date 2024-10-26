@@ -59,7 +59,7 @@ class UserKpiController extends Controller
         $kpi->peratus_pencapaian = $request->peratus_pencapaian;
 
         // If `peratus_pencapaian` is below the threshold, save the reason
-        if ($request->peratus_pencapaian < 75) {
+        if ($request->peratus_pencapaian < 100) {
             $kpi->reason = $request->reason;
         } else {
             $kpi->reason = null; // Clear the reason if the KPI is achieved
@@ -91,7 +91,7 @@ class UserKpiController extends Controller
         $addKpi->peratus_pencapaian = $request->input('peratus_pencapaian');
 
         // If `peratus_pencapaian` is below the threshold, save the reason
-        if ($request->peratus_pencapaian < 75) {
+        if ($request->peratus_pencapaian < 100) {
             $addKpi->reason = $request->input('reason');
         } else {
             $addKpi->reason = null; // Clear the reason if the KPI is achieved
@@ -101,6 +101,8 @@ class UserKpiController extends Controller
 
         return redirect()->back()->with('success', 'KPI updated successfully');
     }
+
+    
 
 
     // public function charts() {

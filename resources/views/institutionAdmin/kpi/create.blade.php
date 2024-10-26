@@ -18,7 +18,7 @@
         </div>
     </div>
 
-    <form action="{{ route('stateAdmin.store') }}" method="POST">
+    <form action="{{ route('institutionAdmin.kpi.assign') }}" method="POST">
         @csrf
         <div class="form-group mb-3">
             <label for="kpi">Select KPI:</label>

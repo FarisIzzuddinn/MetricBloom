@@ -77,7 +77,7 @@
                         <label for="kpi">Select KPI:</label>
                         <select name="kpi_id" class="form-control" required>
                             @foreach($kpis as $kpi)
-                                <option value="{{ $kpi->id }}">{{ $kpi->pernyataan_kpi }}</option>
+                                <option value="{{$kpi->id}}">{{ $kpi->pernyataan_kpi }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -138,8 +138,6 @@
         var form = document.getElementById('deleteForm');
         form.action = button.getAttribute('data-url'); // Set URL untuk form delete
     });
-
-   
 </script>
 
 <style>

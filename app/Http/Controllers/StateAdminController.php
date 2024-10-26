@@ -45,6 +45,10 @@ class StateAdminController extends Controller
         $averageAchievement = ($totalKpis > 0) ? round($totalProgress / $totalKpis, 2) : 0;
 
         $kpiCategories = $kpis->pluck('kpi')->unique();
+
+        $kpiData = $kpis->groupBy('category')->map(function ($group) {
+            return $group->pluck('peratus_pencapaian'); // This will give you the percentage of achievement
+        });
     
         // Calculate KPI progress per institution
         $institutionNames = [];
@@ -55,7 +59,6 @@ class StateAdminController extends Controller
     
         foreach ($institutions as $institution) {
             $institutionNames[] = $institution->name;
-    
             // Get KPIs related to this institution
             $kpisGroup = $kpis->where('institution_id', $institution->id);
     
@@ -78,28 +81,39 @@ class StateAdminController extends Controller
             $operationalEfficiency[] = $operationalKpis->count() > 0 ? round($operationalKpis->avg('peratus_pencapaian'), 2) : 0;
             $customerSatisfaction[] = $customerKpis->count() > 0 ? round($customerKpis->avg('peratus_pencapaian'), 2) : 0;
         }
-    
 
-        return view('stateAdmin.dashboard.index', compact('totalKpis','chartData','kpis','username','kpiCategories' ,'achievedKpis', 'pendingKpis', 'averageAchievement', 'institutionNames', 'kpiAchievements', 'financialPerformance', 'operationalEfficiency', 'customerSatisfaction'));
+        // return view('stateAdmin.dashboard.index', compact('totalKpis','chartData','kpis','username','kpiCategories' ,'achievedKpis', 'pendingKpis', 'averageAchievement', 'institutionNames', 'kpiAchievements', 'financialPerformance', 'operationalEfficiency', 'customerSatisfaction'));
+        return view('stateAdmin.dashboard.index', [
+            'institutions' => $institutions,
+            'chartData' => $chartData,
+            'kpiData' => $kpiData,
+            'totalKpis' => $totalKpis,
+            'averageAchievement' => $averageAchievement,
+            'kpis' => $kpis,
+            'username' => $username,
+            'kpiCategories' => $kpiCategories,
+            'institutionNames' => $institutionNames,
+            'kpiAchievements' => $kpiAchievements,
+            'financialPerformance' => $financialPerformance,
+            'operationalEfficiency' => $operationalEfficiency,
+            'customerSatisfaction' => $customerSatisfaction,
+            'achievedKpis' => $achievedKpis,
+            'pendingKpis' => $pendingKpis,
+        ]);
     }
     
-
-    
-
-
     public function manageKPI()
     {
         // Get the state ID of the authenticated user
         $stateId = Auth::user()->state_id;
 
         $username = Auth::user();
-
     
         // Fetch institutions related to the state
         $institutions = Institution::where('state_id', $stateId)->get();
 
         // Fetch KPIs associated with the institutions in the user's state
-        $kpis = AddKpi::whereHas('institutions', function ($query) use ($stateId) {
+        $kpis = AddKpi::whereHas('states', function ($query) use ($stateId) {
             $query->where('state_id', $stateId);
         })->get();
     
@@ -203,5 +217,46 @@ class StateAdminController extends Controller
         }
     
         return redirect()->route('admin-state-kpis.index')->with('error', 'KPI assignment not found.');
+    }
+
+    public function chart() 
+    {
+        // Get the authenticated user
+        $user = Auth::user();
+
+        // Get all KPIs assigned to the user
+        $addKpis = $user->addKpis;
+
+        // Calculate the total number of KPIs
+        $totalKpis = $addKpis->count();
+        // Calculate the number of achieved, not started, and in progress KPIs
+        $achievedKpis = $addKpis->where('status', 'Achieved')->count();
+        $notStartedKpis = $addKpis->where('status', 'Not Started')->count();
+        $inProgressKpis = $totalKpis - $achievedKpis - $notStartedKpis;
+
+        // Create chart data
+        $chartData = [
+            'labels' => ['Achieved', 'Not Started', 'In Progress'],
+            'datasets' => [
+                [
+                    'label' => 'KPI Status',
+                    'data' => [$achievedKpis, $notStartedKpis, $inProgressKpis],
+                    'backgroundColor' => [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                    ],
+                    'borderColor' => [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                    ],
+                    'borderWidth' => 1,
+                ],
+            ],
+    ];
+
+    // Return chart data
+    return response()->json($chartData);
     }
 }

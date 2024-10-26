@@ -66,7 +66,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
         $InstitutionAdmin = Role::create(['name' => 'Institution Admin']);
         $InstitutionAdmin->givePermissionTo([
-           ' view institutionAdmin dashboard',
+            'view institutionAdmin dashboard',
             'kpi management institution'
         ]);
 

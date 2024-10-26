@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\State;
 use App\Models\AddKpi;
 use App\Models\Institution;
+use App\Models\Sector;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,10 +15,10 @@ class institutionAdminController extends Controller
 {
     public function index()
     {
+        $username = Auth::user();
         $user = Auth::user(); // Get the authenticated user
         $stateId = $user->state_id; // Get the state ID of the logged-in user
         $institutionId = $user->institution_id; // Get the institution ID of the logged-in user
-        $username = Auth::user();
 
         // Get state details
         $state = State::find($stateId); 
@@ -27,53 +28,42 @@ class institutionAdminController extends Controller
             $query->where('institution_id', $institutionId);
         })->get();
 
-        // Fetch users (end users) in the institution to whom KPIs can be assigned
-        $users = User::where('institution_id', $institutionId)->get(); // Get users of the same institution
-
         // Count KPIs for the institution
-        $totalKPIs = $kpis->count(); // Count of retrieved KPIs
-        $achievedKPIs = $kpis->where('status', 'Achieved')->count(); // Count of achieved KPIs
-        $notStartedKPIs = $kpis->where('status', 'Not Started')->count(); // Count of not started KPIs
+        $totalKPIs = $kpis->count(); 
+        $achievedKPIs = $kpis->where('status', 'Achieved')->count(); 
+        $notStartedKPIs = $kpis->where('status', 'Not Started')->count(); 
+
+        // Calculate completed and pending KPIs
+        $completedKPIs = $achievedKPIs;
+        $pendingKPIs = $totalKPIs - $completedKPIs;
 
         // Custom method to calculate overall performance
         $overallPerformance = $this->calculateOverallPerformance($institutionId);
 
         // User statistics
-        $totalUsers = User::count(); // Total number of users
-        $activeUsers = $user->institution->users()->where('active', true)->count(); // Count of active users
-        $inactiveUsers = $user->institution->users()->where('active', false)->count(); // Count of inactive users
+        $totalUsers = User::count(); 
+        $activeUsers = $user->institution->users()->where('active', true)->count(); 
+        $inactiveUsers = $user->institution->users()->where('active', false)->count(); 
 
-        // Prepare data for Sector-wise KPI Breakdown (Bar Chart)
-        // $sectors = Sector::where('institution_id', $institutionId)->get(); // Assuming you have a 'Sector' model
-        // $sectorKpiData = [];
-        // foreach ($sectors as $sector) {
-        //     $sectorKpis = $sector->kpis()->where('institution_id', $institutionId)->get(); // Assuming a relationship between Sector and KPIs
-        //     $sectorKpiData[] = [
-        //         'sector_name' => $sector->name,
-        //         'achieved' => $sectorKpis->where('status', 'Achieved')->count(),
-        //         'in_progress' => $sectorKpis->where('status', 'In Progress')->count(),
-        //         'not_started' => $sectorKpis->where('status', 'Not Started')->count(),
-        //     ];
-        // }
+        // $this->chart();
 
-        // Return view with all necessary data, including users and chart data
+        // Return view with all necessary data, including chart data
         return view('institutionAdmin.dashboard.index', compact(
+            'username',
             'institutionId', 
             'kpis', 
-            'user', 
-            'state', 
             'totalKPIs', 
+            'completedKPIs', // Pass to view
+            'pendingKPIs',   // Pass to view
             'achievedKPIs', 
             'notStartedKPIs', 
             'overallPerformance', 
             'totalUsers', 
             'activeUsers', 
-            'inactiveUsers', 
-            'username',
-            'users', 
-            // Add sector KPI data to the view
+            'inactiveUsers'
         ));
     }
+
 
     public function assignKpi(Request $request)
 {
@@ -99,14 +89,14 @@ class institutionAdminController extends Controller
     public function manageKPI()
     {
         // Get the state ID of the authenticated user
-        $stateId = Auth::user()->state_id;
+        $stateId = Auth::user()->institution_id;
     
         // Fetch institutions related to the state
         $institutions = Institution::where('state_id', $stateId)->get();
 
        // Fetch KPIs associated with the institutions in the user's state
         $kpis = AddKpi::whereHas('institutions', function ($query) use ($stateId) {
-            $query->where('state_id', $stateId);
+            $query->where('institution_id', $stateId);
         })->get();
        
 
@@ -185,8 +175,6 @@ class institutionAdminController extends Controller
         return view('institutionAdmin.kpi.create', compact('usersGroupedBySector', 'kpis','username'));
     }
     
-
-    
     public function storeUserKpiAssignment(Request $request, $kpiId)
     {
         $request->validate([
@@ -198,5 +186,63 @@ class institutionAdminController extends Controller
         $kpi->users()->sync($request->user_ids); // Sync users with the KPI
 
         return redirect()->route('kpis.index')->with('success', 'KPI assigned to users successfully.');
+    }
+
+    public function destroy($id)
+    {
+        // Find the KPI assignment
+        $user = User::whereHas('kpis', function ($query) use ($id) {
+            $query->where('kpi_id', $id);
+        })->first();
+    
+        if ($user) {
+            // Detach the KPI from the institution
+            $user->kpis()->detach($id);
+            
+            return redirect()->route('institutionAdmin.kpi')->with('success', 'KPI assignment deleted successfully.');
+        }
+    
+        return redirect()->route('institutionAdmin.kpi')->with('error', 'KPI assignment not found.');
+    }
+
+    public function chart() 
+    {
+        // Get the authenticated user
+        $user = Auth::user();
+
+        // Get all KPIs assigned to the user
+        $addKpis = $user->addKpis;
+
+        // Calculate the total number of KPIs
+        $totalKpis = $addKpis->count();
+        // Calculate the number of achieved, not started, and in progress KPIs
+        $achievedKpis = $addKpis->where('status', 'Achieved')->count();
+        $notStartedKpis = $addKpis->where('status', 'Not Started')->count();
+        $inProgressKpis = $totalKpis - $achievedKpis - $notStartedKpis;
+
+        // Create chart data
+        $chartData = [
+            'labels' => ['Achieved', 'Not Started', 'In Progress'],
+            'datasets' => [
+                [
+                    'label' => 'KPI Status',
+                    'data' => [$achievedKpis, $notStartedKpis, $inProgressKpis],
+                    'backgroundColor' => [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                    ],
+                    'borderColor' => [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                    ],
+                    'borderWidth' => 1,
+                ],
+            ],
+    ];
+
+    // Return chart data
+    return response()->json($chartData);
     }
 }

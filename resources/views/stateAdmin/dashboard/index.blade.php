@@ -4,7 +4,6 @@
 
 @section('content')
 
-
 <style>
 /* Gaya Umum */
 .container-fluid {
@@ -123,7 +122,7 @@
     /* Chart Styling */
     #dummyBarChart, #dummyPieChart {
         width: 100% !important;
-        height: 300px !important; /* Maintain fixed height for consistent design */
+        height: 100% !important; /* Maintain fixed height for consistent design */
     }
 
     /* Media Queries for Responsive Design */
@@ -187,9 +186,6 @@
                 <div class="card-body d-flex flex-column" >
 
                     <h5 class="card-title">Total KPIs</h5>
-
-                    <h5 class="card-title">Total KPI Assign</h5>
-
                     <p class="card-text display-4 mt-auto">{{ $totalKpis }}</p>
                 </div>
             </div>
@@ -312,78 +308,23 @@
     </div>
 </div>
 
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-
-window.addEventListener('load', function() {
-    console.log('Window is loaded, initializing charts.');
-
-    // Data passed from the backend
-    var institutionNames = @json($institutionNames);
-    var kpiAchievements = @json($kpiAchievements);
-
-    // Bar Chart for Institution-wise KPI Progress
-    var ctxDummyBar = document.getElementById('dummyBarChart').getContext('2d');
-    console.log('Initializing Dummy Bar Chart');
-    var dummyBarChart = new Chart(ctxDummyBar, {
-        type: 'bar',
-        data: {
-            labels: institutionNames,
-            datasets: [{
-                label: 'KPI Achievement (%)',
-                data: kpiAchievements,
-                backgroundColor: 'rgba(54, 162, 235, 0.7)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 2,
-                borderRadius: 5,
-                hoverBackgroundColor: 'rgba(54, 162, 235, 0.9)'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top',
-                    labels: {
-                        font: {
-                            size: 14
-                        }
-                    }
-                },
-                tooltip: {
-                    enabled: true,
-                    backgroundColor: '#f8f9fa',
-                    titleColor: '#333',
-                    bodyColor: '#333',
-                    borderColor: '#ccc',
-                    borderWidth: 1
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(200, 200, 200, 0.2)'
-                    },
-                    title: {
-
     window.addEventListener('load', function() {
-        // Data passed from the backend
-        var institutionNames = @json($institutionNames); // Institution names
-        var kpiAchievements = @json($kpiAchievements);  // Average KPI achievements
+        //data from controller
+        var institutionNames = @json($institutionNames);
+        var kpiAchievements = @json($kpiAchievements);
+        var kpiData = @json($kpiData); 
 
-        // Bar Chart for Institution-wise KPI Progress
+        //bar chart
         var ctxDummyBar = document.getElementById('dummyBarChart').getContext('2d');
         var dummyBarChart = new Chart(ctxDummyBar, {
             type: 'bar',
             data: {
                 labels: institutionNames,
                 datasets: [{
-                    label: 'Average KPI Achievement (%)',
+                    label: 'KPI Achievement (%)',
                     data: kpiAchievements,
                     backgroundColor: 'rgba(54, 162, 235, 0.7)',
                     borderColor: 'rgba(54, 162, 235, 1)',
@@ -397,17 +338,10 @@ window.addEventListener('load', function() {
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-
                         display: true,
                         position: 'top',
-                        labels: {
-                            font: {
-                                size: 14
-                            }
-                        }
                     },
                     tooltip: {
-                        enabled: true,
                         backgroundColor: '#f8f9fa',
                         titleColor: '#333',
                         bodyColor: '#333',
@@ -415,208 +349,44 @@ window.addEventListener('load', function() {
                         borderWidth: 1
                     }
                 },
-                x: {
-                    grid: {
-                        display: false
-
                 scales: {
                     y: {
                         beginAtZero: true,
-                        max: 100,  // Ensure the Y-axis goes from 0% to 100%
-                        grid: {
-                            color: 'rgba(200, 200, 200, 0.2)'
-                        },
-                        title: {
-                            display: true,
-                            text: 'Achievement (%)',
-                            font: {
-                                size: 14
-                            }
-                        }
-
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        },
-                        title: {
-                            display: true,
-                            text: 'Institutions',
-                            font: {
-                                size: 14
-                            }
-                        }
+                        max: 100, 
                     }
                 }
             }
         });
 
+        var ctxPie = document.getElementById('dummyPieChart').getContext('2d');
+        var defaultCategory = Object.keys(kpiData)[0]; // Pick the first available category
 
-    // KPI Data for Pie Chart
-    var financialPerformance = @json($financialPerformance);
-    var operationalEfficiency = @json($operationalEfficiency);
-    var customerSatisfaction = @json($customerSatisfaction);
-
-        // KPI Data for Pie Chart
-        var financialPerformance = @json($financialPerformance);
-        var operationalEfficiency = @json($operationalEfficiency);
-        var customerSatisfaction = @json($customerSatisfaction);
-
-
-        // Initial data setup for KPI Categories
-        var kpiData = {
-            financialPerformance: financialPerformance,
-            operationalEfficiency: operationalEfficiency,
-            customerSatisfaction: customerSatisfaction
-        };
-
-
-    var kpiFilterDropdown = document.getElementById('kpiFilter');
-    var ctx = document.getElementById('dummyPieChart').getContext('2d');
-
-    function updateChart(selectedKPI) {
-        dummyPieChart.data.datasets[0].data = kpiData[selectedKPI];
-        dummyPieChart.update();
-    }
-
-    // Initialize the pie chart
-    var dummyPieChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: institutionNames,
-            datasets: [{
-                label: 'KPI Achievement (%)',
-                data: kpiData[kpiFilterDropdown.value],
-                backgroundColor: 'rgba(54, 162, 235, 0.7)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 2,
-                borderRadius: 5,
-                hoverBackgroundColor: 'rgba(54, 162, 235, 0.9)'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: true,
-                    position: 'top',
-                    labels: {
-                        font: {
-                            size: 14
-                        }
-                    }
-                },
-                tooltip: {
-                    enabled: true,
-                    backgroundColor: '#f8f9fa',
-                    titleColor: '#333',
-                    bodyColor: '#333',
-                    borderColor: '#ccc',
-                    borderWidth: 1
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(200, 200, 200, 0.2)'
-                    },
-                    title: {
-
-        // Get filter dropdown and chart context
-        var kpiFilterDropdown = document.getElementById('kpiFilter');
-        var ctx = document.getElementById('dummyPieChart').getContext('2d');
-
-        // Initialize the Bar Chart for filtered KPI data
-        var dummyPieChart = new Chart(ctx, {
-            type: 'bar',  // If you want a pie chart, change this to 'pie'
+        var dummyPieChart = new Chart(ctxPie, {
+            type: 'pie',
             data: {
-                labels: institutionNames,
+                labels: institutionNames, // Assuming the same institution names are used for each category
                 datasets: [{
                     label: 'KPI Achievement (%)',
-                    data: kpiData[kpiFilterDropdown.value],
-                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 2,
-                    borderRadius: 5,
-                    hoverBackgroundColor: 'rgba(54, 162, 235, 0.9)'
+                    data: kpiData[defaultCategory] || [], // Use default category if available
+                    backgroundColor: ['rgba(54, 162, 235, 0.7)', 'rgba(75, 192, 192, 0.7)', 'rgba(153, 102, 255, 0.7)'],
+                    borderColor: ['rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'],
+                    borderWidth: 1
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-
-                        display: true,
-                        position: 'top',
-                        labels: {
-                            font: {
-                                size: 14
-                            }
-                        }
-                    },
-                    tooltip: {
-                        enabled: true,
-                        backgroundColor: '#f8f9fa',
-                        titleColor: '#333',
-                        bodyColor: '#333',
-                        borderColor: '#ccc',
-                        borderWidth: 1
-                    }
-                },
-
-                x: {
-                    grid: {
-                        display: false
-
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            color: 'rgba(200, 200, 200, 0.2)'
-                        },
-                        title: {
-                            display: true,
-                            text: 'Achievement (%)',
-                            font: {
-                                size: 14
-                            }
-                        }
-
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        },
-                        title: {
-                            display: true,
-                            text: 'Institutions',
-                            font: {
-                                size: 14
-                            }
-                        }
-                    }
-                }
+                maintainAspectRatio: false
             }
         });
 
-
-    // Event listener to update the pie chart
-    kpiFilterDropdown.addEventListener('change', function() {
-        updateChart(this.value);
-
-        // Event listener to update the chart when the filter changes
-        kpiFilterDropdown.addEventListener('change', function() {
-            var selectedKPI = this.value;
-            dummyPieChart.data.datasets[0].data = kpiData[selectedKPI];
+        // Update the Pie chart when the filter is changed
+        document.getElementById('kpiFilter').addEventListener('change', function() {
+            var selectedCategory = this.value;
+            dummyPieChart.data.datasets[0].data = kpiData[selectedCategory] || [];
             dummyPieChart.update();
         });
-
     });
 </script>
-
 @endsection
 
 
