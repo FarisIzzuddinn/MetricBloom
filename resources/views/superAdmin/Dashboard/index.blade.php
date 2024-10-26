@@ -167,15 +167,16 @@
     <div class="row g-4 mt-2">
         <!-- Institution KPI Distribution Chart -->
         <div class="col-lg-6">
-            <div class="card shadow-sm h-100 d-flex">
+            <div class="card shadow-sm d-flex" style="height: 500px;">
                 <div class="card-header bg-success text-white">
                     <i class="bi bi-pie-chart-fill me-2"></i>Total institution for each state
                 </div>
                 <div class="card-body">
-                    <canvas id="institutionsPieChart"></canvas>
+                    <canvas id="institutionsPieChart" style="height: 400px;"></canvas> <!-- Adjust height as needed -->
                 </div>
             </div>
         </div>
+
 
         <!-- Top Performing Institutions Chart -->
         <div class="col-lg-6">
@@ -241,13 +242,26 @@
 
 
     // Institutions KPI Pie Chart
+    const allStateNames = @json($institutionPerState->pluck('name'));
+    const allInstitutionCounts = @json($institutionPerState->pluck('institutions_count'));
+
+    // Filter out states with a count of 0
+    const filteredData = allStateNames.map((name, index) => {
+        return { name: name, count: allInstitutionCounts[index] };
+    }).filter(item => item.count > 0);
+
+    // Separate filtered data into labels and data arrays
+    const labels = filteredData.map(item => item.name);
+    const data = filteredData.map(item => item.count);
+
     var ctxInstitutionPie = document.getElementById('institutionsPieChart').getContext('2d');
     var institutionsPieChart = new Chart(ctxInstitutionPie, {
-        type: 'pie',
+        type: 'bar',
         data: {
-            labels: @json($institutionPerState->pluck('name')), // State names from the database
+            labels: labels, // Set the labels for the y-axis (state names)
             datasets: [{
-                data: @json($institutionPerState->pluck('institutions_count')), // Institution counts per state from the database
+                label: 'Institution Count', // Set a label for the dataset
+                data: data, // Filtered institution counts
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
@@ -268,24 +282,43 @@
             }]
         },
         options: {
+            indexAxis: 'y',
             responsive: true,
+            maintainAspectRatio: false, // Allows the chart to fit the container
             plugins: {
+                legend: {
+                    display: false // This hides the legend completely
+                },
+                title: {
+                    display: true,               // Show the title
+                    text: 'Total Institutions for Each State', // Title text
+                    font: {
+                        size: 18,               // Font size for the title
+                        weight: 'bold'          // Font weight
+                    },
+                    padding: {
+                        top: 10,
+                        bottom: 20              // Padding around the title
+                    },
+                    align: 'center'             // Title alignment
+                },
                 datalabels: {
-                    color: '#000',  
-                    anchor: 'center',  
+                    color: '#000',
+                    anchor: 'center',
                     align: 'center',
                     formatter: function(value, context) {
-                        return value; 
+                        return value;
                     },
-                    font:{
+                    font: {
                         size: 20,
-                        weight:'bold'
+                        weight: 'bold'
                     }
                 }
             }
         },
-        plugins: [ChartDataLabels]  // Enable the DataLabels plugin for this chart
+        plugins: [ChartDataLabels] // Enable the DataLabels plugin for this chart
     });
+
     
     // Top Performing Institutions Chart
     var ctxTopInstitutions = document.getElementById('topInstitutionsChart').getContext('2d');

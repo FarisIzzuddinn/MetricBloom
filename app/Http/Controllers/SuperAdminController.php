@@ -24,7 +24,7 @@ class SuperAdminController extends Controller
         // Kpi overview
         $totalKpi = AddKpi::count();
         $kpisAchieved = AddKpi::where('peratus_pencapaian', '>=', 100)->count();
-        $kpisOnTrack = AddKpi::where('peratus_pencapaian', '>=', 50)->count();
+        $kpisOnTrack = AddKpi::whereBetween('peratus_pencapaian', [50, 99])->count();
         $kpisUnderperforming = AddKpi::whereBetween('peratus_pencapaian', [0, 49])->count();
 
         // User overview
@@ -71,7 +71,6 @@ class SuperAdminController extends Controller
             'totalInstitution',
             'institutionPerState',
             'topInstitutions'
-            
         ));
     }
 }
