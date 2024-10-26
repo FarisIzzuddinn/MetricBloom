@@ -42,7 +42,7 @@
     color: white; 
     margin: 0; /* Hapus margin default */
     text-align: center; /* Teks tengah */
-    
+    position: relative; /* Posisi relatif untuk tooltip */
 }
 
 .card-text {
@@ -50,7 +50,6 @@
     font-weight: bold;
     text-align: center; /* Teks tengah */
     color: white; 
-
 }
 
 /* Gaya Jadual */
@@ -86,85 +85,135 @@
     background-color: #f8f9fa; /* Sorotan untuk kolum pertama */
 }
 
-    /* Status background colors */
-    .status-kuning {
-        background-color: #ffc107; /* Bootstrap warning color */
-        color: black;
+/* Status background colors */
+.status-kuning {
+    background-color: #ffc107; /* Bootstrap warning color */
+    color: black;
+}
+
+.status-hijau {
+    background-color: #28a745; /* Bootstrap success color */
+    color: white;
+}
+
+.status-merah {
+    background-color: #dc3545; /* Bootstrap danger color */
+    color: white;
+}
+
+/* Breadcrumb styling */
+.breadcrumb {
+    background: transparent;
+    padding: 0;
+    font-size: 1rem;
+}
+
+.breadcrumb a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.breadcrumb a:hover {
+    text-decoration: underline;
+}
+
+/* KPI Statement Styling */
+.kpi-statement {
+    white-space: pre-wrap; /* Allows line wrapping */
+    word-wrap: break-word; /* Allows long words to wrap */
+    max-width: 300px; /* Set appropriate maximum width */
+}
+
+/* Tooltip Styling */
+.info-icon {
+    position: relative;
+    cursor: pointer;
+    color: white;
+}
+
+.info-tooltip {
+    display: none;
+    position: absolute;
+    bottom: 120%; /* Position above the icon with more space */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 6px 12px; /* Increased padding for more background coverage */
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    text-align: center;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    font-weight: bold;
+}
+
+.info-icon:hover .info-tooltip {
+    display: block;
+    min-width: max-content; /* Ensures the background fits around text content */
+}
+
+/* Media Queries for Responsive Design */
+@media (max-width: 768px) {
+    .card-title {
+        font-size: 1.1em;
     }
 
-    .status-hijau {
-        background-color: #28a745; /* Bootstrap success color */
-        color: white;
+    .card-text {
+        font-size: 1.8em;
     }
 
-    .status-merah {
-        background-color: #dc3545; /* Bootstrap danger color */
-        color: white;
+    .head-title h1 {
+        font-size: 1.5em;
     }
 
-    /* Breadcrumb styling */
     .breadcrumb {
-        background: transparent;
-        padding: 0;
-        font-size: 1rem;
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 576px) {
+    .card-title {
+        font-size: 1em;
     }
 
-    .breadcrumb a {
-        color: #007bff;
-        text-decoration: none;
+    .card-text {
+        font-size: 1.6em;
     }
 
-    .breadcrumb a:hover {
-        text-decoration: underline;
+    .head-title h1 {
+        font-size: 1.3em;
     }
 
-    /* KPI Statement Styling */
-    .kpi-statement {
-        white-space: pre-wrap; /* Allows line wrapping */
-        word-wrap: break-word; /* Allows long words to wrap */
-        max-width: 300px; /* Set appropriate maximum width */
+    .container-fluid {
+        padding: 0 10px;
     }
 
-    /* Media Queries for Responsive Design */
-    @media (max-width: 768px) {
-        .card-title {
-            font-size: 1.1em;
-        }
-
-        .card-text {
-            font-size: 1.8em;
-        }
-
-        .head-title h1 {
-            font-size: 1.5em;
-        }
-
-        .breadcrumb {
-            font-size: 0.9em;
-        }
+    .breadcrumb {
+        font-size: 0.85em;
     }
+}
 
-    @media (max-width: 576px) {
-        .card-title {
-            font-size: 1em;
-        }
+    .bg-yellow {
+    background-color: #ffc107 !important; /* Kuning */
+    color: black; /* Teks hitam untuk kontras */
+}
 
-        .card-text {
-            font-size: 1.6em;
-        }
+.bg-green {
+    background-color: green !important; /* Hijau */
+    color: white; /* Teks putih untuk kontras */
+}
 
-        .head-title h1 {
-            font-size: 1.3em;
-        }
+.bg-grey {
+    background-color: #95a5a6 !important; /* Merah */
+    color: white; /* Teks putih untuk kontras */
+}
 
-        .container-fluid {
-            padding: 0 10px;
-        }
-
-        .breadcrumb {
-            font-size: 0.85em;
-        }
-    }
+.bg-biru {
+    background-color:  #007bff !important; /* Biru */
+    color: white; /* Teks putih untuk kontras */
+}
 </style>
 
 <div class="container-fluid">
@@ -179,42 +228,74 @@
         </div>
     </div>
 
+    <div class="container-fluid">
+    <div class="head-title">
+        <div class="left">
+            <h1>Dashboard</h1>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="{{route('stateAdmin.dashboard')}}">Dashboard</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
     <!-- KPI Overview Cards with equal height -->
     <div class="row mb-4 g-3 d-flex align-items-stretch"> <!-- Added g-3 for better spacing between columns -->
         <div class="col-sm-6 col-md-3">
-            <div class="card h-100">
-                <div class="card-body d-flex flex-column" >
-
-                    <h5 class="card-title">Total KPIs</h5>
+            <div class="card h-100 bg-green"> 
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">TOTAL KPIS
+                        <span class="info-icon">
+                            <i class="bx bx-info-circle"></i> <!-- Ikon info -->
+                            <span class="info-tooltip">This is the latest kpi number.</span>
+                        </span>
+                    </h5>
                     <p class="card-text display-4 mt-auto">{{ $totalKpis }}</p>
                 </div>
             </div>
         </div>
         <div class="col-sm-6 col-md-3">
-            <div class="card h-100">
+            <div class="card h-100 bg-biru"> 
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">Achieved KPI</h5>
+                    <h5 class="card-title">ACHIEVED KPI
+                        <span class="info-icon">
+                            <i class="bx bx-info-circle"></i> <!-- Ikon info -->
+                            <span class="info-tooltip">This is the number of KPIs that have been achieved</span>
+                        </span>
+                    </h5>
                     <p class="card-text display-4 mt-auto">{{ $achievedKpis }}</p>
                 </div>
             </div>
         </div>
         <div class="col-sm-6 col-md-3">
-            <div class="card h-100">
+            <div class="card h-100 bg-yellow"> <!-- Warna merah -->
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">Pending KPI</h5>
+                    <h5 class="card-title">PENDING KPI
+                        <span class="info-icon">
+                            <i class="bx bx-info-circle"></i> <!-- Ikon info -->
+                            <span class="info-tooltip">This is the number of KPIs that have not yet been achieved.</span>
+                        </span>
+                    </h5>
                     <p class="card-text display-4 mt-auto">{{ $pendingKpis }}</p>
                 </div>
             </div>
         </div>
         <div class="col-sm-6 col-md-3">
-            <div class="card h-100">
+            <div class="card h-100 bg-grey"> <!-- Warna biru -->
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">Average Achievement</h5>
+                    <h5 class="card-title">AVERAGE
+                        <span class="info-icon">
+                            <i class="bx bx-info-circle"></i> <!-- Ikon info -->
+                            <span class="info-tooltip">This is the average KPI achievement.</span>
+                        </span>
+                    </h5>
                     <p class="card-text display-4 mt-auto">{{ $averageAchievement }}%</p>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
     <!-- KPI List with Details -->
     <h4 class="mb-4">Detailed KPI Overview for State</h4>

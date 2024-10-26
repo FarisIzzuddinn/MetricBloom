@@ -7,129 +7,159 @@
 
 <style>
     /* Container for charts */
-.chart-container {
-    position: relative;
-    width: 100%;
-    height: 100%;
-}
+    .chart-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
 
-/* Canvas settings */
-canvas {
-    width: 100% !important;
-    height: 300px !important; /* Adjust height as needed */
-    object-fit: contain; /* Maintain aspect ratio */
-}
+    /* Canvas settings */
+    canvas {
+        width: 100% !important;
+        height: 300px !important; /* Adjust height as needed */
+        object-fit: contain; /* Maintain aspect ratio */
+    }
 
-/* Table styles */
-.table {
-    border-collapse: collapse; /* Collapse borders for consistency */
-    width: 100%; /* Full width for better layout */
-    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 12px;
-    overflow: hidden;
-}
+    /* Table styles */
+    .table {
+        border-collapse: collapse; /* Collapse borders for consistency */
+        width: 100%; /* Full width for better layout */
+        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        overflow: hidden;
+    }
 
-.table thead th {
-    background-color: #f8f9fa; /* Light grey for header */
-    color: #495057; /* Dark grey for text */
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    padding: 12px 16px;
-    border-bottom: 2px solid #dee2e6; /* Thicker border for header */
-}
+    .table thead th {
+        background-color: #f8f9fa; /* Light grey for header */
+        color: #495057; /* Dark grey for text */
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        padding: 12px 16px;
+        border-bottom: 2px solid #dee2e6; /* Thicker border for header */
+    }
 
-.table tbody tr {
-    border-bottom: 1px solid #dee2e6; /* Light grey border */
-}
+    .table tbody tr {
+        border-bottom: 1px solid #dee2e6; /* Light grey border */
+    }
 
-.table tbody tr:hover {
-    background-color: #f1f3f5; /* Hover effect */
-}
+    .table tbody tr:hover {
+        background-color: #f1f3f5; /* Hover effect */
+    }
 
-.table tbody td {
-    padding: 12px 16px;
-    vertical-align: middle;
-    border: 1px solid #dee2e6; /* Added border for table cells */
-}
+    .table tbody td {
+        padding: 12px 16px;
+        vertical-align: middle;
+        border: 1px solid #dee2e6; /* Added border for table cells */
+    }
 
-.table tbody td:first-child {
-    font-weight: bold;
-    background-color: #f8f9fa; /* Highlight for first column */
-}
+    .table tbody td:first-child {
+        font-weight: bold;
+        background-color: #f8f9fa; /* Highlight for first column */
+    }
 
-/* Card styles */
-.card {
-    transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition for hover effects */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Add shadow */
-}
+    /* Card styles */
+    .card {
+        transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition for hover effects */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Add shadow */
+    }
 
-.card:hover {
-    transform: translateY(-5px); /* Slight lift effect */
-    background-color: rgba(255, 255, 255, 0.8); /* Lighten background on hover */
-}
+    .card:hover {
+        transform: translateY(-5px); /* Slight lift effect */
+        background-color: rgba(255, 255, 255, 0.8); /* Lighten background on hover */
+    }
 
-.card-header {
-    font-weight: bold; /* Bold header */
-    text-transform: uppercase; /* Uppercase header */
-    text-align: center; /* Centered text */
-}
+    .card-header {
+        font-weight: bold; /* Bold header */
+        text-transform: uppercase; /* Uppercase header */
+        text-align: center; /* Centered text */
+    }
 
-.card-title {
-    font-size: 1.5rem; /* Larger title font size */
-    margin: 0; /* Remove default margin */
-    text-align: center; /* Centered text */
-}
+    .card-title {
+        font-size: 1.5rem; /* Larger title font size */
+        margin: 0; /* Remove default margin */
+        text-align: center; /* Centered text */
+    }
 
-/* Button styles */
-.btn {
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    transition: background-color 0.3s ease; /* Smooth transition */
-}
+    /* Tooltip styles */
+    .info-icon {
+        position: relative;
+        cursor: pointer;
+        color: white;
+    }
 
-.btn-success {
-    background-color: #38c172; /* Custom green */
-    border-color: #38c172;
-}
+    .info-tooltip {
+        display: none;
+        position: absolute;
+        bottom: 120%; /* Position above the icon with more space */
+        left: 50%;
+        transform: translateX(-65%);
+        background-color: #333;
+        color: #fff;
+        padding: 6px 12px; /* Increased padding for more background coverage */
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        text-align: center;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        font-weight: bold;
+    }
 
-.btn-success:hover {
-    background-color: #32a852; /* Darker green on hover */
-}
+    .info-icon:hover .info-tooltip {
+        display: block;
+        min-width: max-content; /* Ensures the background fits around text content */
+    }
 
-.btn-danger {
-    background-color: #e3342f; /* Custom red */
-    border-color: #e3342f;
-}
+    /* Button styles */
+    .btn {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        transition: background-color 0.3s ease; /* Smooth transition */
+    }
 
-.btn-danger:hover {
-    background-color: #c62828; /* Darker red on hover */
-}
+    .btn-success {
+        background-color: #38c172; /* Custom green */
+        border-color: #38c172;
+    }
 
-/* Modal styles */
-.modal-content {
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+    .btn-success:hover {
+        background-color: #32a852; /* Darker green on hover */
+    }
 
-.modal-header {
-    border-bottom: 1px solid #dee2e6;
-    background-color: #f8f9fa;
-}
+    .btn-danger {
+        background-color: #e3342f; /* Custom red */
+        border-color: #e3342f;
+    }
 
-.modal-title {
-    font-weight: bold;
-    color: #495057;
-}
+    .btn-danger:hover {
+        background-color: #c62828; /* Darker red on hover */
+    }
 
-.modal-footer {
-    border-top: 1px solid #dee2e6;
-}
+    /* Modal styles */
+    .modal-content {
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
 
-.btn-close {
-    background: none;
-    border: none;
-}
+    .modal-header {
+        border-bottom: 1px solid #dee2e6;
+        background-color: #f8f9fa;
+    }
+
+    .modal-title {
+        font-weight: bold;
+        color: #495057;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #dee2e6;
+    }
+
+    .btn-close {
+        background: none;
+        border: none;
+    }
 
 </style>
 
@@ -166,38 +196,63 @@ canvas {
 
 <div class="row">
     <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card" style="background-color: #0f3e0f; color: white;">
-            <div class="card-header text-center">Total KPIs</div>
+        <div class="card" style="background-color: green; color: white;"> 
+            <div class="card-header text-center">
+                Total KPIs
+                <span class="info-icon">
+                    <i class="bx bx-info-circle"></i> <!-- Ikon info -->
+                    <span class="info-tooltip">This is the latest kpi number</span>
+                </span>
+            </div>
             <div class="card-body text-center">
                 <h5 class="card-title">{{ $totalKpis }}</h5>
             </div>
         </div>
     </div>
     <div class="col-lg-3 col-md-6 mt-1">
-    <div class="card" style="background-color: #0f3e0f; color: white;">
-    <div class="card-header text-center">Achieved</div>
+        <div class="card" style="background-color: #007bff; color: white;"> 
+            <div class="card-header text-center">
+                Achieved
+                <span class="info-icon">
+                    <i class="bx bx-info-circle"></i> <!-- Ikon info -->
+                    <span class="info-tooltip">This is the number of KPIs that have been achieved</span>
+                </span>
+            </div>
             <div class="card-body text-center">
                 <h5 class="card-title">{{ $achievedKpis }}</h5>
             </div>
         </div>
     </div> 
     <div class="col-lg-3 col-md-6 mt-1">
-    <div class="card" style="background-color: #0f3e0f; color: white;">
-    <div class="card-header text-center">Pending</div>
+        <div class="card" style="background-color: #ffc107; color: white;"> 
+            <div class="card-header text-center">
+                Pending
+                <span class="info-icon">
+                    <i class="bx bx-info-circle"></i> <!-- Ikon info -->
+                    <span class="info-tooltip">This is the number of KPIs that have not yet been achieved.</span>
+                </span>
+            </div>
             <div class="card-body text-center">
                 <h5 class="card-title">{{ $pendingKpis }}</h5>
             </div>
         </div>
     </div>
     <div class="col-lg-3 col-md-6 mt-1">
-    <div class="card" style="background-color: #0f3e0f; color: white;">
-    <div class="card-header text-center">Average Achievement</div>
+        <div class="card" style="background-color: #95a5a6; color: white;"> 
+            <div class="card-header text-center">
+                Average Achievement
+                <span class="info-icon">
+                    <i class="bx bx-info-circle"></i> <!-- Ikon info -->
+                    <span class="info-tooltip">This is the average KPI achievement.</span>
+                </span>
+            </div>
             <div class="card-body text-center">
                 <h5 class="card-title">{{ $averageAchievement }}%</h5>
             </div>
         </div>
     </div>
 </div>
+
 
 
 
