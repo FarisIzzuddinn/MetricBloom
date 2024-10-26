@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Log;
@@ -22,8 +21,6 @@ class UserController extends Controller
         $states = State::All();
         $institutions = Institution::all();
         $sectors = Sector::all();
-
-      
        
         $users = User::query()
             ->when($search, function ($query, $search) {
@@ -37,7 +34,6 @@ class UserController extends Controller
             })
             ->get();
             
-
         $roles = Role::all()->pluck('name'); // Dapatkan senarai peranan untuk dropdown
 
         return view('superAdmin.user.index', [
@@ -47,10 +43,6 @@ class UserController extends Controller
             'states' => $states,
             'institutions' => $institutions,
             'sectors' => $sectors
-
-
-         
-            // Pass states to the view
         ]);
     }
 
@@ -58,8 +50,14 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::pluck('name', 'name')->all();
+        $states = State::All();
+        $institutions = Institution::all();
+        $sectors = Sector::all();
         return view('superAdmin.user.create', [
-            'roles' => $roles
+            'roles' => $roles,
+            'states' => $states, 
+            'institutions' => $institutions,
+            'sectors' => $sectors
         ]);
     }
 
@@ -110,42 +108,42 @@ class UserController extends Controller
 
     // Mengemaskini maklumat pengguna
     public function update(Request $request, $id)
-{
-    // Validate the request, including the institution_id
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'password' => 'nullable|string|min:8|max:20',
-        'roles' => 'required|array', // Validate roles as an array
-        'state_id' => 'nullable|exists:states,id', // State ID validation
-        'institutions_id' => 'nullable|exists:institutions,id', // Institution ID validation
-        'sector_id' => 'nullable|exists:sectors,id', // Ensure this references the correct table
-    ]);
+    {
+        // Validate the request, including the institution_id
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'password' => 'nullable|string|min:8|max:20',
+            'roles' => 'nullable|array',
+            'state_id' => 'nullable|exists:states,id', 
+            'institutions_id' => 'nullable|exists:institutions,id', 
+            'sector_id' => 'nullable|exists:sectors,id', 
+        ]);
 
-    // Find the user by ID
-    $user = User::findOrFail($id); // Using findOrFail to handle not found user
+        // Find the user by ID
+        $user = User::findOrFail($id); 
 
-    // Update the user's data
-    $user->name = $request->name;
+        // Update the user's data
+        $user->name = $request->name;
 
-    // If a new password is entered, hash and update it
-    if ($request->filled('password')) {
-        $user->password = Hash::make($request->password);
+        // If a new password is entered, hash and update it
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        // Update state, institution, and sector IDs
+        $user->state_id = $request->state_id; 
+        $user->institution_id = $request->institutions_id; 
+        $user->sector_id = $request->sector_id; 
+
+        // Sync roles
+        $user->syncRoles($request->roles); 
+
+        // Save the changes
+        $user->save();
+
+        // Redirect with a success message
+        return redirect('users')->with('status', 'User updated successfully');
     }
-
-    // Update state, institution, and sector IDs
-    $user->state_id = $request->state_id; // Update state ID
-    $user->institution_id = $request->institutions_id; // Ensure institution_id is saved correctly
-    $user->sector_id = $request->sector_id; // Update sector ID
-
-    // Sync roles
-    $user->syncRoles($request->roles); // Syncing roles using a provided array
-
-    // Save the changes
-    $user->save();
-
-    // Redirect with a success message
-    return redirect('users')->with('status', 'User updated successfully');
-}
 
 
     public function renumberItems()
