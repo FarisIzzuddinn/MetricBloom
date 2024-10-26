@@ -10,6 +10,12 @@
     padding: 15px;
 }
 
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 300px; /* Set a fixed height */
+}
+
 /* Kad (Card) */
 .card {
     border-radius: 5px; /* Sudut bulat yang halus untuk penampilan profesional */
@@ -117,12 +123,6 @@
         white-space: pre-wrap; /* Allows line wrapping */
         word-wrap: break-word; /* Allows long words to wrap */
         max-width: 300px; /* Set appropriate maximum width */
-    }
-
-    /* Chart Styling */
-    #dummyBarChart, #dummyPieChart {
-        width: 100% !important;
-        height: 100% !important; /* Maintain fixed height for consistent design */
     }
 
     /* Media Queries for Responsive Design */
@@ -367,7 +367,7 @@
                 labels: institutionNames, // Assuming the same institution names are used for each category
                 datasets: [{
                     label: 'KPI Achievement (%)',
-                    data: kpiData[defaultCategory] || [], // Use default category if available
+                    data: kpiData[defaultCategory] || [], 
                     backgroundColor: ['rgba(54, 162, 235, 0.7)', 'rgba(75, 192, 192, 0.7)', 'rgba(153, 102, 255, 0.7)'],
                     borderColor: ['rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'],
                     borderWidth: 1

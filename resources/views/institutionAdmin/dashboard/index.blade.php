@@ -108,7 +108,7 @@
         <div class="card h-100">
             <div class="card-body d-flex flex-column text-center">
                 <h5 class="card-title text-primary">Active Users</h5>
-                <p class="card-text display-4 mt-auto">{{ $activeUsers }}</p>
+                {{-- <p class="card-text display-4 mt-auto">{{ $activeUsers }}</p> --}}
             </div>
         </div>
     </div>

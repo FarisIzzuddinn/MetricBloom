@@ -3,9 +3,11 @@
 @section('content')
 
 <style>
+
     .card {
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+
 
     .btn {
         transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -15,12 +17,44 @@
         transform: translateY(-3px); /* Angkat butang ke atas */
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Tambah bayangan */
     }
+
+    .dropdown-menu {
+        position: absolute;
+        z-index: 1050; /* Higher z-index to appear on top */
+        top: 100%; /* Align below the button */
+        right: 0; /* Align to the right */
+        margin-top: 0.5rem;
+        min-width: 150px;
+        background-color: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        border-radius: 0.375rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.175);
+    }
+
+    /* Ensure the parent container doesn’t clip the dropdown */
+    .d-flex {
+        position: relative;
+        overflow: visible; /* Prevents overflow clipping */
+    }
 </style>
+
 
 <div class="">
     <h4 class="mb-1"style="font-size: 3rem;">Roles List</h4>
     <p class="mb-6" style="text-align: justify;">A role provides access to predefined menus and features based on assigned roles. Administrators can manage user access depending on their assigned roles.</p>
     
+
+<div class="container">
+    <div class="head-title">
+        <div class="left">
+            <h1>Roles Management</h1>
+            <ul class="breadcrumb">
+                <li><a href="#">Roles Management</a></li>
+            </ul>
+        </div>
+    </div>
+
+
     <!-- Role Cards -->
     <div class="row">
         @foreach ($roles as $role)
@@ -28,12 +62,6 @@
                 <div class="card p-3" style="border-radius: 10px;">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h6 class="fw-normal mb-0">Total users: {{ $role->users_count ?? 4 }}</h6>
-                        <div class="d-flex">
-                            <img src="https://randomuser.me/api/portraits/men/32.jpg" class="rounded-circle" alt="user1" width="30" height="30" style="margin-right: -10px;">
-                            <img src="https://randomuser.me/api/portraits/women/32.jpg" class="rounded-circle" alt="user2" width="30" height="30" style="margin-right: -10px;">
-                            <img src="https://randomuser.me/api/portraits/men/33.jpg" class="rounded-circle" alt="user3" width="30" height="30" style="margin-right: -10px;">
-                            <img src="https://randomuser.me/api/portraits/women/33.jpg" class="rounded-circle" alt="user4" width="30" height="30">
-                        </div>
                     </div>
 
                     <h5 class="mb-1" style="text-transform: capitalize;">{{ $role->name }}</h5>
@@ -130,7 +158,6 @@
                 </div>
             </div>
 
-            <!-- Delete Role Modal -->
             <!-- Delete Role Modal -->
 <div class="modal fade" id="deleteModal{{ $role->id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ $role->id }}" aria-hidden="true">
     <div class="modal-dialog">

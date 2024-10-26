@@ -42,8 +42,8 @@ class institutionAdminController extends Controller
 
         // User statistics
         $totalUsers = User::count(); 
-        $activeUsers = $user->institution->users()->where('active', true)->count(); 
-        $inactiveUsers = $user->institution->users()->where('active', false)->count(); 
+        // $activeUsers = $user->institution->users()->where('active', true)->count(); 
+        // $inactiveUsers = $user->institution->users()->where('active', false)->count(); 
 
         // $this->chart();
 
@@ -59,8 +59,7 @@ class institutionAdminController extends Controller
             'notStartedKPIs', 
             'overallPerformance', 
             'totalUsers', 
-            'activeUsers', 
-            'inactiveUsers'
+            
         ));
     }
 
