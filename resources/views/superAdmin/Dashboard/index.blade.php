@@ -154,15 +154,16 @@
 
     <div class="row g-4 mt-2">
         <div class="col-lg-6">
-            <div class="card shadow-sm h-100 d-flex">
+            <div class="card shadow-sm d-flex" style="height: 500px;">
                 <div class="card-header bg-success text-white">
                     <i class="bi bi-pie-chart-fill me-2"></i>Total institution for each state
                 </div>
                 <div class="card-body">
-                    <canvas id="institutionsPieChart"></canvas>
+                    <canvas id="institutionsPieChart" style="height: 400px;"></canvas> <!-- Adjust height as needed -->
                 </div>
             </div>
         </div>
+
 
         <div class="col-lg-6">
             <div class="card shadow-sm h-100 d-flex">
@@ -266,20 +267,6 @@
             responsive: true,
             maintainAspectRatio: false, // Allows the chart to fit the container
             plugins: {
-                legend: {
-                    display: false // This hides the legend completely
-                },
-                title: {
-                    font: {
-                        size: 18,               // Font size for the title
-                        weight: 'bold'          // Font weight
-                    },
-                    padding: {
-                        top: 10,
-                        bottom: 20              // Padding around the title
-                    },
-                    align: 'center'             // Title alignment
-                },
                 datalabels: {
                     color: '#000',
                     anchor: 'center',
@@ -296,7 +283,8 @@
         },
         plugins: [ChartDataLabels] // Enable the DataLabels plugin for this chart
     });
-
+    
+    // Top Performing Institutions Chart
     var ctxTopInstitutions = document.getElementById('topInstitutionsChart').getContext('2d');
     var topInstitutionsChart = new Chart(ctxTopInstitutions, {
         type: 'bar',
