@@ -35,6 +35,7 @@ class SuperAdminController extends Controller
         $institutionAdmin = User::role('Institution Admin')->count();
         $user = User::role('User')->count();
         $recentUser = User::orderBy('created_at', 'desc')->limit(5)->get();
+        
 
         // States overview
         $totalState = State::count();

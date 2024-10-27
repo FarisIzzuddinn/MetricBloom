@@ -61,6 +61,7 @@
     .card {
         transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition for hover effects */
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Add shadow */
+        
     }
 
     .card:hover {
@@ -78,36 +79,6 @@
         font-size: 1.5rem; /* Larger title font size */
         margin: 0; /* Remove default margin */
         text-align: center; /* Centered text */
-    }
-
-    /* Tooltip styles */
-    .info-icon {
-        position: relative;
-        cursor: pointer;
-        color: white;
-    }
-
-    .info-tooltip {
-        display: none;
-        position: absolute;
-        bottom: 120%; /* Position above the icon with more space */
-        left: 50%;
-        transform: translateX(-65%);
-        background-color: #333;
-        color: #fff;
-        padding: 6px 12px; /* Increased padding for more background coverage */
-        border-radius: 4px;
-        font-size: 12px;
-        white-space: nowrap;
-        text-align: center;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-        z-index: 1000;
-        font-weight: bold;
-    }
-
-    .info-icon:hover .info-tooltip {
-        display: block;
-        min-width: max-content; /* Ensures the background fits around text content */
     }
 
     /* Button styles */
@@ -160,10 +131,33 @@
         background: none;
         border: none;
     }
+    /* Tooltip styles */
+    .kpi-card[data-tooltip]:before,
+    .kpi-card[data-tooltip]:after {
+        display: none;
+        position: absolute;
+        white-space: nowrap;
+        background: rgba(0, 0, 0, 0.75);
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        z-index: 10;
+        opacity: 0; 
+        transition: opacity 0.3s ease; 
+    }
+
+    .kpi-card:hover[data-tooltip]:before,
+    .kpi-card:hover[data-tooltip]:after {
+        display: block;
+        content: attr(data-tooltip);
+        top: -38px;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 1;
+    }
 
 </style>
-
-
 
 @php
     $chartConfiguration = App\Models\ChartConfiguration::first();
@@ -188,72 +182,44 @@
             </li>
         </ul>
     </div>
-    {{-- <a href="#" class="btn-download">
-        <i class='bx bxs-cloud-download' ></i>
-        <span class="text">Download PDF</span>
-    </a> --}}
 </div>
-
 <div class="row">
     <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card" style="background-color: green; color: white;"> 
-            <div class="card-header text-center">
-                Total KPIs
-                <span class="info-icon">
-                    <i class="bx bx-info-circle"></i> <!-- Ikon info -->
-                    <span class="info-tooltip">This is the latest kpi number</span>
-                </span>
-            </div>
+        <div class="card kpi-card bg-primary" style=" color: white;" data-tooltip="This is the latest kpi number."> 
             <div class="card-body text-center">
+                <h5 class="card-title">TOTAL KPI</h5>
                 <h5 class="card-title">{{ $totalKpis }}</h5>
             </div>
         </div>
     </div>
+
     <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card" style="background-color: #007bff; color: white;"> 
-            <div class="card-header text-center">
-                Achieved
-                <span class="info-icon">
-                    <i class="bx bx-info-circle"></i> <!-- Ikon info -->
-                    <span class="info-tooltip">This is the number of KPIs that have been achieved</span>
-                </span>
-            </div>
+        <div class="card kpi-card bg-success" style=" color: white;" data-tooltip="This is the number of KPIs that have been achieved."> 
             <div class="card-body text-center">
+                <h5 class="card-title">ACHIEVED</h5>
                 <h5 class="card-title">{{ $achievedKpis }}</h5>
             </div>
         </div>
-    </div> 
+    </div>
+
     <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card" style="background-color: #ffc107; color: white;"> 
-            <div class="card-header text-center">
-                Pending
-                <span class="info-icon">
-                    <i class="bx bx-info-circle"></i> <!-- Ikon info -->
-                    <span class="info-tooltip">This is the number of KPIs that have not yet been achieved.</span>
-                </span>
-            </div>
+        <div class="card kpi-card bg-warning" style=" color: white;" data-tooltip="This is the number of pending KPIs to achieve."> 
             <div class="card-body text-center">
+                <h5 class="card-title">PENDING</h5>
                 <h5 class="card-title">{{ $pendingKpis }}</h5>
             </div>
         </div>
     </div>
+
     <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card" style="background-color: #95a5a6; color: white;"> 
-            <div class="card-header text-center">
-                Average Achievement
-                <span class="info-icon">
-                    <i class="bx bx-info-circle"></i> <!-- Ikon info -->
-                    <span class="info-tooltip">This is the average KPI achievement.</span>
-                </span>
-            </div>
+        <div class="card kpi-card bg-info" style="color: white;" data-tooltip="This is the average cumulative kpi"> 
             <div class="card-body text-center">
+                <h5 class="card-title">AVERAGE</h5>
                 <h5 class="card-title">{{ $averageAchievement }}%</h5>
             </div>
         </div>
     </div>
 </div>
-
-
 
 
 <div class="row">

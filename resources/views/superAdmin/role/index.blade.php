@@ -36,24 +36,30 @@
         position: relative;
         overflow: visible; /* Prevents overflow clipping */
     }
+    .modal-content {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 10px; /* Radius untuk sudut modal */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2), 0 8px 40px rgba(0, 0, 0, 0.1); /* Bayangan lembut */
+}
+
+.modal-content:hover {
+    transform: translateY(-10px); /* Angkat modal sedikit ke atas apabila hover */
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3), 0 16px 40px rgba(0, 0, 0, 0.2); /* Bayangan lebih dalam */
+}
+
 </style>
-
-
-<div class="">
-    <h4 class="mb-1"style="font-size: 3rem;">Roles List</h4>
-    <p class="mb-6" style="text-align: justify;">A role provides access to predefined menus and features based on assigned roles. Administrators can manage user access depending on their assigned roles.</p>
-    
 
 <div class="">
     <div class="head-title">
         <div class="left">
             <h1>Roles Management</h1>
+            <p class="mb-6" style="text-align: justify;">A role provides access to predefined menus and features based on assigned roles. Administrators can manage user access depending on their assigned roles.</p>
+
             <ul class="breadcrumb">
-                <li><a href="#">Roles Management</a></li>
+                <li><a href="#">Role List</a></li>
             </ul>
         </div>
     </div>
-
 
     <!-- Role Cards -->
     <div class="row">
@@ -173,11 +179,19 @@
                 <p>Are you sure you want to delete the role <strong>{{ $role->name }}</strong>?</p>
             </div>
             <div class="modal-footer justify-content-center">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                </svg>
+                </button>
                 <form action="{{ url('roles/'.$role->id) }}" method="POST">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="submit" class="btn btn-danger">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+                    </svg>
+                    </button>
                 </form>
             </div>
         </div>
@@ -214,7 +228,10 @@
             <div class="card text-center">
                 <div class="card-body">
                     <p>Add new role if it doesn't exist.</p>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoleModal">Add New Role</button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoleModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus me-2" viewBox="0 0 16 16">
+        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+    </svg>Add New Role</button>
                 </div>
             </div>
         </div>

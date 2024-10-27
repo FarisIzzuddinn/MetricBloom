@@ -139,12 +139,96 @@
         </div>
     </div>
    
-    {{-- add new user  --}}
-    <a href="{{ url('users/create') }}" class="btn btn-primary ms-0 mb-3">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus me-2" viewBox="0 0 16 16">
-            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-        </svg>Add user
-    </a>
+    <!-- {{-- add new user button --}} -->
+<a href="#" class="btn btn-primary ms-0 mb-3" data-bs-toggle="modal" data-bs-target="#addUserModal">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-plus me-2" viewBox="0 0 16 16">
+        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+    </svg>Add user
+</a>
+
+<!-- {{-- Modal --}} -->
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUserModalLabel">Add New User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <form action="{{ url('users') }}" method="POST">
+                    @csrf
+
+                    <div class="mb-3">
+                        <label for="">Name</label>
+                        <input type="text" name="name" id="editUserName" class="form-control">
+                        @error('name')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="mb-3">
+                        <label for="">Email</label>
+                        <input type="text" name="email" id="editUserEmail"  class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="">Password (leave blank to keep current password):</label>
+                        <input type="text" name="password" class="form-control">
+                        @error('password')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="mb-3">
+                        <label for="">Roles</label>
+                        <select multiple name="roles[]" id="roles" class="form-control" required>
+                            <option value="">Select Role</option>
+                            @foreach($roles as $role)
+                                <option value="{{ $role }}">{{ $role }}</option>
+                            @endforeach
+                        </select>
+                        @error('roles')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="mb-3" id="state-container" style="display: none;">
+                        <label for="state_id">Select State: (Assign as Admin State):</label>
+                        <select name="state_id" id="state_id" class="form-control">
+                            <option value="">Select State</option>
+                            @foreach($states as $state)
+                                <option value="{{ $state->id }}">{{ $state->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mb-3" id="institution-container" style="display: none;">
+                        <label for="institutions_id">Select Institution: (Assign as Institution Admin):</label>
+                        <select name="institutions_id" id="institutions_id" class="form-control">
+                            <option value="">Select Institution</option>
+                            @foreach($institutions as $institution)
+                                <option value="{{ $institution->id }}">{{ $institution->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mb-3" id="sector-container" style="display: none;">
+                        <label for="sector_id">Select Sector:</label>
+                        <select name="sector_id" id="sector_id" class="form-control">
+                            <option value="">Select Sector</option>
+                            @foreach($sectors as $sector)
+                                <option value="{{ $sector->id }}">{{ $sector->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                   
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-success">Save</button> 
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button> 
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
    
     <div class="table-responsive">
         <table id="myTable" class="table table-striped table-hover">
@@ -168,7 +252,11 @@
                     </td>
                     <td>
                         @include("superAdmin.user.edit")
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-user-name="{{ $user->name }}" data-user-id="{{ $user->id }}">Delete</button>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-user-name="{{ $user->name }}" data-user-id="{{ $user->id }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+                    </svg>
+                        </button>
                     </td>
                     </td>
                 </tr>
@@ -193,11 +281,19 @@
                 <p id="deleteMessage">Are you sure you want to delete this user?</p>
             </div>
             <div class="modal-footer justify-content-center">
-                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                </svg>
+                </button>
                 <form id="deleteForm" action="" method="POST" style="display:inline;">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <button type="submit" class="btn btn-danger">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+                    </svg>
+                    </button>
                 </form>
             </div>
         </div>
@@ -289,34 +385,6 @@
                 </div>
             </div>
 
-
-    
-    <!-- Modal for Delete -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header d-flex flex-column align-items-center text-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill text-warning mb-2" viewBox="0 0 16 16">
-                        <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
-                    </svg>
-                    <h5 class="modal-title" id="deleteModalLabel">Delete Confirmation</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center">
-                    <p id="deleteMessage">Are you sure you want to delete this user?</p>
-                </div>
-                <div class="modal-footer">
-                    <form id="deleteForm" action="" method="POST" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background:blue;">CANCEL</button>
-                        <button type="submit" class="btn btn-danger" style="background:red;">DELETE</button>
-                    </form>
-                </div>
-            </div>
-
-        </div>
-    </div>
 
     <div class="pagination-container">
         <div id="myTable_info" class="dataTables_info"></div>

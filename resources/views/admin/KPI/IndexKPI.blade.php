@@ -3,34 +3,131 @@
 
 <link rel="stylesheet" href="{{ asset("css/table.css") }}">
 
-<div class="">
+<style>
+    /* Gaya untuk jadual */
+    .table {
+        margin-bottom: 0; /* Remove margin at the bottom of the table */
+        border-radius: 12px; /* Rounded corners for the table */
+        overflow: hidden; /* Ensure rounded corners work */
+    }
+
+    .table th, .table td {
+        padding: 15px; /* Padding for better spacing */
+        text-align: left; /* Align text to the left */
+    }
+
+    .table th {
+
+        text-transform: uppercase; /* Ubah suai huruf besar */
+        letter-spacing: 0.1em; /* Jarak huruf */
+        padding: 12px 16px; /* Padding untuk header */
+    }
+
+    .table tbody tr {
+        border-bottom: 1px solid #dee2e6; /* Light grey border */
+        transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s; /* Smooth transition for hover */
+    }
+
+    .table tbody tr:hover {
+        background-color: #f1f3f5; /* Light gray background on hover */
+        transform: translateY(-2px); /* Kesan angkat */
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); /* Bayangan lebih ketara pada hover */
+    }
+
+    .table tbody td {
+        padding: 12px 16px; /* Padding untuk sel */
+        vertical-align: middle; /* Pusatkan vertikal */
+        transition: all 0.2s ease; /* Transisi untuk kesan hover */
+    }
+
+    .table tbody td:first-child {
+        font-weight: bold; /* Tebalkan teks pada kolum pertama */
+    }
+
+    h4 {
+        text-align: start;
+        color: #343a40; /* Darker color for heading */
+        margin-bottom: 20px; /* Space below the heading */
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Text shadow */
+    }
+
+    /* Butang Gaya Konsisten */
+    .btn {
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Bayangan butang */
+        transition: all 0.2s ease-in-out; /* Animation for button */
+    }
+
+    .btn:hover {
+        transform: translateY(-2px); /* Kesan angkat pada hover */
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2); /* Bayangan lebih ketara pada hover */
+    }
+
+    /* Modal Reka Bentuk Konsisten */
+    .modal-content {
+        border-radius: 12px; /* Rounded corners for modal */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Bayangan modal */
+        background: linear-gradient(to bottom right, #ffffff, #f8f9fa); /* Gradient background */
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #dee2e6; /* Bottom border */
+        background-color: #f8f9fa; /* Light grey background */
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Bayangan di bawah header modal */
+    }
+
+    .modal-title {
+        font-weight: bold; /* Bold title */
+        color: #495057; /* Dark grey color */
+    }
+
+    .modal-footer {
+        border-top: 1px solid #dee2e6; /* Top border */
+    }
+
+    .btn-close {
+        background: none; /* No background */
+        border: none; /* No border */
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+        .table {
+            width: 100%; /* Table takes full width on smaller screens */
+            overflow-x: auto; /* Allow horizontal scrolling */
+        }
+    }
+</style>
+
+<div class="container-fluid">
     <div class="row">
-        <div class="col-lg-12">
-            <div class="row align-items-center mb-3 mt-3" >
-                <div class="col-auto">
-                    <h5 class="ms-2" style="font-size: 3rem;">KPI TABLE</h5>
-                </div>
-                <div class="col d-flex justify-content-end">
-                    <div class="btn-group">
-                        @include('admin.KPI.add')
-                    </div>
-                </div>
+        <div class="head-title">
+            <div class="left">
+                <h1>KPI Management</h1>
+                <ul class="breadcrumb">
+                    <li>
+                        <a href="#">KPI Management</a>
+                    </li>
+                </ul>
             </div>
+            @include('admin.KPI.add')
         </div>
            
         <div class="table-responsive table-responsive-sm">
             <table class="table mt-3 p-3">
                 <thead>
-                    <tr>
-                        <th class="text-secondary small-text">BIL</th>
-                        <th class="text-secondary small-text">TERAS</th>
-                        <th class="text-secondary small-text">SO</th>                          
-                        <th class="text-secondary small-text">NEGERI</th>                                                                                           
-                        <th class="text-secondary small-text">KPI</th>
-                        <th class="text-secondary small-text">PERNYATAAN KPI</th>
-                        <th class="text-secondary small-text">SASARAN</th>
-                        <th class="text-secondary small-text">JENIS SASARAN</th>
-                        <th></th>
+                    <tr class="table-secondary">
+                        <th class="small-text">BIL</th>
+                        <th class="small-text">TERAS</th>
+                        <th class="small-text">SECTOR OPERATION</th>                          
+                        <th class="small-text">STATE</th>                                                                                           
+                        <th class="small-text">KPI</th>
+                        <th class="small-text">KPI STATEMENT</th>
+                        <th class="small-text">TARGET</th>
+                        <th class="small-text">TARGET TYPE</th>
+                        <th class="small-text">ACTION</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -170,11 +267,11 @@
 
 <script>
     function openEditPopup(addKpi) {
-        document.getElementById('editKpiForm').action = `/admin/addKpi/update/${addKpi.id}`;
+        document.getElementById('editKpiForm').action = /admin/addKpi/update/${addKpi.id};
         document.getElementById('editTeras').value = addKpi.teras.id;
         document.getElementById('editSO').value = addKpi.so.id;
         addKpi.states.forEach(state => {
-            document.getElementById(`edit_state_${state.id}`).checked = true;
+            document.getElementById(edit_state_${state.id}).checked = true;
         });
         // document.getElementById('editPemilik').value = addKpi.user.id;
         document.getElementById('editPernyataanKpi').value = addKpi.pernyataan_kpi;
@@ -186,7 +283,3 @@
 </script>
 
 @endsection
-
-
-
-

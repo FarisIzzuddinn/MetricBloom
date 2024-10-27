@@ -53,11 +53,14 @@ class UserController extends Controller
         $states = State::All();
         $institutions = Institution::all();
         $sectors = Sector::all();
+        $username = Auth::user();
+        
         return view('superAdmin.user.create', [
             'roles' => $roles,
             'states' => $states, 
             'institutions' => $institutions,
-            'sectors' => $sectors
+            'sectors' => $sectors,
+            'username' => $username
         ]);
     }
 
