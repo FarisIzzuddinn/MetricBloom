@@ -178,7 +178,7 @@
                                 @endforeach
                             </td>
                             <td>
-                                <button type="button" class="btn btn-success edit-btn" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-warning edit-btn" data-bs-toggle="modal"
                                     data-bs-target="#editModal" data-permission-id="{{ $permission->id }}"
                                     data-permission-name="{{ $permission->name }}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">

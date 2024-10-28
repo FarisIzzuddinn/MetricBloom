@@ -14,7 +14,10 @@
     </div>
 </div>
 
-<a href="#" class="btn btn-primary mb-3 float-end" id="assignKPIButton" data-bs-toggle="modal" data-bs-target="#assignKpiModal">Assign New KPI</a>
+<a href="#" class="btn btn-primary mb-3 float-end" id="assignKPIButton" data-bs-toggle="modal" data-bs-target="#assignKpiModal">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+    <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+</svg>Assign New KPI</a>
 
 <!-- Display Success or Error Messages -->
 @if ($errors->any())
@@ -69,7 +72,8 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="assignKpiModalLabel">Assign New KPI</h5>
+                <h5 class="modal-title" id="assignKpiModalLabel">
+                    Assign New KPI</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
