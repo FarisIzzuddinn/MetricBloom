@@ -25,7 +25,8 @@ class SoController extends Controller
 
     public function create()
     {
-        return view('admin.SO.create');
+        $username = Auth::User();
+        return view('admin.SO.create',compact('username'));
     }
 
     public function store(Request $request)

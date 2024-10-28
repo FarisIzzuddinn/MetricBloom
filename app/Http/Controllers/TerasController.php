@@ -17,7 +17,8 @@ class TerasController extends Controller
 
     public function create()
     {
-        return view('admin.teras.create');
+        $username = Auth::User();
+        return view('admin.teras.create', compact( 'username'));
     }
 
     public function store(Request $request)

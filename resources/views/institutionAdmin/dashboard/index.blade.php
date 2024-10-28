@@ -15,66 +15,44 @@
         </div>
     </div>
 
-    <!-- KPI Overview Cards with equal height and tooltips -->
+    <!-- KPI Overview Cards with equal height -->
     <div class="row mb-4 g-3 d-flex align-items-stretch">
         <div class="col-lg-3 col-md-6">
-            <div class="card h-100 text-center bg-success text-white">
+            <div class="card h-100 text-center bg-success text-white kpi-card" data-tooltip="This is the latest KPI number">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title text-white">Total KPI 
-                        <span class="info-icon">
-                            ⓘ
-                            <span class="info-tooltip">Jumlah keseluruhan KPI yang dipantau</span>
-                        </span>
-                    </h5>
+                    <h5 class="card-title text-white">Total KPI</h5>
                     <p class="card-text display-4 mt-auto">{{ $totalKPIs }}</p>
                 </div>
             </div>
         </div>
 
         <div class="col-lg-3 col-md-6">
-            <div class="card h-100 text-center bg-primary text-white">
+            <div class="card h-100 text-center bg-primary text-white kpi-card" data-tooltip="Overall Performance so far">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title text-white">Overall Performance 
-                        <span class="info-icon">
-                            ⓘ
-                            <span class="info-tooltip">Peratusan pencapaian prestasi keseluruhan</span>
-                        </span>
-                    </h5>
+                    <h5 class="card-title text-white">Overall Performance</h5>
                     <p class="card-text display-4 mt-auto">{{ $overallPerformance }}%</p>
                 </div>
             </div>
         </div>
 
         <div class="col-lg-3 col-md-6">
-            <div class="card h-100 text-center bg-warning text-white">
+            <div class="card h-100 text-center bg-warning text-white kpi-card" data-tooltip="Active User">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title text-white">Active Users 
-                        <span class="info-icon">
-                            ⓘ
-                            <span class="info-tooltip">Jumlah pengguna aktif semasa</span>
-                        </span>
-                    </h5>
+                    <h5 class="card-title text-white">Active Users</h5>
                     {{-- <p class="card-text display-4 mt-auto">{{ $activeUsers }}</p> --}}
                 </div>
             </div>
         </div>
 
         <div class="col-lg-3 col-md-6">
-            <div class="card h-100 text-center bg-danger text-white">
+            <div class="card h-100 text-center bg-danger text-white kpi-card" data-tooltip="Other information">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title text-white">Any 
-                        <span class="info-icon">
-                            ⓘ
-                            <span class="info-tooltip">Maklumat tambahan lain yang tersedia</span>
-                        </span>
-                    </h5>
+                    <h5 class="card-title text-white">Any</h5>
                     {{-- <p class="card-text display-4 mt-auto">{{ $anyData }}</p> --}}
                 </div>
             </div>
         </div>
     </div>
-
-
 
     <!-- KPI Distribution Pie Chart -->
     <div class="row mb-4 gx-4">
@@ -184,37 +162,6 @@
         color: white;
     }
 
-    /* Tooltip Styling */
-    .info-icon {
-        position: relative;
-        cursor: pointer;
-        color: white;
-        font-size: 1.1em;
-    }
-
-    .info-tooltip {
-        display: none;
-        position: absolute;
-        bottom: 120%;
-        left: 50%;
-        transform: translateX(-70%);
-        background-color: #333;
-        color: #fff;
-        padding: 6px 12px;
-        border-radius: 4px;
-        font-size: 12px;
-        white-space: nowrap;
-        text-align: center;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-        z-index: 1000;
-        font-weight: bold;
-    }
-
-    .info-icon:hover .info-tooltip {
-        display: block;
-        min-width: max-content;
-    }
-
     /* Table Styling */
     table {
         width: 100%;
@@ -237,6 +184,54 @@
         .card-title {
             font-size: 1em;
         }
+    }
+    
+    /* Gaya Tooltip */
+    .kpi-card {
+        transition: transform 0.3s, box-shadow 0.3s;
+        position: relative;
+    }
+
+    .kpi-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .kpi-card[data-tooltip]:before,
+    .kpi-card[data-tooltip]:after {
+        display: none;
+        position: absolute;
+        white-space: nowrap;
+        background: rgba(0, 0, 0, 0.75);
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        z-index: 10;
+        opacity: 0; 
+        transition: opacity 0.3s ease; 
+    }
+
+    .kpi-card:hover[data-tooltip]:before,
+    .kpi-card:hover[data-tooltip]:after {
+        display: block;
+        content: attr(data-tooltip);
+        top: -38px;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 1;
+    }
+
+    /* Gaya Warna Background KPI */
+    .bg-success { background-color: #28a745; }
+    .bg-primary { background-color: #007bff; }
+    .bg-warning { background-color: #ffc107; }
+    .bg-danger { background-color: #dc3545; }
+
+    .font-bold {
+        font-weight: bold;
+        color: white;
+        font-size: 1.5rem;
     }
 </style>
 @endsection

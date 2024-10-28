@@ -49,12 +49,6 @@
 
 </style>
 
-
-<div class="">
-    <h4 class="mb-1"style="font-size: 3rem;">Roles List</h4>
-    <p class="mb-6" style="text-align: justify;">A role provides access to predefined menus and features based on assigned roles. Administrators can manage user access depending on their assigned roles.</p>
-    
-
 <div class="">
     <div class="head-title">
         <div class="left">

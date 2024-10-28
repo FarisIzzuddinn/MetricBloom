@@ -1,4 +1,4 @@
-@extends('layoutNoName')
+@extends('layout')
 @section('title', 'Dashboard')
 @section('content')
 <style>

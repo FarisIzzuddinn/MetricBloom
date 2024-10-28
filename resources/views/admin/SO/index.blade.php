@@ -5,110 +5,105 @@
 <style>
    /* Gaya untuk jadual */
 .table {
-    margin-bottom: 0; /* Remove margin at the bottom of the table */
-    border-radius: 12px; /* Rounded corners for the table */
-    overflow: hidden; /* Ensure rounded corners work */
+    margin-bottom: 0;
+    border-radius: 12px;
+    overflow: hidden;
 }
 
 .table th, .table td {
-    padding: 15px; /* Padding for better spacing */
-    text-align: left; /* Align text to the left */
+    padding: 15px;
+    text-align: left;
 }
 
 .table th {
-
-    text-transform: uppercase; /* Ubah suai huruf besar */
-    letter-spacing: 0.1em; /* Jarak huruf */
-    padding: 12px 16px; /* Padding untuk header */
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 12px 16px;
 }
 
 .table tbody tr {
-    border-bottom: 1px solid #dee2e6; /* Light grey border */
-    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s; /* Smooth transition for hover */
+    border-bottom: 1px solid #dee2e6;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
 }
 
 .table tbody tr:hover {
-    background-color: #f1f3f5; /* Light gray background on hover */
-    transform: translateY(-2px); /* Kesan angkat */
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2); /* Bayangan lebih ketara pada hover */
+    background-color: #f1f3f5;
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .table tbody td {
-    padding: 12px 16px; /* Padding untuk sel */
-    vertical-align: middle; /* Pusatkan vertikal */
-    transition: all 0.2s ease; /* Transisi untuk kesan hover */
+    padding: 12px 16px;
+    vertical-align: middle;
+    transition: all 0.2s ease;
 }
 
 .table tbody td:first-child {
-    font-weight: bold; /* Tebalkan teks pada kolum pertama */
+    font-weight: bold;
 }
 
 h4 {
     text-align: start;
-    color: #343a40; /* Darker color for heading */
-    margin-bottom: 20px; /* Space below the heading */
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Text shadow */
+    color: #343a40;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Butang Gaya Konsisten */
 .btn {
     padding: 8px 16px;
     border-radius: 6px;
     font-size: 0.875rem;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Bayangan butang */
-    transition: all 0.2s ease-in-out; /* Animation for button */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease-in-out;
 }
 
 .btn-success {
-    background-color: #38c172; /* Custom green */
+    background-color: #38c172;
     border-color: #38c172;
 }
 
 .btn-danger {
-    background-color: #e3342f; /* Custom red */
+    background-color: #e3342f;
     border-color: #e3342f;
 }
 
 .btn:hover {
-    transform: translateY(-2px); /* Kesan angkat pada hover */
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2); /* Bayangan lebih ketara pada hover */
+    transform: translateY(-2px);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-/* Modal Reka Bentuk Konsisten */
 .modal-content {
-    border-radius: 12px; /* Rounded corners for modal */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Bayangan modal */
-    background: linear-gradient(to bottom right, #ffffff, #f8f9fa); /* Gradient background */
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(to bottom right, #ffffff, #f8f9fa);
 }
 
 .modal-header {
-    border-bottom: 1px solid #dee2e6; /* Bottom border */
-    background-color: #f8f9fa; /* Light grey background */
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* Bayangan di bawah header modal */
+    border-bottom: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .modal-title {
-    font-weight: bold; /* Bold title */
-    color: #495057; /* Dark grey color */
+    font-weight: bold;
+    color: #495057;
 }
 
 .modal-footer {
-    border-top: 1px solid #dee2e6; /* Top border */
+    border-top: 1px solid #dee2e6;
 }
 
 .btn-close {
-    background: none; /* No background */
-    border: none; /* No border */
+    background: none;
+    border: none;
 }
 
-/* Responsive styles */
 @media (max-width: 768px) {
     .table {
-        width: 100%; /* Table takes full width on smaller screens */
-        overflow-x: auto; /* Allow horizontal scrolling */
+        width: 100%;
+        overflow-x: auto;
     }
 }
-
 </style>
 
 <div class="">
@@ -117,10 +112,8 @@ h4 {
             <div class="container-fluid mt-3">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h4 class="mb-0" style="font-size: 3rem;">Sektor Operation</h4>
-                    <a href="{{ url('so/create') }}" class="btn btn-primary float-end mb-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-                    </svg> Add So</a>
+                    <a href="{{ url('so/create') }}" class="btn btn-primary float-end mb-3" data-bs-toggle="modal" data-bs-target="#addSoModal">Add SO</a>
+
                 </div>
             </div>
             <div class="card-body">
@@ -138,21 +131,81 @@ h4 {
                             <td>{{ $index + 1 }}</td>
                             <td>{{ $so->SO }}</td>
                             <td>
-                                <a href="{{ url('so/'.$so->id.'/edit') }}" class="btn btn-success">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-                                 </svg>
+                                <a href="#" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal{{$so->id}}" onclick="setEditModal('{{ $so->SO }}', '{{ url('so/'.$so->id.'/edit') }}')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                    </svg>
                                 </a>
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{$so->id}}">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
-                                </svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+                                    </svg>
                                 </button>
                             </td>
+                            <!-- Edit Modal -->
+                            <div class="modal fade" id="editModal{{$so->id}}" tabindex="-1" aria-labelledby="editModalLabel{{$so->id}}" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="editModalLabel{{$so->id}}">Edit SO</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form action="{{ url('so/'.$so->id) }}" method="POST">
+                                            @csrf
+                                            @method('PUT')
+                                            <div class="modal-body">
+                                                <div class="mb-3 ">
+                                                    <label for="so" class="form-label">SO</label>
+                                                    <input type="text" class="form-control" id="so{{$so->id}}" name="SO" value="{{ $so->SO }}" required>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer d-flex justify-content-center">
+                                                <button type="button" class="btn btn-primary me-2" data-bs-dismiss="modal">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                                                    </svg>
+                                                </button>
+                                                <button type="submit" class="btn btn-success">Save</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
 
-                            <!-- Delete Confirmation Modal -->
-                            <div class="modal fade" id="deleteModal{{$so->id}}" tabindex="-1" aria-labelledby="deleteModalLabel{{$so->id}}" aria-hidden="true">
+                            <!-- Add SO Modal -->
+                            <div class="modal fade" id="addSoModal" tabindex="-1" aria-labelledby="addSoModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="addSoModalLabel">Add SO</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form action="{{ url('so') }}" method="POST">
+                                            @csrf
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label for="new_so" class="form-label">SO</label>
+                                                    <input type="text" class="form-control" id="new_so" name="SO" required>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer d-flex justify-content-center">
+                                                <button type="button" class="btn btn-primary me-2" data-bs-dismiss="modal">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                                                    </svg>
+                                                </button>
+                                                <button type="submit" class="btn btn-success">Save</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            
+
+                             <!-- Delete Confirmation Modal -->
+                             <div class="modal fade" id="deleteModal{{$so->id}}" tabindex="-1" aria-labelledby="deleteModalLabel{{$so->id}}" aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header d-flex flex-column align-items-center text-center">
@@ -167,7 +220,7 @@ h4 {
                                             <strong style="font-weight: bold; text-transform: uppercase;">{{ $so->SO }}</strong>?
                                         </div>
                                         <div class="modal-footer justify-content-center">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
                                                   <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
                                             </svg>
@@ -191,3 +244,10 @@ h4 {
 </div>
 
 @endsection
+
+<script>
+    function setEditModal(value, url) {
+        const inputField = document.querySelector(`#so${url.split('/').pop()}`);
+        inputField.value = value;
+    }
+</script>
