@@ -5,17 +5,157 @@
 <link rel="stylesheet" href="{{ asset("css/table.css") }}">
 
 <style>
+    /* Container for charts */
     .chart-container {
         position: relative;
         width: 100%;
         height: 100%;
     }
 
+    /* Canvas settings */
     canvas {
         width: 100% !important;
         height: 300px !important; /* Adjust height as needed */
         object-fit: contain; /* Maintain aspect ratio */
     }
+
+    /* Table styles */
+    .table {
+        border-collapse: collapse; /* Collapse borders for consistency */
+        width: 100%; /* Full width for better layout */
+        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .table thead th {
+        background-color: #f8f9fa; /* Light grey for header */
+        color: #495057; /* Dark grey for text */
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        padding: 12px 16px;
+        border-bottom: 2px solid #dee2e6; /* Thicker border for header */
+    }
+
+    .table tbody tr {
+        border-bottom: 1px solid #dee2e6; /* Light grey border */
+    }
+
+    .table tbody tr:hover {
+        background-color: #f1f3f5; /* Hover effect */
+    }
+
+    .table tbody td {
+        padding: 12px 16px;
+        vertical-align: middle;
+        border: 1px solid #dee2e6; /* Added border for table cells */
+    }
+
+    .table tbody td:first-child {
+        font-weight: bold;
+        background-color: #f8f9fa; /* Highlight for first column */
+    }
+
+    /* Card styles */
+    .card {
+        transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition for hover effects */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Add shadow */
+        
+    }
+
+    .card:hover {
+        transform: translateY(-5px); /* Slight lift effect */
+        background-color: rgba(255, 255, 255, 0.8); /* Lighten background on hover */
+    }
+
+    .card-header {
+        font-weight: bold; /* Bold header */
+        text-transform: uppercase; /* Uppercase header */
+        text-align: center; /* Centered text */
+    }
+
+    .card-title {
+        font-size: 1.5rem; /* Larger title font size */
+        margin: 0; /* Remove default margin */
+        text-align: center; /* Centered text */
+    }
+
+    /* Button styles */
+    .btn {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        transition: background-color 0.3s ease; /* Smooth transition */
+    }
+
+    .btn-success {
+        background-color: #38c172; /* Custom green */
+        border-color: #38c172;
+    }
+
+    .btn-success:hover {
+        background-color: #32a852; /* Darker green on hover */
+    }
+
+    .btn-danger {
+        background-color: #e3342f; /* Custom red */
+        border-color: #e3342f;
+    }
+
+    .btn-danger:hover {
+        background-color: #c62828; /* Darker red on hover */
+    }
+
+    /* Modal styles */
+    .modal-content {
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #dee2e6;
+        background-color: #f8f9fa;
+    }
+
+    .modal-title {
+        font-weight: bold;
+        color: #495057;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #dee2e6;
+    }
+
+    .btn-close {
+        background: none;
+        border: none;
+    }
+    /* Tooltip styles */
+    .kpi-card[data-tooltip]:before,
+    .kpi-card[data-tooltip]:after {
+        display: none;
+        position: absolute;
+        white-space: nowrap;
+        background: rgba(0, 0, 0, 0.75);
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        z-index: 10;
+        opacity: 0; 
+        transition: opacity 0.3s ease; 
+    }
+
+    .kpi-card:hover[data-tooltip]:before,
+    .kpi-card:hover[data-tooltip]:after {
+        display: block;
+        content: attr(data-tooltip);
+        top: -38px;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 1;
+    }
+
 </style>
 
 @php
@@ -32,40 +172,55 @@
     @endphp
 @endif
 
+<div class="head-title">
+    <div class="left">
+        <h1>Dashboard </h1>
+        <ul class="breadcrumb">
+            <li>
+                <a href="#">Dashboard</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
 <div class="row">
     <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card bg-primary text-white">
-            <div class="card-header">Total KPIs</div>
-            <div class="card-body">
+        <div class="card kpi-card bg-primary" style=" color: white;" data-tooltip="This is the latest kpi number."> 
+            <div class="card-body text-center">
+                <h5 class="card-title">TOTAL KPI</h5>
                 <h5 class="card-title">{{ $userTotalKpis }}</h5>
             </div>
         </div>
     </div>
+
     <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card bg-success text-white">
-            <div class="card-header">Achieved</div>
-            <div class="card-body">
+        <div class="card kpi-card bg-success" style=" color: white;" data-tooltip="This is the number of KPIs that have been achieved."> 
+            <div class="card-body text-center">
+                <h5 class="card-title">ACHIEVED</h5>
                 <h5 class="card-title">{{ $userAchievedKpis }}</h5>
             </div>
         </div>
-    </div> 
+    </div>
+
     <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card bg-warning text-white">
-            <div class="card-header">Pending</div>
-            <div class="card-body">
+        <div class="card kpi-card bg-warning" style=" color: white;" data-tooltip="This is the number of pending KPIs to achieve."> 
+            <div class="card-body text-center">
+                <h5 class="card-title">PENDING</h5>
                 <h5 class="card-title">{{ $userPendingKpis }}</h5>
             </div>
         </div>
     </div>
+
     <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card bg-info text-white">
-            <div class="card-header">Average Achievement</div>
-            <div class="card-body">
+        <div class="card kpi-card bg-info" style="color: white;" data-tooltip="This is the average cumulative kpi"> 
+            <div class="card-body text-center">
+                <h5 class="card-title">AVERAGE</h5>
                 <h5 class="card-title">{{ $userAverageAchievement }}%</h5>
             </div>
         </div>
     </div>
 </div>
+
 
 <div class="row">
     <div class="col-lg-8 col-md-12 mt-3">
@@ -86,20 +241,7 @@
     </div>
 </div>
 
-{{-- <div class="row">
-    <div class="col-lg-12">
-        <div class="card">
-            <div class="card-header">Recent Activities</div>
-            <div class="card-body">
-                <ul class="list-group">
-                    <li class="list-group-item">KPI "Revenue Growth" was updated by John Doe.</li>
-                    <li class="list-group-item">New KPI "Customer Satisfaction" was created.</li>
-                    <li class="list-group-item">Alert: "Market Share" KPI is lagging behind.</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div> --}}
+
 
 <div class="row mt-3">
     <div class="col-lg-12">
