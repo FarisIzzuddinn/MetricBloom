@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\State;
 use App\Models\AddKpi;
 use Illuminate\Support\Facades\Auth;
-// use App\Models\AdminDashboard;
-
 
 class AdminController extends Controller
 {
@@ -25,16 +24,15 @@ class AdminController extends Controller
                                 ->count();
         $averageAchievement = ($totalKpis > 0) ? round(($achievedKpis / $totalKpis) * 100) : 0;
 
-        
-         // Kira purata peratus pencapaian
-         $totalAchievement = $addKpis->sum('peratus_pencapaian');
-         $totalKpis = $addKpis->count();
+        // Kira purata peratus pencapaian
+        $totalAchievement = $addKpis->sum('peratus_pencapaian');
+        $totalKpis = $addKpis->count();
  
-         if ($totalKpis > 0) {
-             $averageAchievement = $totalAchievement / $totalKpis;
-         } else {
-             $averageAchievement = 0;
-         }
+        if ($totalKpis > 0) {
+            $averageAchievement = number_format($totalAchievement / $totalKpis, 2);
+        } else {
+            $averageAchievement = number_format(0, 2);
+        }
  
          // Tentukan status berdasarkan purata pencapaian
          $status = $averageAchievement >= 50 ? 'Hijau' : 'Merah';
@@ -44,8 +42,28 @@ class AdminController extends Controller
          $data = $kpis->pluck('peratus_pencapaian')->toArray();
     
          $username  = Auth::User();
+
+         $stateData = $this->kpiCompleteRateByState();
          // Hantar data ke view
-         return view('admin.dashboard.index', compact('addKpis', 'averageAchievement', 'pendingKpis', 'totalKpis', 'achievedKpis', 'username', 'status' , 'labels',  'data'));
+         return view('admin.dashboard.index', compact('addKpis', 'stateData', 'averageAchievement', 'pendingKpis', 'totalKpis', 'achievedKpis', 'username', 'status' , 'labels',  'data'));
+    }
+
+    public function kpiCompleteRateByState(){
+        $states = State::withCount(['kpis as total_kpis_assigned', 'kpis as kpis_completed' => function($query) {
+            $query->where('status', 'achieved'); 
+        }])->get();
+        
+        $stateData = $states->map(function ($state) {
+            $completionRate = $state->total_kpis_assigned > 0
+                ? ($state->kpis_completed / $state->total_kpis_assigned) * 100
+                : 0;
+            return [
+                'state' => $state->name,
+                'completionRate' => $completionRate
+            ];
+        });
+
+        return $stateData;
     }
 
     public function addKpi()
@@ -68,7 +86,5 @@ class AdminController extends Controller
             'data' => $data
         ]);
     }
-    
-
 }
  

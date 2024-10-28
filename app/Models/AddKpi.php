@@ -14,13 +14,27 @@ class AddKpi extends Model
         'bil','teras_id', 'so_id',  'kpi', 'pernyataan_kpi',
         'sasaran', 'jenis_sasaran', 'pencapaian', 'peratus_pencapaian', 'status', 'institution_admin_id'
     ];
+    
+    protected static function boot()
+    {
+        parent::boot();
 
+        static::saving(function ($kpi) {
+            if ($kpi->peratus_pencapaian == 100) {
+                $kpi->status = 'completed';
+            } elseif ($kpi->peratus_pencapaian >= 50) {
+                $kpi->status = 'on-going';
+            } else {
+                $kpi->status = 'not achieved';
+            }
+        });
+    }
+    
     public function addKpis()
     {
         return $this->belongsToMany(AddKpi::class, 'user_kpi'); // Assuming 'user_kpi' is the pivot table
     }
 
-    // Institution Admin
     public function users()
     {
         return $this->belongsToMany(User::class, 'kpi_user', 'kpi_id', 'user_id');
@@ -36,7 +50,6 @@ class AddKpi extends Model
     {
         return $this->belongsToMany(User::class, 'institution_add_kpi', 'add_kpi_id', 'institution_id');
     }
-
 
     public function teras()
     {

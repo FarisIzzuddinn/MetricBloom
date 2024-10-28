@@ -15,4 +15,9 @@ class Teras extends Model
     protected $fillable = [
         'teras',
     ];
+
+    public function addKpis()
+    {
+        return $this->hasMany(AddKpi::class, 'teras_id'); 
+    }
 }

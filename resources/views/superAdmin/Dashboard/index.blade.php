@@ -55,27 +55,57 @@
     background-color: rgba(245, 245, 245, 0.8);
 }
 
-.bg-success {
-    background-color: #28a745;
-}
-
-.bg-primary {
-    background-color: #007bff;
-}
-
-.bg-warning {
-    background-color: #ffc107;
-}
-
-.bg-danger {
-    background-color: #dc3545;
-}
-
 .font-bold {
     font-weight: bold;
     color: white;
     font-size: 1.5rem;
 }
+.kpi-card h6, .kpi-card h4 {
+    white-space: normal; /* Allows text to wrap */
+    word-wrap: break-word; /* Breaks long words to avoid overflow */
+    text-align: center; /* Centers text within the card */
+}
+
+/* Extra small screens */
+@media (max-width: 576px) {
+    .kpi-card h6 {
+        font-size: 0.8rem;
+    }
+    .kpi-card h4 {
+        font-size: 1.2rem;
+    }
+}
+
+/* Small screens */
+@media (max-width: 768px) {
+    .kpi-card h6 {
+        font-size: 1rem;
+    }
+    .kpi-card h4 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Medium screens */
+@media (max-width: 992px) {
+    .kpi-card h6 {
+        font-size: 1.2rem;
+    }
+    .kpi-card h4 {
+        font-size: 1.8rem;
+    }
+}
+
+/* Large screens and above */
+@media (min-width: 1200px) {
+    .kpi-card h6 {
+        font-size: 1.4rem;
+    }
+    .kpi-card h4 {
+        font-size: 2rem;
+    }
+}
+
 </style>
 
 <div class="">
@@ -98,18 +128,17 @@
             ['title' => "UNDERPERFORMING KPI", 'value' => $kpisUnderperforming, 'bgColor' => 'bg-danger', 'tooltip' => "This is the number of underperforming KPIs."],
         ] as $kpi)
         <div class="col-lg-3 col-md-6">
-            <div class="card text-center shadow-sm h-100 kpi-card {{ $kpi['bgColor'] }}" 
-                data-tooltip="{{ $kpi['tooltip'] }}">
-                <div class="card-body d-flex flex-column justify-content-between">
-                    <div class="d-flex flex-column align-items-center mb-3">
-                        <h6 class="mb-0 font-bold">{{ $kpi['title'] }}</h6>
-                        <h4 class="mb-0 mt-2 font-bold">{{ $kpi['value'] }}</h4>
-                    </div>
+            <div class="card text-center shadow-sm h-100 kpi-card {{ $kpi['bgColor'] }}" data-tooltip="{{ $kpi['tooltip'] }}">
+                <div class="card-body d-flex flex-column justify-content-center align-items-center">
+                    <h6 class="mb-0 font-bold">{{ $kpi['title'] }}</h6>
+                    <h4 class="mb-0 mt-2 font-bold">{{ $kpi['value'] }}</h4>
                 </div>
             </div>
         </div>
         @endforeach
     </div>
+    
+    
 </div>
 
     <div class="row g-4">

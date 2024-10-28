@@ -106,16 +106,37 @@ h4 {
 }
 </style>
 
-<div class="">
+<div class="head-title">
+    <div class="left">
+        <h1>Sector Operation Management</h1>
+        <ul class="breadcrumb">
+            <li>
+                <a href="#">Sector Operation Management</a>
+            </li>
+        </ul>
+    </div>
+    <a href="{{ url('so/create') }}" class="btn btn-primary float-end mb-3" data-bs-toggle="modal" data-bs-target="#addSoModal">Add SO</a>
+</div>
+
+@if(session('status'))
+    <div id="alert-message" class="alert alert-{{ session('alert-type', 'info') }} alert-dismissible fade show" role="alert">
+        {{ session('status') }}
+    </div>
+
+    <script>
+        setTimeout(function() {
+            let alert = document.getElementById('alert-message');
+            if(alert){
+                alert.classList.add('fade-out'); // Start fade-out effect
+                setTimeout(() => alert.remove(), 500); // Remove after fade-out completes
+            }
+        }, 5000);
+    </script>
+@endif
+
+<div class="container-fluid">
     <div class="row">
         <div class="col-lg-12">
-            <div class="container-fluid mt-3">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4 class="mb-0" style="font-size: 3rem;">Sektor Operation</h4>
-                    <a href="{{ url('so/create') }}" class="btn btn-primary float-end mb-3" data-bs-toggle="modal" data-bs-target="#addSoModal">Add SO</a>
-
-                </div>
-            </div>
             <div class="card-body">
                 <table class="table">
                     <thead>

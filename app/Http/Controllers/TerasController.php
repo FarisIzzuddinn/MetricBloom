@@ -17,21 +17,48 @@ class TerasController extends Controller
 
     public function create()
     {
-        $username = Auth::User();
-        return view('admin.teras.create', compact( 'username'));
+        return view('admin.teras.create');
     }
 
     public function store(Request $request)
     {
+        // Validate the request input
         $request->validate([
             'teras' => 'required|string|max:255',
         ]);
 
+        $duplicateTeras = Teras::where('teras', $request->teras)->exists();
+
+        if ($duplicateTeras) {
+            // If an active record already exists, return with an error message
+            return redirect()->route('teras.index')->with([
+                'status' => "Duplicate data: Teras already exists.",
+                'alert-type' => "danger"
+            ]);
+        }
+
+        // Check if a soft-deleted record with the same 'teras' value exists
+        $existingTeras = Teras::withTrashed()->where('teras', $request->teras)->first();
+
+        if ($existingTeras) {
+            // If a soft-deleted record exists, restore it instead of creating a new one
+            $existingTeras->restore();
+
+            return redirect()->route('teras.index')->with([
+                'status' => "Teras restored successfully.",
+                'alert-type' => "success"
+            ]);
+        }
+
+        // If no soft-deleted record exists, create a new one
         Teras::create([
             'teras' => $request->teras,
         ]);
 
-        return redirect()->route('teras.index')->with("status", "SO created successfully");
+        return redirect()->route('teras.index')->with([
+            'status' => "Teras created successfully.",
+            'alert-type' => "success"
+        ]);
     }
 
     public function edit($id)
@@ -42,21 +69,35 @@ class TerasController extends Controller
     }
 
     public function update(Request $request, $id)
-{
-    // Validate the request
-    $request->validate([
-        'teras' => 'required|string|max:255',
-    ]);
-
-    // Find the teras by ID and update it
-    $teras = Teras::findOrFail($id);
-    $teras->teras = $request->input('teras');
-    $teras->save();
-
-    // Redirect back to the index or desired location
-    return redirect()->route('teras.index')->with('success', 'Teras updated successfully.');
-}
-
+    {
+        // Validate the request
+        $request->validate([
+            'teras' => 'required|string|max:255',
+        ]);
+    
+        // Check if the teras already exists with the same name but a different ID
+        $existingTeras = Teras::where('teras', $request->input('teras'))->where('id', '!=', $id)->first();
+    
+        if ($existingTeras) {
+            // Redirect back with an error message if duplicate found
+            return redirect()->back()->with([
+                'status' => 'The Teras value already exists. Please enter a unique value.',
+                'alert-type' => 'danger'
+            ]);
+        }
+    
+        // Find the teras by ID and update it
+        $teras = Teras::findOrFail($id);
+        $teras->teras = $request->input('teras');
+        $teras->save();
+    
+        // Redirect back with success message
+        return redirect()->route('teras.index')->with([
+            'status' => 'Teras updated successfully.',
+            'alert-type' => 'success'
+        ]);
+    }
+    
 
     public function renumberItems()
     {
@@ -69,12 +110,33 @@ class TerasController extends Controller
     public function destroy($terasId)
     {
         $teras = Teras::find($terasId);
+
         if ($teras) {
+            // if teras has relation 
+            $isInUse = $teras -> AddKpis()->exists();
+
+            // Then the can't deleted 
+            if ($isInUse){
+                return redirect()->route('teras.index')->with([
+                    'status' => "Teras cannot be deleted because it is in use.",
+                    'alert-type' => "danger"
+                ]);
+            }
+
+            // Else, delete the teras
             $teras->delete();
-            $this->renumberItems(); // Renumber items after deletion
-            return redirect()->route('teras.index')->with("status", "Teras delete successfully");
+            $this->renumberItems(); 
+
+            return redirect()->route('teras.index')->with([
+                'status' => "Teras deleted successfully",
+                'alert-type' => "success"
+            ]);
         }
 
-        return redirect()->route('teras.index')->with("status", "SO not found");
+        return redirect()->route('teras.index')->with([
+            'status' => "Teras not found",
+            'alert-type' => "warning"
+        ]);
     }
 }
+

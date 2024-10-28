@@ -50,14 +50,16 @@
 </style>
 
 <div class="">
-    <div class="head-title">
-        <div class="left">
-            <h1>Roles Management</h1>
-            <p class="mb-6" style="text-align: justify;">A role provides access to predefined menus and features based on assigned roles. Administrators can manage user access depending on their assigned roles.</p>
-
-            <ul class="breadcrumb">
-                <li><a href="#">Role List</a></li>
-            </ul>
+    <div class="container-fluid mt-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="head-title">
+                <div class="left">
+                    <h1>Roles Management</h1>
+                    <ul class="breadcrumb">
+                        <li><a href="#">Roles Management</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 
