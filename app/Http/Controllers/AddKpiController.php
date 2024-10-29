@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\So;
@@ -10,7 +9,6 @@ use App\Models\State;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 // use Illuminate\Support\Facades\Log;
-
 
 class AddKpiController extends Controller
 {
@@ -32,31 +30,41 @@ class AddKpiController extends Controller
     }
 
      // Store a new KPI
-     public function store(Request $request)
+    public function store(Request $request)
     {
-        // Validate the incoming request data
-        $this->validateKpi($request);
-      
-        // Generate a unique bil number for the KPI
-        $bil = AddKpi::count() + 1;
-
-        // Prepare data for creating the KPI
-        $data = $request->except(['_token']);
-        $data['bil'] = $bil; // Set the bil number
-        $data['kpi'] = 'KPI ' . $bil; // Set the KPI name
-        $data['pencapaian'] = $request->input('pencapaian', 0); // Default value of 0 if not provided
-
-        // Create the KPI and get the instance
-        $kpi = AddKpi::create($data);
-
-        // Sync the states with the newly created KPI
-        if ($request->has('states')) {
-            $kpi->states()->sync($request['states']);
-        }
-
-        // Redirect back with a success message
-        return redirect()->route('admin.kpi')->with('success', 'KPI created successfully.');
+         $this->validateKpi($request);
+     
+         // Check for duplicate `pernyataan_kpi`
+         $duplicate = AddKpi::where('pernyataan_kpi', $request->pernyataan_kpi)->exists();
+     
+         if ($duplicate) {
+             // Redirect back with an error message for duplicate KPI
+             return redirect()->back()->with([
+                 'status' => 'Duplicate KPI cannot be added. The "pernyataan KPI" must be unique.',
+                 'alert-type' => 'danger'
+             ]);
+         }
+     
+         // Proceed with KPI creation if no duplicate is found
+         $bil = AddKpi::count() + 1;
+     
+         $data = $request->except(['_token']);
+         $data['bil'] = $bil;
+         $data['kpi'] = 'KPI ' . $bil;
+         $data['pencapaian'] = $request->input('pencapaian', 0);
+     
+         $kpi = AddKpi::create($data);
+     
+         if ($request->has('states')) {
+             $kpi->states()->sync($request['states']);
+         }
+     
+         return redirect()->route('admin.kpi')->with([
+             'status' => 'KPI created successfully.',
+             'alert-type' => 'success'
+         ]);
     }
+     
 
 
     // public function edit($id)

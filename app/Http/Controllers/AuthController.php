@@ -58,7 +58,7 @@ class AuthController extends Controller
 
         // Check user role and redirect accordingly
         if ($user->hasRole('super admin')) {
-            return redirect()->route('permissions.index')->with('success', 'Login Success');
+            return redirect()->route('superAdminDashboard')->with('success', 'Login Success');
         } elseif ($user->hasRole('admin')) {
             return redirect()->route('admin.index')->with('success', 'Login Success');
         } elseif ($user->hasRole('Admin State')) {

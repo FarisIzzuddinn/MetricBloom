@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Spatie\Permission\Models\Permission;
 
-
 class RoleController extends Controller
 {
     public function index()
@@ -74,12 +73,31 @@ class RoleController extends Controller
     }
 
     public function destroy($id)
-{
-    $role = Role::findOrFail($id);
-    $role->delete();
-    
-    return redirect()->back()->with('success', 'Role deleted successfully.');
-}
+    {
+        $role = Role::findOrFail($id);
+
+        $isInUse = $role->users()->exists();
+
+        if ($isInUse) {
+            return redirect()->route('roles.index')->with([
+                'status' => 'Roles cannot be deleted because it is in use.',
+                'alert-type' => 'danger'
+            ]);
+        }
+
+        // No data related
+        $role->delete();
+
+        return redirect()->route('roles.index')->with([
+            'status' => 'Roles deleted successfully',
+            'alert-type' => 'success' 
+        ]);
+        
+        return redirect()->route('roles.index')->with([
+            'status' => 'Roles not found.',
+            'alert-type' => 'warning' 
+        ]);
+    }
 
     public function addPermissionToRole($roleId)
     {

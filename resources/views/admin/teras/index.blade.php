@@ -116,10 +116,7 @@ h4 {
             </li>
         </ul>
     </div>
-    <button class="btn btn-primary float-end mb-3" data-bs-toggle="modal" data-bs-target="#addTerasModal">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
-        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
-    </svg>Add Teras</button>
+    <button class="btn btn-primary float-end mb-3" data-bs-toggle="modal" data-bs-target="#addTerasModal">Add Teras</button>
 </div>
 
 @if(session('status'))
@@ -171,46 +168,42 @@ h4 {
         </div>
     </div>
 </div>
-            <div class="card-body">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>NO</th>
-                            <th>TERAS</th>
-                            <th>ACTION</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($teras as $index => $teras)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $teras->teras }}</td>
-                            <td>
-                                <!-- Butang Edit dengan Modal -->
-                                <a href="#" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal"
-                                   onclick="setEditModal('{{ $teras->teras }}', '{{ url('teras/'.$teras->id.'/edit') }}')">
-                                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
-                                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
-                                    </svg>
-                                </a>
-                                <!-- Butang Delete dengan Modal -->
-                                <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteModal('{{ $teras->teras }}', '{{ url('teras/'.$teras->id.'/delete') }}')">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
-                                    </svg>
-                                </a>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+<div class="card-body">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>NO</th>
+                <th>TERAS</th>
+                <th>ACTION</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($teras as $teras)
+            <tr>
+                <td>{{ $loop->iteration }}</td>
+                <td>{{ $teras->teras }}</td>
+                <td>
+                    <!-- Butang Edit dengan Modal -->
+                    <a href="#" class="btn btn-warning" onclick="setEditModal('{{ $teras->teras }}', '{{ route('teras.update', $teras->id) }}')" data-bs-toggle="modal" data-bs-target="#editModal">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                        </svg>
+                    </a>
+                    <!-- Butang Delete dengan Modal -->
+                    <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteModal('{{ $teras->teras }}', '{{ url('teras/'.$teras->id.'/delete') }}')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                            <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+                        </svg>
+                    </a>
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
 </div>
+       
 
-<!-- Modal Edit -->
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -219,18 +212,20 @@ h4 {
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-            <form action="{{ route('teras.update', $teras->id) }}" method="POST">
+                <!-- Add an ID to the form for easy access in JavaScript -->
+                <form id="editForm" method="POST">
                     @csrf
                     @method('PUT')
 
                     <div class="mb-3">
                         <label for="teras" class="form-label">Teras Name</label>
-                        <input type="text" name="teras" id="teras" value="{{ $teras->teras }}" class="form-control">
+                        <!-- Use this input to dynamically populate the Teras name -->
+                        <input type="text" name="teras" id="editTerasName" class="form-control">
                     </div>
                     <div class="mb-3 text-center ">
                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-                                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
                             </svg>
                         </button>
                         <button type="submit" class="btn btn-success">Update</button>
@@ -273,12 +268,24 @@ h4 {
 </div>
 
 
-
 <script>
     function setDeleteModal(name, url) {
         document.getElementById('delete-item-name').innerText = name;
         document.getElementById('delete-confirm-btn').setAttribute('href', url);
     }
+
+    function setEditModal(terasName, updateUrl) {
+        // Set the action attribute of the form to the update URL
+        document.getElementById('editForm').action = updateUrl;
+
+        // Populate the Teras name in the input field
+        document.getElementById('editTerasName').value = terasName;
+
+        // Show the modal
+        const editModal = new bootstrap.Modal(document.getElementById('editModal'));
+        editModal.show();
+    }
+
 </script>
 
 @endsection

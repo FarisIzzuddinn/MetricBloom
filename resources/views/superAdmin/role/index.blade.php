@@ -8,7 +8,6 @@
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-
     .btn {
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
@@ -62,6 +61,21 @@
             </div>
         </div>
     </div>
+    @if(session('status'))
+        <div id="alert-message" class="alert alert-{{ session('alert-type', 'info') }} alert-dismissible fade show" role="alert">
+            {{ session('status') }}
+        </div>
+
+        <script>
+            setTimeout(function() {
+                let alert = document.getElementById('alert-message');
+                if(alert){
+                    alert.classList.add('fade-out'); // Start fade-out effect
+                    setTimeout(() => alert.remove(), 500); // Remove after fade-out completes
+                }
+            }, 2000);
+        </script>
+    @endif
 
     <!-- Role Cards -->
     <div class="row">
@@ -199,7 +213,6 @@
         </div>
     </div>
 </div>
-
 
         @endforeach
 

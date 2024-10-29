@@ -2,7 +2,6 @@
 @section('content')
 @section('title', 'Dashboard')
 
-
 <style>
 .info-icon {
     position: relative;
@@ -182,7 +181,7 @@
 </div>
 
     <div class="row g-4 mt-2">
-        <div class="col-lg-6">
+        <div class="col-lg-12">
             <div class="card shadow-sm d-flex" style="height: 500px;">
                 <div class="card-header bg-success text-white">
                     <i class="bi bi-pie-chart-fill me-2"></i>Total institution for each state
@@ -193,8 +192,7 @@
             </div>
         </div>
 
-
-        <div class="col-lg-6">
+        {{-- <div class="col-lg-6">
             <div class="card shadow-sm h-100 d-flex">
                 <div class="card-header bg-dark text-white">
                     <i class="bi bi-bar-chart-fill me-2"></i>Top Performing Institutions
@@ -203,7 +201,7 @@
                     <canvas id="topInstitutionsChart"></canvas>
                 </div>
             </div>
-        </div>
+        </div> --}}
     </div>
 </div>
 
