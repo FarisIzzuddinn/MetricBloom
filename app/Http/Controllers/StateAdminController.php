@@ -13,74 +13,71 @@ use Illuminate\Support\Facades\Auth;
 class StateAdminController extends Controller
 {
     public function index()
-    {
-        // Retrieve the state ID of the logged-in user
-        $stateId = auth()->user()->state_id; 
-        $username = Auth::user();
-        $chartData = Auth::user();
-        
-        // Retrieve all institutions within the state
-        $institutions = Institution::where('state_id', $stateId)->get();
-        
-        // Retrieve the state and its associated KPIs
-        $state = State::with('kpis')->find($stateId);
-        $kpis = $state ? $state->kpis : collect(); // Handle if state is null
-        
-        // Calculate the total number of KPIs for the given state
-        $totalKpis = AddKpi::where('state_id', $stateId)->count();
-        
-        // Calculate the number of KPIs that have been achieved (progress >= 75%)
-        $achievedKpis = AddKpi::where('state_id', $stateId)
-                            ->where('peratus_pencapaian', '>=', 100)
-                            ->count();
-        
-        // Calculate the number of KPIs that are still pending (0% <= progress < 75%)
-        $pendingKpis = AddKpi::where('state_id', $stateId)
-                            ->where('peratus_pencapaian', '>=', 50)
-                            ->count();
-        
-        // Calculate the average achievement percentage for all KPIs
-        $totalProgress = AddKpi::where('state_id', $stateId)->sum('peratus_pencapaian');
-        $averageAchievement = ($totalKpis > 0) ? round($totalProgress / $totalKpis, 2) : 0;
+{
+    // Retrieve the state ID of the logged-in user
+    $stateId = auth()->user()->state_id;
+    $username = Auth::user();
+    $chartData = Auth::user();
+    
+    // Retrieve all institutions within the state
+    $institutions = Institution::where('state_id', $stateId)->get();
+    
+    // Retrieve the state and its associated KPIs
+    $state = State::with('kpis')->find($stateId);
+    $kpis = $state ? $state->kpis : collect(); // Handle if state is null
+    
+    // Calculate the total number of KPIs for the given state
+    $totalKpis = $kpis->count();
+    
+    // Calculate the number of KPIs that have been achieved (progress >= 100%)
+    $achievedKpis = $kpis->where('peratus_pencapaian', '>=', 100)->count();
+    
+    // Calculate the number of KPIs that are still pending (progress < 100%)
+    $pendingKpis = $kpis->where('peratus_pencapaian', '<', 100)->count();
+    
+    // Calculate the average achievement percentage for all KPIs
+    $totalProgress = $kpis->sum('peratus_pencapaian');
+    $averageAchievement = ($totalKpis > 0) ? round($totalProgress / $totalKpis, 2) : 0;
 
-        $kpiCategories = $kpis->pluck('kpi')->unique();
+    $kpiCategories = $kpis->pluck('kpi')->unique();
 
-        $kpiData = $kpis->groupBy('category')->map(function ($group) {
-            return $group->pluck('peratus_pencapaian'); // This will give you the percentage of achievement
-        });
+    $kpiData = $kpis->groupBy('category')->map(function ($group) {
+        return $group->pluck('peratus_pencapaian'); // This will give you the percentage of achievement
+    });
+    
+    // Calculate KPI progress per institution
+    $institutionNames = [];
+    $kpiAchievements = [];
+    $financialPerformance = [];
+    $operationalEfficiency = [];
+    $customerSatisfaction = [];
+    
+    foreach ($institutions as $institution) {
+        $institutionNames[] = $institution->name;
+        $kpisGroup = $kpis->where('institution_id', $institution->id);
         
-        // Calculate KPI progress per institution
-        $institutionNames = [];
-        $kpiAchievements = [];
-        $financialPerformance = [];
-        $operationalEfficiency = [];
-        $customerSatisfaction = [];
-        
-        foreach ($institutions as $institution) {
-            $institutionNames[] = $institution->name;
-            $kpisGroup = $kpis->where('institution_id', $institution->id);
-            
-            $averageAchievement = $institution->kpis->avg('peratus_pencapaian');
-            $kpiAchievements[] =  $averageAchievement ?: 0;
+        $averageAchievement = $institution->kpis->avg('peratus_pencapaian');
+        $kpiAchievements[] = $averageAchievement ?: 0;
 
-            // Group KPIs by category
-            $financialKpis = $kpisGroup->where('category', 'financial_performance');
-            $operationalKpis = $kpisGroup->where('category', 'operational_efficiency');
-            $customerKpis = $kpisGroup->where('category', 'customer_satisfaction');
-        
-            // Calculate average achievement for each category
-            $financialPerformance[] = $financialKpis->count() > 0 ? round($financialKpis->avg('peratus_pencapaian'), 2) : 0;
-            $operationalEfficiency[] = $operationalKpis->count() > 0 ? round($operationalKpis->avg('peratus_pencapaian'), 2) : 0;
-            $customerSatisfaction[] = $customerKpis->count() > 0 ? round($customerKpis->avg('peratus_pencapaian'), 2) : 0;
-        }
-
-        return view('stateAdmin.dashboard.index', compact(
-            'institutions', 'chartData', 'kpiData', 'totalKpis', 
-            'averageAchievement', 'kpis', 'username', 'kpiCategories',
-            'institutionNames', 'kpiAchievements', 'financialPerformance',
-            'operationalEfficiency', 'customerSatisfaction', 'achievedKpis', 'pendingKpis'
-        ));
+        // Group KPIs by category
+        $financialKpis = $kpisGroup->where('category', 'financial_performance');
+        $operationalKpis = $kpisGroup->where('category', 'operational_efficiency');
+        $customerKpis = $kpisGroup->where('category', 'customer_satisfaction');
+    
+        // Calculate average achievement for each category
+        $financialPerformance[] = $financialKpis->count() > 0 ? round($financialKpis->avg('peratus_pencapaian'), 2) : 0;
+        $operationalEfficiency[] = $operationalKpis->count() > 0 ? round($operationalKpis->avg('peratus_pencapaian'), 2) : 0;
+        $customerSatisfaction[] = $customerKpis->count() > 0 ? round($customerKpis->avg('peratus_pencapaian'), 2) : 0;
     }
+
+    return view('stateAdmin.dashboard.index', compact(
+        'institutions', 'chartData', 'kpiData', 'totalKpis', 
+        'averageAchievement', 'kpis', 'username', 'kpiCategories',
+        'institutionNames', 'kpiAchievements', 'financialPerformance',
+        'operationalEfficiency', 'customerSatisfaction', 'achievedKpis', 'pendingKpis'
+    ));
+}
+
 
     
     public function manageKPI()

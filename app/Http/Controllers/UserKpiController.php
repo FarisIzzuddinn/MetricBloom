@@ -10,38 +10,32 @@ class UserKpiController extends Controller
 {
     public function index()
     {
-        // Dapatkan pengguna yang sedang login
-        $user = Auth::user();
         $username = Auth::user();
+        $user = Auth::user();
 
-        $addKpi = Auth::user();
-    
+        // Fetch KPIs for the logged-in user, including the 'so' and 'teras' relationships
+        $addKpis = $user->kpis()->with(['so', 'teras'])->get();
+
         // Total KPIs for the logged-in user
-        $userTotalKpis = $user->kpis()->count();
-    
+        $userTotalKpis = $addKpis->count();
+
         // KPIs with achievement percentage >= 75% for the logged-in user
-        $userAchievedKpis = $user->kpis()->where('peratus_pencapaian', '>=', 75)->count();
-    
+        $userAchievedKpis = $addKpis->where('peratus_pencapaian', '>=', 75)->count();
+
         // KPIs with achievement percentage < 75% for the logged-in user
-        $userPendingKpis = $user->kpis()->whereBetween('peratus_pencapaian', [0, 75])->count();
-    
+        $userPendingKpis = $addKpis->whereBetween('peratus_pencapaian', [0, 75])->count();
+
         // Average achievement percentage for the logged-in user
         $userAverageAchievement = ($userTotalKpis > 0) ? round(($userAchievedKpis / $userTotalKpis) * 100) : 0;
-    
-        // Get all KPIs related to the logged-in user
-       $addKpis = $user->kpis;
-    
+
         // Prepare data for the chart
         $labels = $addKpis->pluck('kpi')->toArray();
         $data = $addKpis->pluck('peratus_pencapaian')->toArray();
 
-        // \log::info('Total KPIs: ' . $userTotalKpis);
-        // \Log::info('Achieved KPIs: ' . $userAchievedKpis);
-        // \Log::info('Pending KPIs: ' . $userPendingKpis);
-            
-        // Paparkan ke view
-        return view('user.KPI.IndexKPI', compact('addKpis','addKpi', 'labels', 'userTotalKpis', 'userAchievedKpis', 'userPendingKpis', 'userAverageAchievement', 'data', 'user', 'username'));
+        // Pass data to the view
+        return view('user.KPI.IndexKPI', compact('addKpis', 'labels', 'userTotalKpis','username', 'userAchievedKpis', 'userPendingKpis', 'userAverageAchievement', 'data', 'user'));
     }
+
     
     
 
@@ -75,7 +69,6 @@ class UserKpiController extends Controller
         return redirect()->back()->with('success', 'KPI updated successfully!');
     }
 
-
     public function edit($id)
     {
         $addKpis = AddKpi::findOrFail($id);
@@ -105,6 +98,23 @@ class UserKpiController extends Controller
 
         return redirect()->back()->with('success', 'KPI updated successfully');
     }
+
+    
+
+    // public function charts() {
+
+    //     $userId = Auth::id();
+ 
+    //     $data = AddKpi::where('user_id', $userId)
+    //                  ->select('kpi','peratus_pencapaian')
+    //                  ->get();
+ 
+    //      $kpi = $data->pluck('kpi');
+    //      $peratus_pencapaian = $data->pluck('peratus_pencapaian');
+ 
+    //      return view('/user/KPI/IndexKPI', compact('kpi', 'peratus_pencapaian'));
+ 
+    //  }
 
     private function validateKpi(Request $request)
     {

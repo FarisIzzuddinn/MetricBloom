@@ -5,22 +5,157 @@
 <link rel="stylesheet" href="{{ asset("css/table.css") }}">
 
 <style>
+    /* Container for charts */
     .chart-container {
         position: relative;
         width: 100%;
         height: 100%;
     }
 
+    /* Canvas settings */
     canvas {
         width: 100% !important;
         height: 300px !important; /* Adjust height as needed */
         object-fit: contain; /* Maintain aspect ratio */
     }
-    input[readonly] {
-        background-color: #f0f0f0; /* Light gray background */
-        color: #6c757d; /* Darker gray text color */
-        border: 1px solid #ced4da; /* Border color */
+
+    /* Table styles */
+    .table {
+        border-collapse: collapse; /* Collapse borders for consistency */
+        width: 100%; /* Full width for better layout */
+        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+        overflow: hidden;
     }
+
+    .table thead th {
+        background-color: #f8f9fa; /* Light grey for header */
+        color: #495057; /* Dark grey for text */
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        padding: 12px 16px;
+        border-bottom: 2px solid #dee2e6; /* Thicker border for header */
+    }
+
+    .table tbody tr {
+        border-bottom: 1px solid #dee2e6; /* Light grey border */
+    }
+
+    .table tbody tr:hover {
+        background-color: #f1f3f5; /* Hover effect */
+    }
+
+    .table tbody td {
+        padding: 12px 16px;
+        vertical-align: middle;
+        border: 1px solid #dee2e6; /* Added border for table cells */
+    }
+
+    .table tbody td:first-child {
+        font-weight: bold;
+        background-color: #f8f9fa; /* Highlight for first column */
+    }
+
+    /* Card styles */
+    .card {
+        transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition for hover effects */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Add shadow */
+        
+    }
+
+    .card:hover {
+        transform: translateY(-5px); /* Slight lift effect */
+        background-color: rgba(255, 255, 255, 0.8); /* Lighten background on hover */
+    }
+
+    .card-header {
+        font-weight: bold; /* Bold header */
+        text-transform: uppercase; /* Uppercase header */
+        text-align: center; /* Centered text */
+    }
+
+    .card-title {
+        font-size: 1.5rem; /* Larger title font size */
+        margin: 0; /* Remove default margin */
+        text-align: center; /* Centered text */
+    }
+
+    /* Button styles */
+    .btn {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        transition: background-color 0.3s ease; /* Smooth transition */
+    }
+
+    .btn-success {
+        background-color: #38c172; /* Custom green */
+        border-color: #38c172;
+    }
+
+    .btn-success:hover {
+        background-color: #32a852; /* Darker green on hover */
+    }
+
+    .btn-danger {
+        background-color: #e3342f; /* Custom red */
+        border-color: #e3342f;
+    }
+
+    .btn-danger:hover {
+        background-color: #c62828; /* Darker red on hover */
+    }
+
+    /* Modal styles */
+    .modal-content {
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid #dee2e6;
+        background-color: #f8f9fa;
+    }
+
+    .modal-title {
+        font-weight: bold;
+        color: #495057;
+    }
+
+    .modal-footer {
+        border-top: 1px solid #dee2e6;
+    }
+
+    .btn-close {
+        background: none;
+        border: none;
+    }
+    /* Tooltip styles */
+    .kpi-card[data-tooltip]:before,
+    .kpi-card[data-tooltip]:after {
+        display: none;
+        position: absolute;
+        white-space: nowrap;
+        background: rgba(0, 0, 0, 0.75);
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        z-index: 10;
+        opacity: 0; 
+        transition: opacity 0.3s ease; 
+    }
+
+    .kpi-card:hover[data-tooltip]:before,
+    .kpi-card:hover[data-tooltip]:after {
+        display: block;
+        content: attr(data-tooltip);
+        top: -38px;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 1;
+    }
+
 </style>
 
 @php
@@ -37,40 +172,58 @@
     @endphp
 @endif
 
-<div class="row">
-    <div class="col-lg-3 col-md-6 mt-1 ">
-        <div class="card bg-primary text-white">
-            <div class="card-header">Total KPIs</div>
-            <div class="card-body">
-                <h5 class="card-title">{{ $userTotalKpis }}</h5>
-            </div>
+
+<div class="">
+    <div class="head-title">
+        <div class="left">
+            <h1 class="font-bold">Dashboard</h1>
+            <ul class="breadcrumb">
+                <li>
+                    <a href="/Dashboard/KPI" class="font-bold">Dashboard</a>
+                </li>
+            </ul>
         </div>
     </div>
-    <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card bg-success text-white">
-            <div class="card-header">Achieved</div>
-            <div class="card-body">
-                <h5 class="card-title">{{ $userAchievedKpis }}</h5>
+
+    <div class="row mt-1">
+        <div class="col-lg-3 col-md-6 mt-1">
+            <div class="card kpi-card bg-primary" style=" color: white;" data-tooltip="This is the latest kpi number."> 
+                <div class="card-body text-center">
+                    <h5 class="card-title">TOTAL KPI</h5>
+                    <h5 class="card-title">{{ $userTotalKpis }}</h5>
+                </div>
             </div>
         </div>
-    </div> 
-    <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card bg-warning text-white">
-            <div class="card-header">Pending</div>
-            <div class="card-body">
-                <h5 class="card-title">{{ $userPendingKpis }}</h5>
+
+        <div class="col-lg-3 col-md-6 mt-1">
+            <div class="card kpi-card bg-success" style=" color: white;" data-tooltip="This is the number of KPIs that have been achieved."> 
+                <div class="card-body text-center">
+                    <h5 class="card-title">ACHIEVED</h5>
+                    <h5 class="card-title">{{ $userAchievedKpis }}</h5>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card bg-info text-white">
-            <div class="card-header">Average Achievement</div>
-            <div class="card-body">
-                <h5 class="card-title">{{ $userAverageAchievement }}%</h5>
+
+        <div class="col-lg-3 col-md-6 mt-1">
+            <div class="card kpi-card bg-warning" style=" color: white;" data-tooltip="This is the number of pending KPIs to achieve."> 
+                <div class="card-body text-center">
+                    <h5 class="card-title">PENDING</h5>
+                    <h5 class="card-title">{{ $userPendingKpis }}</h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mt-1">
+            <div class="card kpi-card bg-info" style="color: white;" data-tooltip="This is the average cumulative kpi"> 
+                <div class="card-body text-center">
+                    <h5 class="card-title">AVERAGE</h5>
+                    <h5 class="card-title">{{ $userAverageAchievement }}%</h5>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 
 <div class="row">
     <div class="col-lg-8 col-md-12 mt-3">
@@ -91,44 +244,61 @@
     </div>
 </div>
 
-
-<div class="row">
-    <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card kpi-card bg-primary" style=" color: white;" data-tooltip="This is the latest kpi number."> 
-            <div class="card-body text-center">
-                <h5 class="card-title">TOTAL KPI</h5>
-                <h5 class="card-title">{{ $userTotalKpis }}</h5>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card kpi-card bg-success" style=" color: white;" data-tooltip="This is the number of KPIs that have been achieved."> 
-            <div class="card-body text-center">
-                <h5 class="card-title">ACHIEVED</h5>
-                <h5 class="card-title">{{ $userAchievedKpis }}</h5>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card kpi-card bg-warning" style=" color: white;" data-tooltip="This is the number of pending KPIs to achieve."> 
-            <div class="card-body text-center">
-                <h5 class="card-title">PENDING</h5>
-                <h5 class="card-title">{{ $userPendingKpis }}</h5>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card kpi-card bg-info" style="color: white;" data-tooltip="This is the average cumulative kpi"> 
-            <div class="card-body text-center">
-                <h5 class="card-title">AVERAGE</h5>
-                <h5 class="card-title">{{ $userAverageAchievement }}%</h5>
+<div class="row mt-3">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-header">KPI OVERVIEW</div>
+            <div class="card-body">
+                <!-- Table Section -->
+            <div class="table-container">
+                <div class="table-responsive table-responsive-sm">
+                    <table class="table p-3 mb-5">
+                        <thead>
+                            <tr class="table-secondary text-secondary small-text">
+                                <th >NO</th>
+                                <th >TERAS</th>
+                                <th >SO</th>
+                                <th >KPI</th>
+                                <th >KPI STATEMENT</th>
+                                <th >TARGET</th>
+                                <th >TARGET TYPE</th>
+                                <th >ACHIEVEMENT</th>
+                                <th >REASON</th>
+                                <th >ACHIEVEMENT(%)</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($addKpis as $addKpi)
+                                <tr>
+                                    <td class="text-secondary small-text">{{ $loop->iteration }}</td>
+                                    <td class="small-text">{{ $addKpi->teras->teras }}</td>
+                                    <td class="small-text">{{ $addKpi->SO->SO }}</td>
+                                    <td class="small-text">{{ $addKpi->kpi }}</td>
+                                    <td class="small-text kpi-statement">{{ $addKpi->pernyataan_kpi }}</td>
+                                    <td class="small-text">{{ $addKpi->sasaran }}</td>
+                                    <td class="small-text">{{ $addKpi->jenis_sasaran }}</td>
+                                    <td class="small-text">{{ $addKpi->pencapaian }}</td>
+                                    <td class="small-text">{{ $addKpi->reason }}</td>
+                                    <td class="small-text">{{ $addKpi->peratus_pencapaian }}</td>
+                                    <td>
+                                        <button onclick="openEditPopup({{ json_encode($addKpi) }})" data-bs-toggle="modal" class="btn btn-warning small-button"  data-bs-target="#editKpi">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                                            </svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 
 <div class="modal fade" id="editKpi" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -207,7 +377,7 @@
                                 @if(old('reason', $addKpi->reason) != '')
                                     <option value="{{ old('reason', $addKpi->reason) }}">{{ old('reason', $addKpi->reason) }}</option>
                                 @endif
-                                <option value="">--- Select Reason ---</option>
+                                <option value="" disabled selected>--- Select Reason ---</option>
                                 <option value="money">Money</option>
                                 <option value="manpower">Manpower</option>
                                 <option value="material">Material</option>
@@ -251,12 +421,12 @@
     const chartTitle = @json($chartTitle);
 
     const backgroundColors = [
-        'rgba(255, 99, 132, 0.2)',
-        'rgba(54, 162, 235, 0.2)',
-        'rgba(255, 206, 86, 0.2)',
-        'rgba(75, 192, 192, 0.2)',
-        'rgba(153, 102, 255, 0.2)',
-        'rgba(255, 159, 64, 0.2)'
+        'rgba(255, 99, 132, 1)',
+        'rgba(54, 162, 235, 1)',
+        'rgba(255, 206, 86, 1)',
+        'rgba(75, 192, 192, 1)',
+        'rgba(153, 102, 255, 1)',
+        'rgba(255, 159, 64, 1)'
     ];
 
     const borderColors = [
@@ -277,7 +447,7 @@
             datasets: [{
                 label: '',
                 data: data,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                backgroundColor: 'rgba(75, 192, 192, 1)',
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1
             }]

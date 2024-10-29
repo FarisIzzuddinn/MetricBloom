@@ -277,6 +277,7 @@
                                 <th>PENCAPAIAN</th>
                                 <th>PERATUS PENCAPAIAN</th>
                                 <th>STATUS</th>
+                                <th>REASON</th>
 
                             </tr>
                         </thead>

@@ -11,7 +11,6 @@ use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, CanResetPasswordTrait, HasRoles;
@@ -26,6 +25,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'state_id', 
+        'institution_id', 
+        'sector_id'
     ];
 
     /**
@@ -89,3 +91,4 @@ class User extends Authenticatable
         return $this->belongsTo(Sector::class);
     }
 }
+
