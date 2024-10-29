@@ -155,6 +155,11 @@
         transform: translateX(-50%);
         opacity: 1;
     }
+    input[readonly] {
+        background-color: #f0f0f0; /* Light gray background */
+        color: #6c757d; /* Darker gray text color */
+        border: 1px solid #ced4da; /* Border color */
+    }
 
 </style>
 
@@ -254,16 +259,16 @@
                     <table class="table p-3 mb-5">
                         <thead>
                             <tr class="table-secondary text-secondary small-text">
-                                <th >BIL</th>
+                                <th >NO</th>
                                 <th >TERAS</th>
-                                <th >SO</th>
+                                <th >SECTOR OPERATION</th>
                                 <th >KPI</th>
-                                <th >PERNYATAAN KPI</th>
-                                <th >SASARAN</th>
-                                <th >JENIS SASARAN</th>
-                                <th >PENCAPAIAN</th>
+                                <th >KPI STATEMENT</th>
+                                <th >TARGET</th>
+                                <th >TARGET TYPE</th>
+                                <th >ACHIEVEMENT</th>
                                 <th >REASON</th>
-                                <th >PERATUS PENCAPAIAN</th>
+                                <th >ACHIEVEMENT PERCENTAGE</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -375,7 +380,7 @@
                                 @if(old('reason', $addKpi->reason) != '')
                                     <option value="{{ old('reason', $addKpi->reason) }}">{{ old('reason', $addKpi->reason) }}</option>
                                 @endif
-                                <option value="">--- Select Reason ---</option>
+                                <option value=""disabled selected>--- Select Reason ---</option>
                                 <option value="money">Money</option>
                                 <option value="manpower">Manpower</option>
                                 <option value="material">Material</option>
@@ -445,7 +450,7 @@
         data: {
             labels: labels,
             datasets: [{
-                label: chartTitle || 'Default Title',
+                label: chartTitle || 'HI',
                 data: data,
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
@@ -461,11 +466,11 @@
     // KPI Status Distribution Chart
     const ctx2 = document.getElementById('statusDistributionChart').getContext('2d');
     const chart2 = new Chart(ctx2, {
-        type: 'doughnut', // Change to 'pie' or 'doughnut' if appropriate
+        type: 'pie', // Change to 'pie' or 'doughnut' if appropriate
         data: {
             labels: labels, // Ensure this is correct for pie chart
             datasets: [{
-                label: chartTitle || 'Default Title',
+                // label: chartTitle || 'Default Title',
                 data: data.length > 0 ? data : [1], // Ensure there's data to render
                 backgroundColor: data.length > 0 ? backgroundColors : ['#f0f0f0'], 
                 borderColor: data.length > 0 ? borderColors : ['#ccc'], 
@@ -487,7 +492,7 @@
                 },
                 title: { 
                     display: true,
-                    text: chartTitle || 'Default Pie Chart Title', // Display the dynamic or default title
+                    // text: chartTitle || 'Default Pie Chart Title', 
                     font: {
                         size: 18, // Size of the title
                     }
@@ -507,7 +512,7 @@
     function openEditPopup(addKpi) {
         const modal = new bootstrap.Modal(document.getElementById('editKpi'));
         document.getElementById('editTeras').value = addKpi.teras.id;
-        document.getElementById('editSO').value = addKpi.SO;
+        document.getElementById('editSO').value = addKpi.SO ? addKpi.SO : '';
         document.getElementById('editkpi').value = addKpi.kpi;
         document.getElementById('editPernyataanKpi').value = addKpi.pernyataan_kpi;
         document.getElementById('editSasaran').value = addKpi.sasaran;

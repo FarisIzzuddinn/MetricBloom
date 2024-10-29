@@ -30,8 +30,8 @@ class institutionAdminController extends Controller
 
         // Count KPIs for the institution
         $totalKPIs = $kpis->count(); 
-        $achievedKPIs = $kpis->where('status', 'Achieved')->count(); 
-        $notStartedKPIs = $kpis->where('status', 'Not Started')->count(); 
+        $achievedKPIs = $kpis->where('status', 'completed')->count(); 
+        $notStartedKPIs = $kpis->where('status', 'not achieved')->count(); 
 
         // Calculate completed and pending KPIs
         $completedKPIs = $achievedKPIs;
@@ -47,6 +47,10 @@ class institutionAdminController extends Controller
 
         // $this->chart();
 
+        // Calculate the average achievement percentage for all KPIs
+        $totalProgress = AddKpi::where('institution_id', $institutionId)->sum('peratus_pencapaian');
+        $averageAchievement = ($totalKPIs > 0) ? round($totalProgress / $totalKPIs, 2) : 0;
+
         // Return view with all necessary data, including chart data
         return view('institutionAdmin.dashboard.index', compact(
             'username',
@@ -59,6 +63,7 @@ class institutionAdminController extends Controller
             'notStartedKPIs', 
             'overallPerformance', 
             'totalUsers', 
+            'averageAchievement',
             
         ));
     }

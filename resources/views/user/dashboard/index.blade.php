@@ -40,9 +40,9 @@
                         <table class="table mt-3 p-3">
                             <thead>
                                 <tr class="border border-dark table-success text-start">
-                                    {{-- <th>Bil</th> --}}
-                                    {{-- <th>Teras</th> --}}
-                                    {{-- <th>SO</th> --}}
+                                    {{-- <th>Bil</th>
+                                    <th>Teras</th>
+                                    <th>SO</th> --}}
                                     <th>Negeri</th>
                                     <th>Pemilik</th>
                                     <th>KPI</th>

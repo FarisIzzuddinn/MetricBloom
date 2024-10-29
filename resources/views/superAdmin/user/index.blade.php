@@ -398,8 +398,8 @@
             responsive: true,
             fixedHeader: true,
             fixedColumns: true,
-            pageLength: 5,
-            lengthMenu: [[5, 10, 20, 50, -1], [5, 10, 20, 50, 'All']],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [5, 10, 20, 50, 'All']],
             pagingType: 'full_numbers',
 
             dom: 

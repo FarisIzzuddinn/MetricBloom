@@ -32,7 +32,7 @@ class AddKpi extends Model
     
     public function addKpis()
     {
-        return $this->belongsToMany(AddKpi::class, 'user_kpi'); // Assuming 'user_kpi' is the pivot table
+        return $this->belongsToMany(AddKpi::class, 'kpi_user'); 
     }
 
     public function users()

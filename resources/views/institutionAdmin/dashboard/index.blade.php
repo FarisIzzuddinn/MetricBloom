@@ -3,59 +3,43 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<div class="">
-    <div class="head-title">
-        <div class="left">
-            <h1>Dashboard</h1>
-            <ul class="breadcrumb">
-                <li>
-                    <a href="{{ route('stateAdmin.dashboard') }}">Dashboard</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- KPI Overview Cards with equal height -->
-    <div class="row mb-4 g-3 d-flex align-items-stretch">
-        <div class="col-lg-3 col-md-6">
-            <div class="card h-100 text-center bg-success text-white kpi-card" data-tooltip="This is the latest KPI number">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title text-white">Total KPI</h5>
-                    <p class="card-text display-4 mt-auto">{{ $totalKPIs }}</p>
-                </div>
+<div class="container-fluid">
+        <div class="head-title">
+            <div class="left">
+                <h1 class="font-bold">Dashboard</h1>
+                <ul class="breadcrumb">
+                    <li>
+                        <a href="{{ route('stateAdmin.dashboard') }}" class="font-bold">Dashboard</a>
+                    </li>
+                </ul>
             </div>
         </div>
-
-        <div class="col-lg-3 col-md-6">
-            <div class="card h-100 text-center bg-primary text-white kpi-card" data-tooltip="Overall Performance so far">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title text-white">Overall Performance</h5>
-                    <p class="card-text display-4 mt-auto">{{ $overallPerformance }}%</p>
+    
+        <!-- KPI Cards with Tooltip -->
+        <div class="row g-4 mb-4 justify-content-center ">
+            @foreach([
+                ['title' => "TOTAL KPI", 'value' => $totalKPIs, 'bgColor' => 'bg-primary', 'tooltip' => "This is the latest KPI number."],
+                ['title' => "ACHIEVED", 'value' => $achievedKPIs, 'bgColor' => 'bg-success', 'tooltip' => "This is the number of KPIs that have been achieved."],
+                ['title' => "PENDING", 'value' => $pendingKPIs, 'bgColor' => 'bg-warning', 'tooltip' => "This is the number of pending KPIs to achieve."],
+                ['title' => "AVERAGE", 'value' => $averageAchievement . '%', 'bgColor' => 'bg-info', 'tooltip' => "This is the average KPI achievement."],
+            ] as $kpi)
+            <div class="col-lg-3 col-md-6">
+                <div class="card text-center shadow-sm h-100 kpi-card {{ $kpi['bgColor'] }}" 
+                    data-tooltip="{{ $kpi['tooltip'] }}">
+                    <div class="card-body d-flex flex-column justify-content-between">
+                        <div class="d-flex flex-column align-items-center mb-3">
+                            <h6 class="mb-0 font-bold">{{ $kpi['title'] }}</h6>
+                            <h4 class="mb-0 mt-2 font-bold">{{ $kpi['value'] }}</h4>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="col-lg-3 col-md-6">
-            <div class="card h-100 text-center bg-warning text-white kpi-card" data-tooltip="Active User">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title text-white">Active Users</h5>
-                    {{-- <p class="card-text display-4 mt-auto">{{ $activeUsers }}</p> --}}
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-3 col-md-6">
-            <div class="card h-100 text-center bg-danger text-white kpi-card" data-tooltip="Other information">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title text-white">Any</h5>
-                    {{-- <p class="card-text display-4 mt-auto">{{ $anyData }}</p> --}}
-                </div>
-            </div>
+            @endforeach
         </div>
     </div>
 
     <!-- KPI Distribution Pie Chart -->
-    <div class="row mb-4 gx-4">
+    <div class="row mb-4 gx-4 ">
         <div class="col-12 col-md-6 d-flex align-items-stretch">
             <div class="card w-100">
                 <div class="card-header">
@@ -105,8 +89,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const kpiData = {
-        completed: {{ $pendingKPIs }},
-        pending: {{ $achievedKPIs }},
+        completed: {{ $achievedKPIs }},
+        pending: {{ $pendingKPIs }},
     };
 
     const ctx = document.getElementById('kpiStatusPieChart').getContext('2d');
@@ -116,12 +100,13 @@
             labels: ['Completed', 'Pending'],
             datasets: [{
                 data: [kpiData.completed, kpiData.pending],
-                backgroundColor: ['#4caf50', '#f44336'],
+                backgroundColor: ['#198754', '#ffc107'],
                 hoverOffset: 4
             }]
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
                     position: 'top',
@@ -135,7 +120,6 @@
     /* Dashboard Container Styling */
     .container-fluid {
         padding: 20px;
-        background-color: #f5f6fa;
     }
 
     /* Card Styling */
@@ -221,12 +205,6 @@
         transform: translateX(-50%);
         opacity: 1;
     }
-
-    /* Gaya Warna Background KPI */
-    .bg-success { background-color: #28a745; }
-    .bg-primary { background-color: #007bff; }
-    .bg-warning { background-color: #ffc107; }
-    .bg-danger { background-color: #dc3545; }
 
     .font-bold {
         font-weight: bold;

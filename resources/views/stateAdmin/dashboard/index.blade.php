@@ -70,7 +70,7 @@
             ['title' => "TOTAL KPI", 'value' => $totalKpis, 'bgColor' => 'bg-primary', 'tooltip' => "This is the latest KPI number."],
             ['title' => "ACHIEVED", 'value' => $achievedKpis, 'bgColor' => 'bg-success', 'tooltip' => "This is the number of KPIs that have been achieved."],
             ['title' => "PENDING", 'value' => $pendingKpis, 'bgColor' => 'bg-warning', 'tooltip' => "This is the number of pending KPIs to achieve."],
-            ['title' => "AVERAGE", 'value' => $averageAchievement, 'bgColor' => 'bg-info', 'tooltip' => "This is the average KPI achievement."],
+            ['title' => "AVERAGE", 'value' => round(array_sum($kpiAchievements) / count($kpiAchievements), 2) . '%', 'bgColor' => 'bg-info', 'tooltip' => "This is the average KPI achievement."],
         ] as $kpi)
         <div class="col-lg-3 col-md-6">
             <div class="card text-center shadow-sm h-100 kpi-card {{ $kpi['bgColor'] }}" 
@@ -86,6 +86,43 @@
         @endforeach
     </div>
 </div>
+    <!-- Charts Section -->
+    <div class="row mb-4 gx-4">
+        <!-- Bar Chart for Institution-wise KPI Progress -->
+        <div class="col-12 col-md-6 mb-4 d-flex align-items-stretch">
+        <div class="card w-100" style="background-color: white;">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Institusi KPI Progress</span>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height: 100%; width: 100%;">
+                        <canvas id="dummyBarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Pie Chart for KPI Achievements vs Pending -->
+        <div class="col-12 col-md-6 mb-4 d-flex align-items-stretch">
+        <div class="card w-100" style="background-color: white;">
+                <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+                    <span class="text-sm mb-2 mb-md-0">KPI Achievement Overview</span>
+                    <div>
+                        <select id="kpiFilter" class="form-select form-select-sm" style="min-width: 150px;">
+                            @foreach ($kpiCategories as $category)
+                                <option value="{{ $category }}">{{ ucfirst(str_replace('_', ' ', $category)) }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height: 100%; width: 100%;">
+                        <canvas id="dummyPieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 
@@ -99,12 +136,12 @@
                 <table class="table table-hover">
                     <thead class="thead-dark">
                         <tr>
-                            <th>BIL</th>
+                            <th>NO</th>
                             <th>KPI DESCRIPTION</th>
                             <th>TARGET</th>
                             <th>REASON</th>
                             <th>INSTITUTION ASSIGN</th>
-                            <th>Progress</th>
+                            <th>PROGRESS</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -145,43 +182,7 @@
         </div>
     </div>
 
-    <!-- Charts Section -->
-<div class="row mb-4 gx-4">
-    <!-- Bar Chart for Institution-wise KPI Progress -->
-    <div class="col-12 col-md-6 mb-4 d-flex align-items-stretch">
-    <div class="card w-100" style="background-color: white;">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <span>Institusi KPI Progress</span>
-            </div>
-            <div class="card-body">
-                <div class="chart-container" style="position: relative; height: 100%; width: 100%;">
-                    <canvas id="dummyBarChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Pie Chart for KPI Achievements vs Pending -->
-    <div class="col-12 col-md-6 mb-4 d-flex align-items-stretch">
-    <div class="card w-100" style="background-color: white;">
-            <div class="card-header d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
-                <span class="text-sm mb-2 mb-md-0">KPI Achievement Overview</span>
-                <div>
-                    <select id="kpiFilter" class="form-select form-select-sm" style="min-width: 150px;">
-                        @foreach ($kpiCategories as $category)
-                            <option value="{{ $category }}">{{ ucfirst(str_replace('_', ' ', $category)) }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div class="card-body">
-                <div class="chart-container" style="position: relative; height: 100%; width: 100%;">
-                    <canvas id="dummyPieChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -201,7 +202,7 @@
                 datasets: [{
                     label: 'KPI Achievement (%)',
                     data: kpiAchievements,
-                    backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                    backgroundColor: 'rgba(54, 162, 235, 1)',
                     borderColor: 'rgba(54, 162, 235, 1)',
                     borderWidth: 2,
                     borderRadius: 5,
@@ -239,16 +240,17 @@
         var dummyPieChart = new Chart(ctxPie, {
             type: 'pie',
             data: {
-                labels: institutionNames, // Assuming the same institution names are used for each category
+                labels: "", // Assuming the same institution names are used for each category
                 datasets: [{
                     label: 'KPI Achievement (%)',
                     data: kpiData[defaultCategory] || [], 
-                    backgroundColor: ['rgba(54, 162, 235, 0.7)', 'rgba(75, 192, 192, 0.7)', 'rgba(153, 102, 255, 0.7)'],
+                    backgroundColor: ['rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'],
                     borderColor: ['rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)', 'rgba(153, 102, 255, 1)'],
                     borderWidth: 1
                 }]
             },
             options: {
+                display: false,
                 responsive: true,
                 maintainAspectRatio: false
             }
