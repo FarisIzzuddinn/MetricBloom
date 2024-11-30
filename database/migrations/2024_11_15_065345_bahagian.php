@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('chart_rename', function (Blueprint $table) {
+        Schema::create('bahagian', function(Blueprint$table){
             $table->id();
-            $table->string('chart_title')->default('Default Chart Title');
+            $table->string('nama_bahagian');
+            $table->unsignedBigInteger('sector_id')->nullable(); // Add sector_id column
             $table->timestamps();
+
+            $table->foreign('sector_id')->references('id')->on('sectors')->onDelete('cascade'); // Foreign key relationship
         });
     }
 
@@ -23,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('chart_rename');
+        Schema::dropIfExists('bahagian');
     }
 };

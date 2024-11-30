@@ -3,6 +3,7 @@
 
 <link rel="stylesheet" href="{{ asset("css/table.css") }}">
 
+
 <div class="container-fluid">
     <div class="row">
         <div class="head-title">
@@ -39,18 +40,18 @@
                 No KPI data available.
             </div>
         @else
-            <div class="table-responsive table-responsive-sm">
-                <table class="table mt-3 p-3">
+            <div class="table-responsive">
+                <table class="table table-bordered mt-0 p-0">
                     <thead>
                         <tr>
                             <th class="small-text">BIL</th>
                             <th class="small-text">TERAS</th>
-                            <th class="small-text">SO</th>
+                            <th class="small-text">SECTOR</th>
                             <th class="small-text">STATE</th>
+                            <th class="small-text">INSTITUTIONS</th>
+                            <th class="small-text">DISTINCT</th>
                             <th class="small-text">KPI</th>
-                            <th class="small-text">KPI STATEMENT</th>
-                            <th class="small-text">TARGET</th>
-                            <th class="small-text">TARGET TYPE</th>
+                            <th class="small-text">PDF</th>
                             <th class="small-text">ACTION</th>
                         </tr>
                     </thead>
@@ -59,20 +60,49 @@
                             <tr>
                                 <td class="text-secondary small-text">{{ $loop->iteration }}</td>
                                 <td class="small-text">{{ $addKpi->teras ? $addKpi->teras->id : 'No Teras Found' }}</td>
-                                <td class="small-text">{{ $addKpi->so ? $addKpi->so->id : 'No SO found' }}</td>
+                                <td class="small-text">{{ $addKpi->sector ? $addKpi->sector->id : 'No Sector found' }}</td>
                                 <td class="small-text">
                                     @if ($addKpi->states->isNotEmpty())
-                                        @foreach ($addKpi->states as $state)
-                                            {{ $state->name }}@if (!$loop->last), @endif
-                                        @endforeach
+                                        <ul>
+                                            @foreach ($addKpi->states as $state)
+                                                <li>{{ $state->name }}</li>
+                                            @endforeach
+                                        </ul>
                                     @else
-                                        No State Found
+                                        <em>No States Assigned</em>
                                     @endif
                                 </td>
-                                <td class="small-text">{{ $addKpi->kpi }}</td>
+                                <td class="small-text">
+                                    @if ($addKpi->institutions->isNotEmpty())
+                                        <ul>
+                                            @foreach ($addKpi->institutions as $institution)
+                                                <li>{{ $institution->name }}</li>
+                                            @endforeach
+                                        </ul>
+                                    @else
+                                        <em>No Institutions Assigned</em>
+                                    @endif
+                                </td>
+                                <td class="small-text">
+                                    @if ($addKpi->bahagians->isNotEmpty())
+                                        <ul>
+                                            @foreach ($addKpi->bahagians as $bahagian)
+                                                <li>{{ $bahagian->nama_bahagian }}</li>
+                                            @endforeach
+                                        </ul>
+                                    @else
+                                        <em>No Bahagians Assigned</em>
+                                    @endif
+                                </td>
+                                {{-- <td class="small-text">{{ $addKpi->kpi }}</td> --}}
                                 <td class="small-text kpi-statement">{{ $addKpi->pernyataan_kpi }}</td>
-                                <td class="small-text">{{ $addKpi->sasaran }}</td>
-                                <td class="small-text">{{ $addKpi->jenis_sasaran }}</td>
+                                {{-- <td class="small-text">{{ $addKpi->sasaran }}</td>
+                                <td class="small-text">{{ $addKpi->jenis_sasaran }}</td> --}}
+                                <td>
+                                    @if($addKpi->pdf_file_path)
+                                        <a href="{{ url('/storage/' . $addKpi->pdf_file_path) }}" target="_blank">Download PDF</a>
+                                    @endif
+                                </td>
                                 <td>
                                     <button onclick="openEditPopup({{ json_encode($addKpi) }})" class="btn btn-warning small-button mt-1">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
@@ -88,33 +118,6 @@
                 </table>
             </div>
         @endif
-    </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header d-flex flex-column align-items-center text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill text-warning mb-2" viewBox="0 0 16 16">
-                    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
-                </svg>
-                    <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-center">
-                    Are you sure you want to delete this <b>ROW</b>
-                    <strong id="modalItemName"></strong>?
-                </div>
-               <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background:blue;">CANCEL</button>
-                    <form id="deleteForm" method="POST" style="display:inline-block;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-primary" style="background:red;">DELETE</button>
-                    </form>
-                </div>
-            </div>
-        </div>
     </div>
 
     <div class="modal fade" id="editKpi" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -144,14 +147,14 @@
                         <div class="row mb-3">
                             <label for="SO" class="col-sm-5 col-form-label">SO</label>
                             <div class="col-sm-7">
-                                <select id="editSO" name="so_id" class="form-select" required>
-                                    @foreach ($so as $so)
-                                        <option value="{{ $so->id }}">{{ $so->SO }}</option>   
+                                <select id="editSO" name="sectors_id" class="form-select" required>
+                                    @foreach ($sectors as $sector)
+                                        <option value="{{ $sector->id }}">{{ $sector->name }}</option>   
                                     @endforeach
                                 </select>
                             </div>
                         </div>
-
+{{-- 
                         <div class="row mb-3">
                             <label for="editNegeri" class="col-sm-5 col-form-label">NEGERI</label>
                             <div class="col-sm-7">
@@ -177,6 +180,56 @@
                                         @endforeach
                                     </ul>
                                 </div>
+                            </div>
+                        </div> --}}
+
+                        <div class="form-group mt-4">
+                            <label for="editOwner">Select Owners:</label>
+                            <div class="border p-3">
+                                <h5>States</h5>
+                                @foreach ($states as $state)
+                                    <div class="form-check">
+                                        <input 
+                                            class="form-check-input" 
+                                            type="checkbox" 
+                                            name="owners[]" 
+                                            value="state-{{ $state->id }}" 
+                                            id="state-{{ $state->id }}">
+                                        <label class="form-check-label" for="state-{{ $state->id }}">
+                                            {{ $state->name }}
+                                        </label>
+                                    </div>
+                                @endforeach
+    
+                                <h5 class="mt-3">Institutions</h5>
+                                @foreach ($institutions as $institution)
+                                    <div class="form-check">
+                                        <input 
+                                            class="form-check-input" 
+                                            type="checkbox" 
+                                            name="owners[]" 
+                                            value="institution-{{ $institution->id }}" 
+                                            id="institution-{{ $institution->id }}">
+                                        <label class="form-check-label" for="institution-{{ $institution->id }}">
+                                            {{ $institution->name }}
+                                        </label>
+                                    </div>
+                                @endforeach
+    
+                                <h5 class="mt-3">Bahagian</h5>
+                                @foreach ($bahagians as $bahagian)
+                                    <div class="form-check">
+                                        <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            name="owners[]"
+                                            value="bahagian-{{ $bahagian->id }}"
+                                            id="bahagian-{{ $bahagian->id }}">
+                                        <label class="form-check-label" for="bahagian-{{ $bahagian->id }}">
+                                            {{ $bahagian->nama_bahagian }}
+                                        </label>
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
 
@@ -221,10 +274,26 @@
     function openEditPopup(addKpi) {
         document.getElementById('editKpiForm').action = `/admin/addKpi/update/${addKpi.id}`;
         document.getElementById('editTeras').value = addKpi.teras.id;
-        document.getElementById('editSO').value = addKpi.so.id;
-        addKpi.states.forEach(state => {
-            document.getElementById(`edit_state_${state.id}`).checked = true;
-        });
+        document.getElementById('editSO').value = addKpi.sector.id;
+        document.querySelectorAll('input[name="owners[]"]').forEach(input => input.checked = false);
+
+        // Check relevant owners
+        if (addKpi.states) {
+            addKpi.states.forEach(state => {
+                document.getElementById(`state-${state.id}`).checked = true;
+            });
+        }
+        if (addKpi.institutions) {
+            addKpi.institutions.forEach(institution => {
+                document.getElementById(`institution-${institution.id}`).checked = true;
+            });
+        }
+        if (addKpi.bahagians) {
+            addKpi.bahagians.forEach(bahagian => {
+                document.getElementById(`bahagian-${bahagian.id}`).checked = true;
+            });
+        }
+
         // document.getElementById('editPemilik').value = addKpi.user.id;
         document.getElementById('editPernyataanKpi').value = addKpi.pernyataan_kpi;
         document.getElementById('editSasaran').value = addKpi.sasaran;

@@ -12,10 +12,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('password', 512);
+            $table->string('salt')->nullable();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            // $table->foreignId('role_id')->nullable()->constrained('roles');
-            $table->rememberToken();
+            $table->string('remember_token', 100)->nullable();
             $table->timestamps();
         });
     }    

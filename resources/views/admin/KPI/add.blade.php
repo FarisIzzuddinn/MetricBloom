@@ -8,14 +8,14 @@
   
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title fs-5" id="exampleModalLabel">ADD KPI</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form action="{{ route('kpi.store') }}" method="POST">
+                <form action="{{ route('kpi.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="row mb-3">
                         <label for="teras" class="col-sm-5 col-form-label">Teras</label>
@@ -29,70 +29,101 @@
                     </div>
 
                     <div class="row mb-3">
-                        <label for="SO" class="col-sm-5 col-form-label">SO</label>
+                        <label for="SO" class="col-sm-5 col-form-label">Sector</label>
                         <div class="col-sm-7">
-                            <select id="addSo" name="so_id" class="form-select" required>
-                                @foreach ($so as $so)
-                                    <option value="{{ $so->id }}">{{ $so->SO }}</option>   
+                            <select id="sectors_id" name="sectors_id" class="form-select" required>
+                                @foreach ($sectors as $sector)
+                                    <option value="{{ $sector->id }}">{{ $sector->name }}</option>   
                                 @endforeach
                             </select>
                         </div>
                     </div>
+                    
+                    <div class="form-group mt-4">
+                        <label>Select Owners:</label>
+                        <div class="border p-3">
+                            <h5>States</h5>
+                            @foreach ($states as $state)
+                                <div class="form-check">
+                                    <input 
+                                        class="form-check-input" 
+                                        type="checkbox" 
+                                        name="owners[]" 
+                                        value="state-{{ $state->id }}" 
+                                        id="state-{{ $state->id }}">
+                                    <label class="form-check-label" for="state-{{ $state->id }}">
+                                        {{ $state->name }}
+                                    </label>
+                                </div>
+                            @endforeach
+                
+                            <h5 class="mt-3">Institutions</h5>
+                            @foreach ($institutions as $institution)
+                                <div class="form-check">
+                                    <input 
+                                        class="form-check-input" 
+                                        type="checkbox" 
+                                        name="owners[]" 
+                                        value="institution-{{ $institution->id }}" 
+                                        id="institution-{{ $institution->id }}">
+                                    <label class="form-check-label" for="institution-{{ $institution->id }}">
+                                        {{ $institution->name }}
+                                    </label>
+                                </div>
+                            @endforeach
+                
+                            <h5 class="mt-3">Bahagian</h5>
 
-                    <div class="row mb-3">
-                        <label for="states" class="col-sm-5 col-form-label">Negeri:</label>
-                        <div class="col-sm-7">
-                            <div class="dropdown">
-                                <button class="btn btn-outline-secondary dropdown-toggle w-100" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Select States
-                                </button>
-                                <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton">
-                                    @foreach($states as $state)
-                                        <li>
-                                            <div class="form-check px-3">
-                                                <input class="form-check-input" type="checkbox" name="states[]" id="state_{{ $state->id }}" value="{{ $state->id }}">
-                                                <label class="form-check-label" for="state_{{ $state->id }}">{{ $state->name }}</label>
-                                            </div>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            </div>
+                            @if($bahagians && $bahagians->isNotEmpty())
+                                @foreach ($bahagians as $bahagian)
+                                    <div class="form-check">
+                                        <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            name="owners[]"
+                                            value="bahagian-{{ $bahagian->id }}"
+                                            id="bahagian-{{ $bahagian->id }}">
+                                        <label class="form-check-label" for="bahagian-{{ $bahagian->id }}">
+                                            {{ $bahagian->nama_bahagian }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            @else
+                                <p>No Bahagian available.</p>
+                            @endif
                         </div>
                     </div>
 
-                    <!-- {{-- <div class="row mb-3">
-                        <label for="addPemilik" class="col-sm-5 col-form-label">PEMILIK</label>
-                        <div class="col-sm-7">
-                            <select id="addPemilik" name="user_id" class="form-select" required>
-                                @foreach ($users as $user)
-                                    <option value="{{ $user->id }}">{{ $user->name }}</option>   
-                                @endforeach
-                            </select>
-                        </div>
-                    </div> --}} -->
 
                     <div class="row mb-3">
-                        <label for="pernyataan_kpi" class="col-sm-5 col-form-label">PERNYATAAN KPI</label>
+                        <label for="pernyataan_kpi" class="col-sm-5 col-form-label">KPI</label>
                         <div class="col-sm-7">
                             <input type="text" id="addPernyataanKpi" name="pernyataan_kpi" class="form-control" required>
                         </div>
                     </div>
 
                     <div class="row mb-3">
-                        <label for="sasaran" class="col-sm-5 col-form-label">SASARAN</label>
+                        <label for="sasaran" class="col-sm-5 col-form-label">Target</label>
                         <div class="col-sm-7">
                             <input type="number" inputmode="numeric" id="addSasaran" name="sasaran" class="form-control" required>
                         </div>
                     </div>
 
                     <div class="row mb-3">
-                        <label for="addJenisSasaran" class="col-sm-5 col-form-label">JENIS SASARAN</label>
+                        <label for="addJenisSasaran" class="col-sm-5 col-form-label">Target Type</label>
                         <div class="col-sm-7">
                             <select id="addJenisSasaran" name="jenis_sasaran" class="form-select" required>
-                                <option value="" disabled selected>Select Jenis Sasaran</option>
-                                <option value="peratus">%</option>
-                                <option value="bilangan">Bilangan</option>
+                                <option value="" disabled selected>Select Target Type</option>
+                                <option value="peratus">Percentage(%)</option>
+                                <option value="bilangan">Number</option>
                             </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="sasaran" class="col-sm-5 col-form-label">Upload PDF File</label>
+                        <div class="col-sm-7">
+                            <input type="file" name="pdf_file_path" id="pdf_file_path" class="form-control" accept="application/pdf">
                         </div>
                     </div>
 

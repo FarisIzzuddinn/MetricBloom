@@ -5,9 +5,7 @@ use App\Http\Controllers\SoController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Password;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\ChartController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\TerasController;
 use App\Http\Controllers\AddKpiController;
@@ -47,40 +45,47 @@ Route::post('reset-password', [ForgotPassController::class, 'submitResetPassword
 
 Route::resource('profileEdit', AuthController::class);
 
-// ===================== SUPER ADMIN ======================
-Route::group(['middleware' => ['role:super admin|admin']], function () {
-    // Super Admin Dashboard 
-    Route::get('/Dashboard/SuperAdmin', [SuperAdminController::class, 'index'])->name('superAdminDashboard');
-    
-    // Manage State and Institution
+Route::middleware(['role:super admin'])->group(function () {
+    Route::get('/Dashboard/SuperAdmin', [SuperAdminController::class, 'index'])->name('superAdminDashboard');  // Super Admin Dashboard 
+
     Route::resource('states', StateController::class);
     Route::resource('institutions', InstitutionController::class);
-    
-    
 
-    // Super admin permission 
     Route::resource('permissions', PermissionController::class);
     Route::get('permissions/{permissionId}/delete', [PermissionController::class, 'destroy']);
-    
 
-    // Super admin set roles 
     Route::resource('roles', RoleController::class);
     Route::get('roles/{roleId}/delete', [RoleController::class, 'destroy'])->middleware('permission:delete role');
     Route::get('roles/{roleId}/give-permission', [RoleController::class, 'addPermissionToRole']);
     Route::put('roles/{roleId}/give-permission', [RoleController::class, 'updatePermissionToRole']);
     Route::delete('/roles/{id}', [RoleController::class, 'destroy'])->name('roles.destroy');
 
-    // Super admin users
     Route::resource('users', UserController::class);
     Route::get('users/{userId}/delete', [UserController::class, 'destroy']);
     Route::get('/get-institutions/{stateId}', [UserController::class, 'getInstitutions']);
+});
 
-    Route::group(['middleware' => ['permission:view dashboard']], function () {
-        Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
-    });
-    
+Route::middleware(['role:Admin State'])->group(function () {
+    Route::resource('admin-state-kpis', StateAdminController::class);
+    Route::get('/state-admin/dashboard', [StateAdminController::class, 'index'])->name('stateAdmin.dashboard');
+    Route::get('/state-admin/kpi-management', [StateAdminController::class, 'manageKPI'])->name('stateAdmin.kpi');
+    Route::put('/admin-state-kpis', [StateAdminController::class, 'updateKPI'])->name('stateAdmin.kpi.update');
+});
 
-    // crud Kpi
+Route::middleware(['role:Institution Admin'])->group(function () {
+    Route::resource('admin-institution-kpis', institutionAdminController::class);
+    Route::get('/institution-admin/dashboard', [institutionAdminController::class, 'index'])->name('institutionAdmin.dashboard');
+    Route::get('/institution-admin/kpi-management', [institutionAdminController::class, 'kpiIndex'])->name('institutionAdmin.kpi');
+    Route::put('/institution-admin/kpi/assign', [institutionAdminController::class, 'update'])->name('institutionAdmin.kpi.assign');
+});
+
+Route::middleware(['role:Admin Bahagian'])->group(function () {
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+    Route::get('/adminBahagian/kpi', [UserKpiController::class, 'index'])->name('user.kpi.index');
+    Route::put('/kpi/update', [UserKpiController::class, 'update'])->name('user.kpi.update');
+});
+
+Route::middleware(['role:admin|super admin'])->group(function () {
     Route::get('/admin/kpi', [AddKpiController::class, 'index'])->name('admin.kpi');  
     Route::get('/kpi/add', [AddKpiController::class, 'create'])-> name('kpi.add');
     Route::post('/admin/kpi', [AddKpiController::class, 'store'])->name('kpi.store');
@@ -94,42 +99,30 @@ Route::group(['middleware' => ['role:super admin|admin']], function () {
     Route::get('teras/{terasID}/delete', [TerasController::class, 'destroy']);
 
     //crud so 
-    Route::resource('so', SoController::class);
-    Route::get('so/{soID}/delete', [SoController::class, 'destroy']);
-  
-    Route::post('/chartTitle', [ChartController::class, 'updateChartTitle'])->name('updateChartTitle');
-    Route::post('/chartTitle/rename', [ChartController::class, 'create'])->name('chartRename');
-    Route::get('/charts', [ChartController::class, 'showCharts'])->name('charts.show');
-
-    Route::get('/kpi-data/{state}', [AdminController::class, 'getKpiDataByState']);
+    Route::resource('sector', SoController::class);
+    Route::get('sector/{sectorID}/delete', [SoController::class, 'destroy']);
 });
 
-// Admin State
-Route::middleware(['auth', 'role:Admin State'])->group(function () {
-    Route::resource('admin-state-kpis', StateAdminController::class);
-    Route::get('/state-admin/dashboard', [StateAdminController::class, 'index'])->name('stateAdmin.dashboard');
-    Route::get('/state-admin/kpi-management', [StateAdminController::class, 'manageKPI'])->name('stateAdmin.kpi');
-    Route::post('/admin-state-kpis', [StateAdminController::class, 'store'])->name('stateAdmin.store');
-    
-});
-
-// Admin Institution
-Route::middleware(['auth', 'role:Institution Admin'])->group(function () {
-    Route::resource('admin-institution-kpis', institutionAdminController::class);
-    Route::get('/institution-admin/dashboard', [institutionAdminController::class, 'index'])->name('institutionAdmin.dashboard');
-    Route::get('/institution-admin/kpi-management', [institutionAdminController::class, 'manageKPI'])->name('institutionAdmin.kpi');
-    Route::post('/institution-admin/kpi/assign', [institutionAdminController::class, 'assignKpi'])->name('institutionAdmin.kpi.assign');
-});
-
-
-// ===================== USER ======================
-// Route::middleware(['role:user'])->group(function () {
-    Route::put('/user/addKpi/update/{id}', [UserKpiController::class, 'update'])->name('user.update');
-    Route::get('/user/{AddKPI}/edit', [UserKpiController::class, 'edit'])->name('user.edit');
-    Route::post('/user/KPI/IndexKPI', [UserKpiController::class, 'storeInput'])->name('user.kpi.storeInput');
-    Route::get('/user/KPI/IndexKPI', [UserKpiController::class, 'index'])->name('user.kpi.input'); 
+// Route::middleware(['role:SectorAdmin'])->group(function () {
+//     Route::get('/sectoradmin/dashboard', [SectorAdminDashboardController::class, 'index']);
 // });
+
+Route::get('/storage/{path}', function ($path) {
+    $file = storage_path('app/public/' . $path);
+
+    if (!file_exists($file)) {
+        abort(404);
+    }
+
+    return response()->file($file);
+})->where('path', '.*');
+
+
+// ===================== UNAUTHORIZED USER ======================
+Route::get('/unauthorized', [AuthController::class, 'unauthorized']);
+
 
 // ===================== LOGOUT ======================
 Route::delete('/logout', [AuthController::class, 'logout'])->name('logout');
+
 

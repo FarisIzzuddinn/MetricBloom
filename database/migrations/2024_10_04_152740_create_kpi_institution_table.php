@@ -11,11 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kpi_institution', function (Blueprint $table) {
+        Schema::create('kpi_institutions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('kpi_id')->constrained('add_kpis')->onDelete('cascade'); // Correct reference to 'add_kpis'
-            $table->foreignId('institution_id')->constrained('institutions')->onDelete('cascade');
+            $table->unsignedBigInteger('add_kpi_id'); // Foreign key to the KPI table
+            $table->unsignedBigInteger('institution_id'); // Foreign key to the Institutions table
             $table->timestamps();
+
+            // Foreign keys
+            $table->foreign('add_kpi_id')->references('id')->on('add_kpis')->onDelete('cascade');
+            $table->foreign('institution_id')->references('id')->on('institutions')->onDelete('cascade');
+
+            // Prevent duplicate entries
+            $table->unique(['add_kpi_id', 'institution_id']);
         });
     }
 
@@ -24,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kpi_institution');
+        Schema::dropIfExists('kpi_institutions');
     }
 };

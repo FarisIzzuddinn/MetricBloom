@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\State;
 use App\Models\AddKpi;
+use App\Models\Sector;
+use App\Models\Bahagian;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+
 
 class AdminController extends Controller
 {
@@ -13,41 +17,51 @@ class AdminController extends Controller
         $this->middleware('permission:view dashboard');
     }
     
-    public function index()
+    public function index(Request $request)
     {
-        // Retrieve data from the Kpi model
-        $addKpis = AddKpi::orderBy('bil')->get();
-        $totalKpis = AddKpi::count();
-        $achievedKpis = AddKpi::where('peratus_pencapaian', '>=', '75')->count();
-        $pendingKpis = AddKpi::where('peratus_pencapaian', '>=', 0)
-                                ->where('peratus_pencapaian', '<', 75)
-                                ->count();
-        $averageAchievement = ($totalKpis > 0) ? round(($achievedKpis / $totalKpis) * 100) : 0;
+        $username = Auth::User();
+        $user = auth()->user(); // Get the currently logged-in user
 
-        // Kira purata peratus pencapaian
-        $totalAchievement = $addKpis->sum('peratus_pencapaian');
-        $totalKpis = $addKpis->count();
- 
-        if ($totalKpis > 0) {
-            $averageAchievement = number_format($totalAchievement / $totalKpis, 2);
-        } else {
-            $averageAchievement = number_format(0, 2);
+        // Check if the user is associated with a Bahagian
+        if (!$user->userEntity || !$user->userEntity->bahagian_id) {
+            return redirect()->back()->withErrors('No Bahagian is associated with your account.');
         }
- 
-         // Tentukan status berdasarkan purata pencapaian
-         $status = $averageAchievement >= 50 ? 'Hijau' : 'Merah';
-
-         $kpis = AddKpi::all();
-         $labels = $kpis->pluck('kpi')->toArray();
-         $data = $kpis->pluck('peratus_pencapaian')->toArray();
     
-         $username  = Auth::User();
+        $bahagian = $user->userEntity->bahagian; // Get the user's Bahagian
+        $sectorId = $bahagian->sector_id; // Get the sector ID for the Bahagian
+        $sectors = Sector::all(); // Get all sectors for the dropdown filter
 
-         $stateData = $this->kpiCompleteRateByState();
-         // Hantar data ke view
-         return view('admin.dashboard.index', compact('addKpis', 'stateData', 'averageAchievement', 'pendingKpis', 'totalKpis', 'achievedKpis', 'username', 'status' , 'labels',  'data'));
+        // Get the selected sector ID from the request, defaulting to the user's sector
+        $selectedSectorId = $request->input('sector_id', $sectorId);
+
+        // Retrieve KPIs for all Bahagians in the selected sector
+        $addKpis = AddKpi::whereHas('bahagians', function ($query) use ($selectedSectorId) {
+            $query->whereHas('sector', function ($sectorQuery) use ($selectedSectorId) {
+                $sectorQuery->where('id', $selectedSectorId);
+            });
+        })->get();
+
+        $sectorId = 1; // Example: Sektor Keselamatan dan Koreksional
+        $bahagians = Bahagian::where('sector_id', $sectorId)->get();
+    
+        $chartData = $bahagians->map(function ($bahagian) {
+            $achieved = $bahagian->addKpis()->wherePivot('status', 'achieved')->count();
+            $notAchieved = $bahagian->addKpis()->wherePivot('status', 'not achieved')->count();
+    
+            return [
+                'name' => $bahagian->nama_bahagian,
+                'achieved' => $achieved,
+                'notAchieved' => $notAchieved,
+                'color' => '#' . substr(md5($bahagian->id), 0, 6),
+            ];
+        });
+    
+        $totalAchieved = $chartData->sum('achieved');
+        $totalNotAchieved = $chartData->sum('notAchieved');
+
+        return view('admin.dashboard.index', compact('addKpis', 'username', 'bahagian', 'bahagians', 'sectors', 'selectedSectorId', 'chartData', 'totalNotAchieved', 'totalAchieved'));
     }
-
+    
     public function kpiCompleteRateByState(){
         $states = State::withCount(['kpis as total_kpis_assigned', 'kpis as kpis_completed' => function($query) {
             $query->where('status', 'achieved'); 
@@ -64,11 +78,6 @@ class AdminController extends Controller
         });
 
         return $stateData;
-    }
-
-    public function addKpi()
-    {
-        return view('admin.add-kpi');
     }
 
     public function getKpiDataByState($state)

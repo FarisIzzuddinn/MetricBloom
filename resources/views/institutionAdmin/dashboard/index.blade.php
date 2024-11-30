@@ -1,215 +1,153 @@
 @extends('layout')
-
-@section('title', 'Dashboard')
-
 @section('content')
-<div class="container-fluid">
-        <div class="head-title">
-            <div class="left">
-                <h1 class="font-bold">Dashboard</h1>
-                <ul class="breadcrumb">
-                    <li>
-                        <a href="{{ route('stateAdmin.dashboard') }}" class="font-bold">Dashboard</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    
-        <!-- KPI Cards with Tooltip -->
-        <div class="row g-4 mb-4 justify-content-center ">
-            @foreach([
-                ['title' => "TOTAL KPI", 'value' => $totalKPIs, 'bgColor' => 'bg-primary', 'tooltip' => "This is the latest KPI number."],
-                ['title' => "ACHIEVED", 'value' => $achievedKPIs, 'bgColor' => 'bg-success', 'tooltip' => "This is the number of KPIs that have been achieved."],
-                ['title' => "PENDING", 'value' => $pendingKPIs, 'bgColor' => 'bg-warning', 'tooltip' => "This is the number of pending KPIs to achieve."],
-                ['title' => "AVERAGE", 'value' => $averageAchievement . '%', 'bgColor' => 'bg-info', 'tooltip' => "This is the average KPI achievement."],
-            ] as $kpi)
-            <div class="col-lg-3 col-md-6">
-                <div class="card text-center shadow-sm h-100 kpi-card {{ $kpi['bgColor'] }}" 
-                    data-tooltip="{{ $kpi['tooltip'] }}">
-                    <div class="card-body d-flex flex-column justify-content-between">
-                        <div class="d-flex flex-column align-items-center mb-3">
-                            <h6 class="mb-0 font-bold">{{ $kpi['title'] }}</h6>
-                            <h4 class="mb-0 mt-2 font-bold">{{ $kpi['value'] }}</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-    </div>
-
-    <!-- KPI Distribution Pie Chart -->
-    <div class="row mb-4 gx-4 ">
-        <div class="col-12 col-md-6 d-flex align-items-stretch">
-            <div class="card w-100">
-                <div class="card-header">
-                    <h5 class="mb-0">KPI Distribution by Status</h5>
-                </div>
-                <div class="card-body">
-                    <div class="chart-container" style="height: 300px; width: 100%;">
-                        <canvas id="kpiStatusPieChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Detailed KPI Table -->
-    <h4 class="mb-4">Detailed KPI Overview for State</h4>
-    <div class="card mb-3">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>BIL</th>
-                            <th>KPI DESCRIPTION</th>
-                            <th>TARGET</th>
-                            <th>PERCENTAGE ACHIEVED</th>
-                            <th>REASON</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($kpis->unique('pernyataan_kpi') as $index => $kpi)
-                        <tr>
-                            <td>{{ $index + 1 }}</td>
-                            <td>{{ $kpi->pernyataan_kpi }}</td>
-                            <td>{{ $kpi->sasaran }}</td>
-                            <td>{{ $kpi->peratus_pencapaian }}</td>
-                            <td>{{ $kpi->reason }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    const kpiData = {
-        completed: {{ $achievedKPIs }},
-        pending: {{ $pendingKPIs }},
-    };
-
-    const ctx = document.getElementById('kpiStatusPieChart').getContext('2d');
-    const kpiStatusPieChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: ['Completed', 'Pending'],
-            datasets: [{
-                data: [kpiData.completed, kpiData.pending],
-                backgroundColor: ['#198754', '#ffc107'],
-                hoverOffset: 4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-            }
-        }
-    });
-</script>
-
 <style>
-    /* Dashboard Container Styling */
-    .container-fluid {
+        .container-fluid {
         padding: 20px;
     }
 
-    /* Card Styling */
-    .card {
+    .page-header {
+        background-color: #007bff;
+        color: white;
+        padding: 20px;
         border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease;
-    }
-    .card:hover {
-        transform: scale(1.02);
+        margin-bottom: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    /* Card Header Styling */
+    .page-header h1, .page-header h5 {
+        margin: 0;
+        padding: 0;
+    }
+
+    .card {
+        border-radius: 10px;
+    }
+
     .card-header {
-        background-color: #f1f3f6;
-        font-weight: 600;
-        font-size: 1.1em;
-        color: #333;
-        border-bottom: 1px solid #dcdcdc;
-    }
-
-    /* Card Title */
-    .card-title {
-        color: white;
-    }
-
-    /* Table Styling */
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    th, td {
-        padding: 10px;
-        text-align: left;
-    }
-    th {
-        background-color: #343a40;
-        color: white;
-    }
-    .table-hover tbody tr:hover {
-        background-color: #f1f3f6;
-    }
-
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .card-title {
-            font-size: 1em;
-        }
-    }
-    
-    /* Gaya Tooltip */
-    .kpi-card {
-        transition: transform 0.3s, box-shadow 0.3s;
-        position: relative;
-    }
-
-    .kpi-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    }
-
-    .kpi-card[data-tooltip]:before,
-    .kpi-card[data-tooltip]:after {
-        display: none;
-        position: absolute;
-        white-space: nowrap;
-        background: rgba(0, 0, 0, 0.75);
-        color: #fff;
-        padding: 5px 10px;
-        border-radius: 4px;
-        font-size: 0.9rem;
-        z-index: 10;
-        opacity: 0; 
-        transition: opacity 0.3s ease; 
-    }
-
-    .kpi-card:hover[data-tooltip]:before,
-    .kpi-card:hover[data-tooltip]:after {
-        display: block;
-        content: attr(data-tooltip);
-        top: -38px;
-        left: 50%;
-        transform: translateX(-50%);
-        opacity: 1;
-    }
-
-    .font-bold {
         font-weight: bold;
-        color: white;
-        font-size: 1.5rem;
+        font-size: 1.1rem;
+        background-color: #f8f9fa;
+        border-bottom: none;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .summary-card {
+        border: none;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        text-align: center;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .summary-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .summary-card h2 {
+        margin: 0;
+        font-size: 2.5rem;
+    }
+
+    .form-control {
+        border-radius: 8px;
+    }
+
+    .table {
+        margin-top: 20px;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .badge {
+        font-size: 0.9rem;
+        padding: 5px 10px;
+        border-radius: 5px;
     }
 </style>
+
+<div class="container-fluid">
+    @if ($institution)
+        <div class="page-header">
+            <h1>{{ $institution->name }} Dashboard</h1>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="row mb-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="summary-card">
+                    <h6 class="text-uppercase text-muted">Total KPI</h6>
+                    <h2 class="text-primary">{{ $kpis->count() }}</h2>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="summary-card">
+                    <h6 class="text-uppercase text-muted">Achieved KPI</h6>
+                    <h2 class="text-success">{{ $kpis->where('peratus_pencapaian', 100)->count() }}</h2>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="summary-card">
+                    <h6 class="text-uppercase text-muted">Pending KPI</h6>
+                    <h2 class="text-warning">{{ $kpis->whereBetween('peratus_pencapaian', [1, 99])->count() }}</h2>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6">
+                <div class="summary-card">
+                    <h6 class="text-uppercase text-muted">Not Achieved KPI</h6>
+                    <h2 class="text-danger">{{ $kpis->where('peratus_pencapaian', 0)->count() }}</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- KPI Table -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">KPIs Assigned to {{ $institution->name }}</h5>
+            </div>
+            <div class="card-body">
+                @if ($kpis->isEmpty())
+                    <p>No KPIs assigned to this institution.</p>
+                @else
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>KPI Name</th>
+                                <th>Target</th>
+                                <th>Achievement (%)</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($kpis as $index => $kpi)
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $kpi->pernyataan_kpi }}</td>
+                                    <td>{{ $kpi->sasaran }}</td>
+                                    <td>{{ $kpi->peratus_pencapaian }}</td>
+                                    <td>
+                                        <span class="badge {{ $kpi->peratus_pencapaian >= $kpi->sasaran ? 'bg-success' : 'bg-danger' }}">
+                                            {{ $kpi->peratus_pencapaian >= $kpi->sasaran ? 'Achieved' : 'Not Achieved' }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @endif
+            </div>
+        </div>
+    @else
+        <div class="alert alert-danger">
+            <p>No institution assigned to this user. Please contact the administrator.</p>
+        </div>
+    @endif
+</div>
 @endsection

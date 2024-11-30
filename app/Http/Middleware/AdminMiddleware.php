@@ -15,21 +15,19 @@ class AdminMiddleware
      * @param  \Closure  $next
      * @return mixed
      */
-
+    
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::check()){
+        if (Auth::check()) {
             /** @var App\Models\User */
-
             $user = Auth::user();
-            if($user->hasRole('admin') ){
+            if ($user->hasRole('admin')) {
                 return $next($request);
             }
-            abort(403, "User does not have correct ROLE");
+            // Redirect to a custom unauthorized page
+            return redirect()->route('unauthorized');
         }
-
-        abort(401);
-    }
-
     
+        abort(401); // Unauthorized: user not logged in
+    }
 }

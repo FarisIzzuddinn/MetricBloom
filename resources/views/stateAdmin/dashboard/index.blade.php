@@ -1,4 +1,192 @@
 @extends('layout')
+
+@section('content')
+
+<style>
+    #chart-container {
+        width: 100%; /* Takes the full width of its parent */
+        height: 500px; /* Adjust height as needed */
+        margin: 0 auto; /* Center horizontally */
+    }
+
+    .container-fluid {
+        padding: 20px;
+    }
+
+    .page-header {
+        background-color: #007bff;
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-header h1, .page-header h5 {
+        margin: 0;
+        padding: 0;
+    }
+
+    .card {
+        border-radius: 10px;
+    }
+
+    .card-header {
+        font-weight: bold;
+        font-size: 1.1rem;
+        background-color: #f8f9fa;
+        border-bottom: none;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .summary-card {
+        border: none;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        text-align: center;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .summary-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .summary-card h2 {
+        margin: 0;
+        font-size: 2.5rem;
+    }
+
+    .form-control {
+        border-radius: 8px;
+    }
+
+    .table {
+        margin-top: 20px;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .badge {
+        font-size: 0.9rem;
+        padding: 5px 10px;
+        border-radius: 5px;
+    }
+
+    #container {
+        margin-top: 40px;
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1>Dashboard</h1>
+            <h5>
+                State: {{ $state ? $state->name : 'No State assigned' }}
+            </h5>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="summary-card">
+                <h6 class="text-uppercase text-muted">Total KPI</h6>
+                <h2 class="text-primary">{{ $kpis->count() }}</h2>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="summary-card">
+                <h6 class="text-uppercase text-muted">Achieved KPI</h6>
+                <h2 class="text-success">{{ $kpis->where('peratus_pencapaian', '==', 100)->count() }}</h2>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="summary-card">
+                <h6 class="text-uppercase text-muted">Pending KPI</h6>
+                <h2 class="text-warning">{{ $kpis->whereBetween('peratus_pencapaian', [1,99])->count() }}</h2>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="summary-card">
+                <h6 class="text-uppercase text-muted">Not Achieved KPI</h6>
+                <h2 class="text-danger">{{ $kpis->where('peratus_pencapaian', '=', 0)->count() }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4 mb-3">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    KPIs Assigned to Your Bahagian
+                </div>
+                <div class="card-body">
+                    @if($kpis->isEmpty())
+                        <p class="text-muted">No KPIs are assigned to the selected sector.</p>
+                    @else
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>KPI Name</th>
+                                    <th>Target</th>
+                                    <th>Achievement (%)</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($kpis as $kpi)
+                                    <tr>
+                                        <td>{{ $kpi->pernyataan_kpi }}</td>
+                                        <td>{{ $kpi->sasaran }}</td>
+                                        <td>{{ $kpi->peratus_pencapaian }}</td>
+                                        <td>
+                                            <span class="badge {{ $kpi->peratus_pencapaian >= $kpi->sasaran ? 'bg-success' : 'bg-danger' }}">
+                                                {{ $kpi->peratus_pencapaian >= $kpi->sasaran ? 'Achieved' : 'Not Achieved' }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div> 
+
+    <div class="row mb-4">
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Institutions in {{ $state->name }}</h5>
+                </div>
+                <div class="card-body">
+                    @if ($institutions->isEmpty())
+                        <p>No institutions found for this state.</p>
+                    @else
+                        <ul class="list-group">
+                            @foreach ($institutions as $institution)
+                                <li class="list-group-item">{{ $institution->name }}</li>
+                            @endforeach
+                        </ul>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>   
+</div>
+@endsection
+
+{{-- @extends('layout')
 @section('title', 'Dashboard')
 @section('content')
 
@@ -268,4 +456,6 @@
 
 
     
+ --}}
 
+ 

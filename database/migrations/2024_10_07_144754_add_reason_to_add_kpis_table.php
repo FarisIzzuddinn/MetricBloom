@@ -9,18 +9,18 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
-    {
-        Schema::table('add_kpis', function (Blueprint $table) {
-            $table->text('reason')->nullable()->after('peratus_pencapaian');
-        });
-    }
+    // public function up()
+    // {
+    //     Schema::table('add_kpis', function (Blueprint $table) {
+    //         $table->text('reason')->nullable()->after('peratus_pencapaian');
+    //     });
+    // }
     
-    public function down()
-    {
-        Schema::table('add_kpis', function (Blueprint $table) {
-            $table->dropColumn('reason');
-        });
-    }
+    // public function down()
+    // {
+    //     Schema::table('add_kpis', function (Blueprint $table) {
+    //         $table->dropColumn('reason');
+    //     });
+    // }
     
 };

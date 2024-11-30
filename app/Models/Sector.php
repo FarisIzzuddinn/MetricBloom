@@ -2,22 +2,26 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Sector extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = ['name'];
 
-    public function users()
+    public $timestamps = true;
+
+    public function addKpis()
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(AddKpi::class);
     }
 
-    public function kpis()
+    // Define the relationship with Bahagian
+    public function bahagians()
     {
-        return $this->belongsToMany(AddKpi::class, 'kpi_sector'); // Many-to-many relationship
+        return $this->hasMany(Bahagian::class, 'sector_id');
     }
 }

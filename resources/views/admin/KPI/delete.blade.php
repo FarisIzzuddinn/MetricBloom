@@ -1,5 +1,5 @@
 <!-- Delete Button Trigger Modal -->
-<button type="button" class="btn btn-danger small-button mt-1" data-bs-toggle="modal" data-bs-target="#deleteModal" data-name="{{ $addKpi->name }}">
+<button type="button" class="btn btn-danger small-button mt-1" data-bs-toggle="modal" data-bs-target="#deleteModal" data-name="{{ $addKpi->pernyataan_kpi }}" data-id="{{ $addKpi->id }}">
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
         <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
     </svg>
@@ -17,12 +17,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body text-center">
-                Are you sure you want to delete this <b>ROW</b>
-                <strong id="modalItemName"></strong>?
+                Are you sure you want to delete this row ?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background:blue;">CANCEL</button>
-                <form action="{{ route('kpi.destroy', $addKpi->id) }}" method="POST" style="display:inline-block;">
+                <form id="deleteForm" action="" method="POST" style="display:inline-block;">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-primary" style="background:red;">DELETE</button>
@@ -37,7 +36,11 @@
     deleteModal.addEventListener('show.bs.modal', function (event) {
         var button = event.relatedTarget; 
         var itemName = button.getAttribute('data-name'); 
-        var modalItemName = deleteModal.querySelector('#modalItemName'); 
-        modalItemName.textContent = itemName; 
+        var itemId = button.getAttribute('data-id'); 
+        
+        // Update the form action dynamically
+        var deleteForm = deleteModal.querySelector('#deleteForm');
+        deleteForm.action = `/admin/Kpi/IndexKPI/${itemId}`;
     });
 </script>
+

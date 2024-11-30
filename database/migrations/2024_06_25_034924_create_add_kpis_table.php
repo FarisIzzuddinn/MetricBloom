@@ -15,17 +15,15 @@ return new class extends Migration
         if (!Schema::hasTable('add_kpis')) {
             Schema::create('add_kpis', function (Blueprint $table) {
                 $table->id();
-                $table->integer('bil')->nullable();
-                $table->unsignedBigInteger('teras_id');
-                $table->unsignedBigInteger('so_id'); 
-                $table->unsignedBigInteger('user_id')->nullable();
-                $table->string('kpi'); 
-                $table->string('pernyataan_kpi')->unique();
-                $table->string('sasaran');
-                $table->string('jenis_sasaran');
-                $table->float('pencapaian')->default(0);
-                $table->float('peratus_pencapaian')->default(0);
+                $table->unsignedBigInteger('teras_id'); // Foreign key to Teras
+                $table->unsignedBigInteger('sectors_id')->nullable(); // Foreign key to Sectors
+                $table->string('pernyataan_kpi'); // KPI Statement
+                $table->string('jenis_sasaran'); // Target Type
+                $table->decimal('sasaran', 10, 2); // Target Value
+                // $table->decimal('pencapaian', 10, 2)->default(0); // Achievement Value
+                // $table->decimal('peratus_pencapaian', 5, 2)->nullable(); // Achievement Percentaget
                 $table->timestamps();
+                
             });
         }
     }

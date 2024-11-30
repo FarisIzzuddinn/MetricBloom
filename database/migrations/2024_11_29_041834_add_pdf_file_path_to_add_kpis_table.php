@@ -9,11 +9,10 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->unsignedBigInteger('institution_id')->nullable();
-            $table->foreign('institution_id')->references('id')->on('institutions'); // Assuming 'institutions' is your institution table
+        Schema::table('add_kpis', function (Blueprint $table) {
+            $table->string('pdf_file_path')->nullable();
         });
     }
 
@@ -22,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('add_kpis', function (Blueprint $table) {
             //
         });
     }

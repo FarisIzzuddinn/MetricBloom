@@ -6,20 +6,8 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 <!-- DataTable Bootstrap 5 JS -->
-<script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
 
-<!-- DataTable Buttons Extension -->
-{{-- <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css">
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
-<script src="https://cdn.datatables.net/fixedheader/3.4.0/js/dataTables.fixedHeader.min.js"></script>
-<script src="https://cdn.datatables.net/fixedcolumns/4.2.2/js/dataTables.fixedColumns.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script> --}}
+
 
 @extends('layout')
 @section('title', 'Dashboard')
@@ -129,6 +117,22 @@
 </style>
 
 <div class="container-fluid">
+    @if(session('status'))
+        <div id="alert-message" class="alert alert-{{ session('alert-type', 'info') }} alert-dismissible fade show" role="alert">
+            {{ session('status') }}
+        </div>
+
+        <script>
+            setTimeout(function() {
+                let alert = document.getElementById('alert-message');
+                if(alert){
+                    alert.classList.add('fade-out'); // Start fade-out effect
+                    setTimeout(() => alert.remove(), 500); // Remove after fade-out completes
+                }
+            }, 2000);
+        </script>
+    @endif
+
     <div class="head-title">
         <div class="left">
             <h1>User Management</h1>
@@ -147,7 +151,7 @@
 
     {{-- add modal  --}}
     <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="addUserModalLabel">Add New User</h5>
@@ -157,56 +161,23 @@
                 <form action="{{ url('users') }}" method="POST">
                         @csrf
 
-                        <div class="mb-3">
-                            <label for="">Name</label>
-                            <input type="text" name="name" id="editUserName" class="form-control">
-                            @error('name')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label for="">Email</label>
-                            <input type="text" name="email" id="editUserEmail"  class="form-control">
-                        </div>
-                        <div class="mb-3">
-                            <label for="">Password</label>
-                            <input type="text" name="password" class="form-control">
-                            @error('password')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label for="">Roles</label>
-                            <select multiple name="roles[]" id="roles" class="form-control" required>
-                                <option value="">Select Role</option>
-                                @foreach($roles as $role)
-                                    <option value="{{ $role }}">{{ $role }}</option>
-                                @endforeach
-                            </select>
-                            @error('roles')
-                                <span class="text-danger">{{ $message }}</span>
-                            @enderror
-                        </div>
+                        {{-- Username --}}
+                        <x-floating-form id="addUsername" name="name" type="text" placeholder="Full Name"/> 
 
-                        <div class="mb-3" id="state-container" style="display: none;">
-                            <label for="state_id">Select State: (Assign as Admin State):</label>
-                            <select name="state_id" id="state_id" class="form-control">
-                                <option value="">Select State</option>
-                                @foreach($states as $state)
-                                    <option value="{{ $state->id }}">{{ $state->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                        {{-- email --}}
+                        <x-floating-form id="addEmail" name="email" type="email" placeholder="Email Address"/>
 
-                        <div class="mb-3" id="institution-container" style="display: none;">
-                            <label for="institutions_id">Select Institution: (Assign as Institution Admin):</label>
-                            <select name="institution_id" id="institutions_id" class="form-control">
-                                <option value="">Select Institution</option>
-                                @foreach($institutions as $institution)
-                                    <option value="{{ $institution->id }}">{{ $institution->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                        {{-- password  --}}
+                        <x-floating-form id="addPassword" name="password" type="password" placeholder="Password"/>
+                     
+                        {{-- roles  --}}
+                        <x-select-dropdown id="addRole" name="roles" :options="$roles" label="Role"/>
+                    
+                        {{-- state  --}}
+                        <x-select-dropdown-none id="state-container" name="state_id" style="display: none" :options="$states" label="State"/>
+
+                        {{-- institution  --}}
+                        <x-select-dropdown-none id="institution-container" name="institution_id" style="display: none" :options="$institutions" label="Institution"/>
 
                         <div class="mb-3" id="sector-container" style="display: none;">
                             <label for="sector_id">Select Sector:</label>
@@ -214,6 +185,16 @@
                                 <option value="">Select Sector</option>
                                 @foreach($sectors as $sector)
                                     <option value="{{ $sector->id }}">{{ $sector->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="mb-3" id="bahagian-container" style="display: none;">
+                            <label for="bahagian_id">Select bahagian:</label>
+                            <select name="bahagian_id" id="bahagian_id" class="form-control">
+                                <option value="">Select bahagian</option>
+                                @foreach($bahagians as $bahagian)
+                                    <option value="{{ $bahagian->id }}">{{ $bahagian->nama_bahagian }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -381,75 +362,65 @@
             checkRoles();
         });
 
-        // Inisialisasi fungsi untuk kontrol pemilihan peranan dan elemen yang ditunjukkan
-        const rolesSelect = document.getElementById('roles');
-        const stateContainer = document.getElementById('state-container');
-        const institutionContainer = document.getElementById('institution-container');
-        const sectorContainer = document.getElementById('sector-container');
-        const stateSelect = document.getElementById('state_id');
-        const institutionSelect = document.getElementById('institutions_id');
-        const sectorSelect = document.getElementById('sector_id');
+        // Initialize function and get id based on container and input form
+        const rolesSelect = document.getElementById('addRole'); // Role dropdown
+        const stateContainer = document.getElementById('state-container'); // State container
+        const institutionContainer = document.getElementById('institution-container'); // Institution container
+        const sectorContainer = document.getElementById('sector-container'); // Sector container
+        const bahagianContainer = document.getElementById('bahagian-container'); // Sector container
+        const stateSelect = document.getElementById('state-container').querySelector('select'); // State select
+        const institutionSelect = document.getElementById('institution-container').querySelector('select'); // Institution select
+        const sectorSelect = document.getElementById('sector_id'); // Sector select
+        const bahagianSelect = document.getElementById('bahagian_id'); // Sector select
 
-        // Fungsi untuk periksa peranan yang dipilih dan kontrol tampilan field
-        function checkRoles() {
+        const checkRoles = () => {
             const selectedRoles = Array.from(rolesSelect.selectedOptions).map(option => option.value);
 
-            // Tampilkan field berdasarkan pemilihan peranan
-            if (selectedRoles.includes('user')) {
-                stateContainer.style.display = 'block';
-                institutionContainer.style.display = 'block';
-                sectorContainer.style.display = 'block';
-            } else {
-                stateContainer.style.display = 'none';
-                institutionContainer.style.display = 'none';
-                sectorContainer.style.display = 'none';
-
-                stateSelect.value = "";
-                institutionSelect.value = "";
-                sectorSelect.value = "";
-            }
-
+            // Show or hide State dropdown
             if (selectedRoles.includes('Admin State')) {
                 stateContainer.style.display = 'block';
-            }
-
-            if (selectedRoles.includes('Institution Admin')) {
-                stateContainer.style.display = 'block';
-                institutionContainer.style.display = 'block';
-            }
-        }
-
-        // Fungsi untuk ambil institusi berdasarkan state yang dipilih
-        function fetchInstitutions(stateId) {
-            fetch(`/get-institutions/${stateId}`)
-                .then(response => response.json())
-                .then(data => {
-                    institutionSelect.innerHTML = '<option value="">Choose an institution</option>';
-                    data.forEach(institution => {
-                        const option = document.createElement('option');
-                        option.value = institution.id;
-                        option.textContent = institution.name;
-                        institutionSelect.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error fetching institutions:', error));
-        }
-
-        // Dengarkan perubahan di select box state
-        stateSelect.addEventListener('change', function() {
-            const selectedStateId = this.value;
-            if (selectedStateId) {
-                fetchInstitutions(selectedStateId);
+                stateSelect.setAttribute('required', 'required');
             } else {
-                institutionSelect.innerHTML = '<option value="">Choose an institution</option>';
+                stateContainer.style.display = 'none';
+                stateSelect.removeAttribute('required');
+                stateSelect.value = ""; 
             }
-        });
 
-        // Awal periksa di muat halaman
-        checkRoles();
+            // Show or hide Institution dropdown
+            if (selectedRoles.includes('Institution Admin')) {
+                institutionContainer.style.display = 'block';
+                institutionSelect.setAttribute('required', 'required');
+            } else {
+                institutionContainer.style.display = 'none';
+                institutionSelect.removeAttribute('required');
+                institutionSelect.value = ""; 
+            }
 
-        // Dengarkan perubahan di select box peranan
+            // Show or hide Sector dropdown
+            if (selectedRoles.includes('admin')) {
+                sectorContainer.style.display = 'block';
+                sectorSelect.setAttribute('required', 'required');
+            } else {
+                sectorContainer.style.display = 'none';
+                sectorSelect.removeAttribute('required');
+                sectorSelect.value = ""; 
+            }
+
+            if (selectedRoles.includes('Admin Bahagian')) {
+                bahagianContainer.style.display = 'block';
+                bahagianSelect.setAttribute('required', 'required');
+            } else {
+                bahagianContainer.style.display = 'none';
+                bahagianSelect.removeAttribute('required');
+                bahagianSelect.value = ""; 
+            }
+        };
+
+        // Trigger the function when roles change
         rolesSelect.addEventListener('change', checkRoles);
+
+        // Run on page load to set initial visibility
+        checkRoles();
     });
 </script>
 

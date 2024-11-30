@@ -14,7 +14,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="editForm" action="" method="POST">
+                <form id="editForm" action="{{ url('users/' . $user->id) }}" method="POST">
                     @csrf
                     @method('PUT')
 
@@ -38,7 +38,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="">Roles</label>
-                        <select multiple name="roles[]" id="roles" class="form-control" required>
+                        <select name="roles" id="roles" class="form-control" required>
                             <option value="">Select Role</option>
                             @foreach($roles as $role)
                                 <option value="{{ $role }}">{{ $role }}</option>
@@ -61,7 +61,7 @@
 
                     <div class="mb-3" id="institution-container" style="display: none;">
                         <label for="institutions_id">Select Institution: (Assign as Institution Admin):</label>
-                        <select name="institutions_id" id="institutions_id" class="form-control">
+                        <select name="institution_id" id="institution_id" class="form-control">
                             <option value="">Select Institution</option>
                             @foreach($institutions as $institution)
                                 <option value="{{ $institution->id }}">{{ $institution->name }}</option>
@@ -88,10 +88,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Modal edit
-       
-    });
-</script>

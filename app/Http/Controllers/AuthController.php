@@ -49,31 +49,61 @@ class AuthController extends Controller
     }
 
     public function loginPost(Request $request)
-{
-    $credentials = $request->only('email', 'password');
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|string',
+        ]);
 
-    if (Auth::attempt($credentials)) {
-        /** @var \App\Models\User */
-        $user = Auth::user();
+        $user = \App\Models\User::where('email', $request->email)->first();
 
-        // Check user role and redirect accordingly
-        if ($user->hasRole('super admin')) {
-            return redirect()->route('superAdminDashboard')->with('success', 'Login Success');
-        } elseif ($user->hasRole('admin')) {
-            return redirect()->route('admin.index')->with('success', 'Login Success');
-        } elseif ($user->hasRole('Admin State')) {
-            return redirect()->route('stateAdmin.dashboard')->with('success', 'Login Success');
-        } elseif ($user->hasRole('Institution Admin')) {
-            return redirect()->route('institutionAdmin.dashboard')->with('success', 'Login Success');
-        } else {
-            return redirect()->route('user.kpi.input')->with('success', 'Login Success');
+        if ($user) {
+            if (password_verify($request->password, $user->password)) {
+                Auth::login($user);
+                return $this->redirectToDashboard($user);
+            }
+
+            $hashedPassword = hash('sha512', $user->salt . $request->password);
+            for ($i = 0; $i < 10000; $i++) {
+                $hashedPassword = hash('sha512', $hashedPassword);
+            }
+
+            if (password_verify($hashedPassword, $user->password)) {
+                Auth::login($user);
+                \Log::info('User logged in successfully with SHA-512 rehash', ['user_id' => $user->id]);
+                return $this->redirectToDashboard($user);
+            }
         }
+
+        \Log::warning('Failed login attempt', ['email' => $request->email]);
+        return redirect()->back()->withErrors(['email' => 'Wrong email or password'])->withInput();
     }
 
-    // Authentication failed
-    return redirect()->back()->withErrors(['email' => 'wrong email or password'])->withInput();
-}
 
+    /**
+     * Redirects the user to their respective dashboard based on their role.
+     */
+    private function redirectToDashboard($user)
+    {
+        if ($user->hasRole('super admin', 'web')) {
+            return redirect()->route('superAdminDashboard')->with('success', 'Login Success');
+        } elseif ($user->hasRole('admin', 'web')) {
+            return redirect()->route('admin.index')->with('success', 'Login Success');
+        } elseif ($user->hasRole('Admin State', 'web')) {
+            return redirect()->route('stateAdmin.dashboard')->with('success', 'Login Success');
+        } elseif ($user->hasRole('Institution Admin', 'web')) {
+            return redirect()->route('institutionAdmin.dashboard')->with('success', 'Login Success');
+        } elseif ($user->hasRole('Admin Bahagian', 'web')) {
+            return redirect()->route('admin.index')->with('success', 'Login Success');
+        }
+    
+        return redirect()->route('unauthorized')->with('error', 'Role not recognized.');
+    }
+    
+    public function unauthorized()
+    {
+        return response()->view('errors.unauthorized', [], 403);
+    }
 
     public function edit($id) {
         // $user = auth()->user();

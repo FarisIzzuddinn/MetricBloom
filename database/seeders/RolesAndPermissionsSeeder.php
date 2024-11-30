@@ -39,15 +39,6 @@ class RolesAndPermissionsSeeder extends Seeder
             Permission::create(['name' => $permission]);
         }
 
-        // Buat roles dan assign permissions
-        $adminRole = Role::create(['name' => 'admin']);
-        $adminRole->givePermissionTo([
-            'view dashboard',
-            'view add kpi',
-            'view so',
-            'view teras',
-        ]);
-
         $superadminRole = Role::create(['name' => 'super admin']);
         $superadminRole->givePermissionTo([
             'view permissions',
@@ -57,6 +48,16 @@ class RolesAndPermissionsSeeder extends Seeder
             'Manage State',
             'Manage Institution'
         ]);
+        
+        // Buat roles dan assign permissions
+        $adminRole = Role::create(['name' => 'admin']);
+        $adminRole->givePermissionTo([
+            'view dashboard',
+            'view add kpi',
+            'view so',
+            'view teras',
+        ]);
+
 
         $AdminState = Role::create(['name' => 'Admin State']);
         $AdminState->givePermissionTo([

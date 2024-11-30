@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\State;
 use App\Models\AddKpi;
+use App\Models\KpiState;
+use App\Models\UserEntity;
 use App\Models\Institution;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -12,91 +14,152 @@ use Illuminate\Support\Facades\Auth;
 
 class StateAdminController extends Controller
 {
-    public function index()
-{
-    // Retrieve the state ID of the logged-in user
-    $stateId = auth()->user()->state_id;
-    $username = Auth::user();
-    $chartData = Auth::user();
+//     public function index()
+// {
+//     // Retrieve the state ID of the logged-in user
+//     $stateId = auth()->user()->state_id;
+//     $username = Auth::user();
+//     $chartData = Auth::user();
     
-    // Retrieve all institutions within the state
-    $institutions = Institution::where('state_id', $stateId)->get();
+//     // Retrieve all institutions within the state
+//     $institutions = Institution::where('state_id', $stateId)->get();
     
-    // Retrieve the state and its associated KPIs
-    $state = State::with('kpis')->find($stateId);
-    $kpis = $state ? $state->kpis : collect(); // Handle if state is null
+//     // Retrieve the state and its associated KPIs
+//     $state = State::with('kpis')->find($stateId);
+//     $kpis = $state ? $state->kpis : collect(); // Handle if state is null
     
-    // Calculate the total number of KPIs for the given state
-    $totalKpis = $kpis->count();
+//     // Calculate the total number of KPIs for the given state
+//     $totalKpis = $kpis->count();
     
-    // Calculate the number of KPIs that have been achieved (progress >= 100%)
-    $achievedKpis = $kpis->where('peratus_pencapaian', '>=', 100)->count();
+//     // Calculate the number of KPIs that have been achieved (progress >= 100%)
+//     $achievedKpis = $kpis->where('peratus_pencapaian', '>=', 100)->count();
     
-    // Calculate the number of KPIs that are still pending (progress < 100%)
-    $pendingKpis = $kpis->where('peratus_pencapaian', '<', 100)->count();
+//     // Calculate the number of KPIs that are still pending (progress < 100%)
+//     $pendingKpis = $kpis->where('peratus_pencapaian', '<', 100)->count();
     
-    // Calculate the average achievement percentage for all KPIs
-    $totalProgress = $kpis->sum('peratus_pencapaian');
-    $averageAchievement = ($totalKpis > 0) ? round($totalProgress / $totalKpis, 2) : 0;
+//     // Calculate the average achievement percentage for all KPIs
+//     $totalProgress = $kpis->sum('peratus_pencapaian');
+//     $averageAchievement = ($totalKpis > 0) ? round($totalProgress / $totalKpis, 2) : 0;
 
-    $kpiCategories = $kpis->pluck('kpi')->unique();
+//     $kpiCategories = $kpis->pluck('kpi')->unique();
 
-    $kpiData = $kpis->groupBy('category')->map(function ($group) {
-        return $group->pluck('peratus_pencapaian'); // This will give you the percentage of achievement
-    });
+//     $kpiData = $kpis->groupBy('category')->map(function ($group) {
+//         return $group->pluck('peratus_pencapaian'); // This will give you the percentage of achievement
+//     });
     
-    // Calculate KPI progress per institution
-    $institutionNames = [];
-    $kpiAchievements = [];
-    $financialPerformance = [];
-    $operationalEfficiency = [];
-    $customerSatisfaction = [];
+//     // Calculate KPI progress per institution
+//     $institutionNames = [];
+//     $kpiAchievements = [];
+//     $financialPerformance = [];
+//     $operationalEfficiency = [];
+//     $customerSatisfaction = [];
     
-    foreach ($institutions as $institution) {
-        $institutionNames[] = $institution->name;
-        $kpisGroup = $kpis->where('institution_id', $institution->id);
+//     foreach ($institutions as $institution) {
+//         $institutionNames[] = $institution->name;
+//         $kpisGroup = $kpis->where('institution_id', $institution->id);
         
-        $averageAchievement = $institution->kpis->avg('peratus_pencapaian');
-        $kpiAchievements[] = $averageAchievement ?: 0;
+//         $averageAchievement = $institution->kpis->avg('peratus_pencapaian');
+//         $kpiAchievements[] = $averageAchievement ?: 0;
 
-        // Group KPIs by category
-        $financialKpis = $kpisGroup->where('category', 'financial_performance');
-        $operationalKpis = $kpisGroup->where('category', 'operational_efficiency');
-        $customerKpis = $kpisGroup->where('category', 'customer_satisfaction');
+//         // Group KPIs by category
+//         $financialKpis = $kpisGroup->where('category', 'financial_performance');
+//         $operationalKpis = $kpisGroup->where('category', 'operational_efficiency');
+//         $customerKpis = $kpisGroup->where('category', 'customer_satisfaction');
     
-        // Calculate average achievement for each category
-        $financialPerformance[] = $financialKpis->count() > 0 ? round($financialKpis->avg('peratus_pencapaian'), 2) : 0;
-        $operationalEfficiency[] = $operationalKpis->count() > 0 ? round($operationalKpis->avg('peratus_pencapaian'), 2) : 0;
-        $customerSatisfaction[] = $customerKpis->count() > 0 ? round($customerKpis->avg('peratus_pencapaian'), 2) : 0;
+//         // Calculate average achievement for each category
+//         $financialPerformance[] = $financialKpis->count() > 0 ? round($financialKpis->avg('peratus_pencapaian'), 2) : 0;
+//         $operationalEfficiency[] = $operationalKpis->count() > 0 ? round($operationalKpis->avg('peratus_pencapaian'), 2) : 0;
+//         $customerSatisfaction[] = $customerKpis->count() > 0 ? round($customerKpis->avg('peratus_pencapaian'), 2) : 0;
+//     }
+
+//     return view('stateAdmin.dashboard.index', compact(
+//         'institutions', 'chartData', 'kpiData', 'totalKpis', 
+//         'averageAchievement', 'kpis', 'username', 'kpiCategories',
+//         'institutionNames', 'kpiAchievements', 'financialPerformance',
+//         'operationalEfficiency', 'customerSatisfaction', 'achievedKpis', 'pendingKpis'
+//     ));
+// }
+
+    public function index()
+    {
+        // Fetch the authenticated user's state_id from the user_entities table
+        $username = Auth::User();
+        $userEntity = UserEntity::where('user_id', Auth::id())->first();
+
+        if (!$userEntity || !$userEntity->state_id) {
+            // Handle the case where no state is assigned to the user
+            return view('stateAdmin.dashboard', [
+                    'state' => null,
+                    'institutions' => collect(), // Empty collection
+                    'addKpis' => collect(),  // Empty collection
+            ]);
+        }
+
+        $state = State::find($userEntity->state_id);
+
+        // Retrieve institutions related to the state
+        $institutions = Institution::where('state_id', $state->id)->get();
+
+        // Retrieve KPIs assigned to the state using the pivot table
+        $kpis =AddKpi::whereHas('states', function ($query) use ($state) {
+            $query->where('state_id', $state->id);
+        })->get();
+
+        return view('stateAdmin.dashboard.index', compact('username', 'state', 'institutions', 'kpis'));
     }
 
-    return view('stateAdmin.dashboard.index', compact(
-        'institutions', 'chartData', 'kpiData', 'totalKpis', 
-        'averageAchievement', 'kpis', 'username', 'kpiCategories',
-        'institutionNames', 'kpiAchievements', 'financialPerformance',
-        'operationalEfficiency', 'customerSatisfaction', 'achievedKpis', 'pendingKpis'
-    ));
-}
-
-
-    
     public function manageKPI()
     {
-        // Get the state ID of the authenticated user
-        $stateId = Auth::user()->state_id;
+        $username = auth::user();
+        // Get the logged-in user
+        $user = Auth::user();
 
-        $username = Auth::user();
-    
-        // Fetch institutions related to the state
-        $institutions = Institution::where('state_id', $stateId)->get();
+        // Retrieve the user's entity, which contains the state_id
+        $userEntity = UserEntity::where('user_id', $user->id)->first();
 
-        // Fetch KPIs associated with the institutions in the user's state
-        $kpis = AddKpi::whereHas('states', function ($query) use ($stateId) {
-            $query->where('state_id', $stateId);
-        })->get();
-    
-        return view('stateAdmin.kpi.index', compact('kpis', 'institutions','username'));
+        // Check if the user has an associated entity
+        if (!$userEntity || !$userEntity->state_id) {
+            return redirect()->back()->with('error', 'You are not assigned to any state.');
+        }
+
+        // Retrieve the state
+        $state = State::find($userEntity->state_id);
+
+        if (!$state) {
+            return redirect()->back()->with('error', 'State not found for your assignment.');
+        }
+
+        // Fetch KPIs related to the state
+        $kpis = KpiState::with('state')
+        ->where('state_id', $state->id)
+        ->get();
+
+        return view('stateAdmin.kpi.index', compact('state', 'kpis', 'username'));
     }
+
+
+    public function updateKPI(Request $request)
+    {
+        $request->validate([
+            'kpi_state_id' => 'required|exists:kpi_states,id',
+            'pencapaian' => 'required|numeric|min:0',
+        ]);
+    
+        $kpiState = KpiState::find($request->kpi_state_id);
+    
+        if (!$kpiState) {
+            return redirect()->back()->with('error', 'The specified KPI does not exist.');
+        }
+    
+        $kpiState->pencapaian = $request->pencapaian;
+        $kpiState->peratus_pencapaian = ($request->pencapaian / $kpiState->kpi->sasaran) * 100;
+        $kpiState->status = $kpiState->peratus_pencapaian >= 100 ? 'achieved' : 'not achieved';
+    
+        $kpiState->save();
+    
+        return redirect()->back()->with('success', 'KPI updated successfully!');
+    }
+    
     
 
     public function assignKPI(Request $request, $kpiId)

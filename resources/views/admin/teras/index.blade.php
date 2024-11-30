@@ -112,7 +112,7 @@ h4 {
         <h1>Teras Management</h1>
         <ul class="breadcrumb">
             <li>
-                <a href="#">Teras</a>
+                <a href="#">Teras Management</a>
             </li>
         </ul>
     </div>

@@ -1,446 +1,296 @@
-@can('view dashboard')
 @extends('layout')
-@section('title', 'Dashboard')
+
 @section('content')
 
-<link rel="stylesheet" href="{{ asset("css/table.css") }}">
-
 <style>
-    /* Container for charts */
-    .chart-container {
-        position: relative;
-        width: 100%;
-        height: 100%;
+    #chart-container {
+        width: 100%; /* Takes the full width of its parent */
+        height: 500px; /* Adjust height as needed */
+        margin: 0 auto; /* Center horizontally */
     }
 
-    /* Canvas settings */
-    canvas {
-        width: 100% !important;
-        height: 300px !important; /* Adjust height as needed */
-        object-fit: contain; /* Maintain aspect ratio */
+    .container-fluid {
+        padding: 20px;
     }
 
-    /* Table styles */
-    .table {
-        border-collapse: collapse; /* Collapse borders for consistency */
-        width: 100%; /* Full width for better layout */
-        box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
-        border-radius: 12px;
-        overflow: hidden;
-    }
-
-    .table thead th {
-        background-color: #f8f9fa; /* Light grey for header */
-        color: #495057; /* Dark grey for text */
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        padding: 12px 16px;
-        border-bottom: 2px solid #dee2e6; /* Thicker border for header */
-    }
-
-    .table tbody tr {
-        border-bottom: 1px solid #dee2e6; /* Light grey border */
-    }
-
-    .table tbody tr:hover {
-        background-color: #f1f3f5; /* Hover effect */
-    }
-
-    .table tbody td {
-        padding: 12px 16px;
-        vertical-align: middle;
-        border: 1px solid #dee2e6; /* Added border for table cells */
-    }
-
-    .table tbody td:first-child {
-        font-weight: bold;
-        background-color: #f8f9fa; /* Highlight for first column */
-    }
-
-    /* Card styles */
-    .card {
-        transition: transform 0.3s, box-shadow 0.3s; /* Smooth transition for hover effects */
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Add shadow */
-        
-    }
-
-    .card:hover {
-        transform: translateY(-5px); /* Slight lift effect */
-        background-color: rgba(255, 255, 255, 0.8); /* Lighten background on hover */
-    }
-
-    .card-header {
-        font-weight: bold; /* Bold header */
-        text-transform: uppercase; /* Uppercase header */
-        text-align: center; /* Centered text */
-    }
-
-    .card-title {
-        font-size: 1.5rem; /* Larger title font size */
-        margin: 0; /* Remove default margin */
-        text-align: center; /* Centered text */
-    }
-
-    /* Button styles */
-    .btn {
-        padding: 6px 12px;
-        border-radius: 6px;
-        font-size: 0.875rem;
-        transition: background-color 0.3s ease; /* Smooth transition */
-    }
-
-    .btn-success {
-        background-color: #38c172; /* Custom green */
-        border-color: #38c172;
-    }
-
-    .btn-success:hover {
-        background-color: #32a852; /* Darker green on hover */
-    }
-
-    .btn-danger {
-        background-color: #e3342f; /* Custom red */
-        border-color: #e3342f;
-    }
-
-    .btn-danger:hover {
-        background-color: #c62828; /* Darker red on hover */
-    }
-
-    /* Modal styles */
-    .modal-content {
-        border-radius: 12px;
+    .page-header {
+        background-color: #007bff;
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .modal-header {
-        border-bottom: 1px solid #dee2e6;
-        background-color: #f8f9fa;
+    .page-header h1, .page-header h5 {
+        margin: 0;
+        padding: 0;
     }
 
-    .modal-title {
+    .card {
+        border-radius: 10px;
+    }
+
+    .card-header {
         font-weight: bold;
-        color: #495057;
+        font-size: 1.1rem;
+        background-color: #f8f9fa;
+        border-bottom: none;
     }
 
-    .modal-footer {
-        border-top: 1px solid #dee2e6;
+    .card-body {
+        padding: 20px;
     }
 
-    .btn-close {
-        background: none;
+    .summary-card {
         border: none;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        text-align: center;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s, box-shadow 0.3s;
     }
-    /* Tooltip styles */
-    .kpi-card[data-tooltip]:before,
-    .kpi-card[data-tooltip]:after {
-        display: none;
-        position: absolute;
-        white-space: nowrap;
-        background: rgba(0, 0, 0, 0.75);
-        color: #fff;
-        padding: 5px 10px;
-        border-radius: 4px;
+
+    .summary-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .summary-card h2 {
+        margin: 0;
+        font-size: 2.5rem;
+    }
+
+    .form-control {
+        border-radius: 8px;
+    }
+
+    .table {
+        margin-top: 20px;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .badge {
         font-size: 0.9rem;
-        z-index: 10;
-        opacity: 0; 
-        transition: opacity 0.3s ease; 
+        padding: 5px 10px;
+        border-radius: 5px;
     }
 
-    .kpi-card:hover[data-tooltip]:before,
-    .kpi-card:hover[data-tooltip]:after {
-        display: block;
-        content: attr(data-tooltip);
-        top: -38px;
-        left: 50%;
-        transform: translateX(-50%);
-        opacity: 1;
+    #container {
+        margin-top: 40px;
     }
-
 </style>
 
-@php
-    $chartConfiguration = App\Models\ChartConfiguration::first();
-@endphp
-
-@if ($chartConfiguration)
-    @php
-        $chartTitle = $chartConfiguration->chart_title;
-    @endphp
-@else
-    @php
-        $chartTitle = 'Default Chart Title'; // Provide a fallback title or handle the absence of data appropriately
-    @endphp
-@endif
-
-<div class="head-title">
-    <div class="left">
-        <h1>Dashboard</h1>
-        <ul class="breadcrumb">
-            <li>
-                <a href="#">Dashboard</a>
-            </li>
-        </ul>
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <div>
+            <h1>Dashboard</h1>
+            <h5>
+                Bahagian: {{ auth()->user()->userEntity->bahagian->nama_bahagian ?? 'No Bahagian assigned' }}
+            </h5>
+        </div>
     </div>
-</div>
-<div class="row">
-    <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card kpi-card bg-primary" style=" color: white;" data-tooltip="This is the latest kpi number."> 
-            <div class="card-body text-center">
-                <h5 class="card-title">TOTAL KPI</h5>
-                <h5 class="card-title">{{ $totalKpis }}</h5>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6">
+            <div class="summary-card">
+                <h6 class="text-uppercase text-muted">Total KPI</h6>
+                <h2 class="text-primary">{{ $addKpis->count() }}</h2>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="summary-card">
+                <h6 class="text-uppercase text-muted">Achieved KPI</h6>
+                <h2 class="text-success">{{ $addKpis->where('peratus_pencapaian', '==', 100)->count() }}</h2>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="summary-card">
+                <h6 class="text-uppercase text-muted">Pending KPI</h6>
+                <h2 class="text-warning">{{ $addKpis->whereBetween('peratus_pencapaian', [1,99])->count() }}</h2>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+            <div class="summary-card">
+                <h6 class="text-uppercase text-muted">Not Achieved KPI</h6>
+                <h2 class="text-danger">{{ $addKpis->where('peratus_pencapaian', '=', 0)->count() }}</h2>
             </div>
         </div>
     </div>
 
-    <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card kpi-card bg-success" style=" color: white;" data-tooltip="This is the number of KPIs that have been achieved."> 
-            <div class="card-body text-center">
-                <h5 class="card-title">ACHIEVED</h5>
-                <h5 class="card-title">{{ $achievedKpis }}</h5>
-            </div>
+    <div class="row">
+        <div class="col-lg-6 mb-3">
+            <div id="chart-container" style="height: 400px;"></div>
         </div>
     </div>
 
-    <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card kpi-card bg-warning" style=" color: white;" data-tooltip="This is the number of pending KPIs to achieve."> 
-            <div class="card-body text-center">
-                <h5 class="card-title">PENDING</h5>
-                <h5 class="card-title">{{ $pendingKpis }}</h5>
-            </div>
+    <!-- Sector Filter -->
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <form method="GET" action="{{ route('admin.index') }}">
+                <label for="sector_id" class="form-label">Select Sector:</label>
+                <select name="sector_id" id="sector_id" class="form-control" onchange="this.form.submit()">
+                    @foreach($sectors as $sector)
+                        <option value="{{ $sector->id }}" {{ $sector->id == $selectedSectorId ? 'selected' : '' }}>
+                            {{ $sector->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </form>
         </div>
     </div>
-
-    <div class="col-lg-3 col-md-6 mt-1">
-        <div class="card kpi-card bg-info" style="color: white;" data-tooltip="This is the average cumulative kpi"> 
-            <div class="card-body text-center">
-                <h5 class="card-title">AVERAGE</h5>
-                <h5 class="card-title">{{ $averageAchievement }}%</h5>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="row">
-    <div class="col-lg-8 col-md-12 mt-3">
-        <div class="card">
-            <div class="card-header">KPI Performance Over Time</div>
-            <div class="card-body chart-container">
-               
-                <canvas id="performanceChart"></canvas>
-            </div>
-        </div>
-    </div>
-    <div class="col-lg-4 col-md-12 mt-3">
-        <div class="card">
-            <div class="card-header">KPI Status Distribution</div>
-            <div class="card-body chart-container">
-                <canvas id="statusDistributionChart"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
-
-{{-- <div class="row">
-    <div class="col-lg-12">
-        <div class="card">
-            <div class="card-header">Recent Activities</div>
-            <div class="card-body">
-                <ul class="list-group">
-                    <li class="list-group-item">KPI "Revenue Growth" was updated by John Doe.</li>
-                    <li class="list-group-item">New KPI "Customer Satisfaction" was created.</li>
-                    <li class="list-group-item">Alert: "Market Share" KPI is lagging behind.</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div> --}}
-
-<div class="row mt-3">
-    <div class="col-lg-12">
-        <div class="card">
-            <div class="card-header">KPI OVERVIEW</div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr class="table-secondary text-secondary small-text">
-                                
-                                <th>BIL</th>
-                                <th>TERAS</th>
-                                <th>SO</th>
-                                <th>NEGERI</th>
-                                <th>KPI</th>
-                                <th>PERNYATAAN KPI</th>
-                                <th>SASARAN</th>
-                                <th>PENCAPAIAN</th>
-                                <th>PERATUS PENCAPAIAN</th>
-                                <th>STATUS</th>
-                                <th>REASON</th>
-
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($addKpis as $index => $addkpi)
+   
+    <!-- KPI Table -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    KPIs Assigned to Your Bahagian
+                </div>
+                <div class="card-body">
+                    @if($addKpis->isEmpty())
+                        <p class="text-muted">No KPIs are assigned to the selected sector.</p>
+                    @else
+                        <table class="table table-bordered">
+                            <thead>
                                 <tr>
-                                    <td class="small-text text-secondary">{{ $index + 1 }}</td>
-                                    <td class="small-text">{{ $addkpi->teras ? $addkpi->teras->id : 'Teras has been deleted' }}</td>
-                                    <td class="small-text kpi-statement">{{ $addkpi->so ? $addkpi->so->id : 'SO has been deleted' }}</td> 
-                                    <td class="small-text">
-                                        @if ($addkpi->states->isNotEmpty())
-                                            @foreach ($addkpi->states as $state)
-                                                {{ $state->name }} @if (!$loop->last), @endif
-                                            @endforeach
-                                        @else
-                                            No State Found
-                                        @endif
-                                    </td>
-                                    <td class="small-text">{{ $addkpi->kpi }}</td>
-                                    <td class="small-text kpi-statement">{{ $addkpi->pernyataan_kpi }}</td>
-                                    <td class="small-text">{{ $addkpi->sasaran }}</td>
-                                    <td class="small-text">{{ $addkpi->pencapaian }}%</td>
-                                    <td class="small-text">{{ number_format($addkpi->peratus_pencapaian, 2) }}%</td>
-                                    <td class="small-text">
-                                        @if($addkpi->peratus_pencapaian >= 75)
-                                            <span class="badge text-bg-success">Tinggi</span>
-                                        @elseif($addkpi->peratus_pencapaian >= 50)
-                                            <span class="badge text-bg-warning">Sederhana</span>
-                                        @else
-                                            <span class="badge text-bg-danger">Rendah</span>
-                                        @endif
-                                    </td>
-                                    <td class="small-text">{{ $addkpi->reason }}</td>
+                                    <th>KPI Name</th>
+                                    <th>Target</th>
+                                    <th>Achievement (%)</th>
+                                    <th>Status</th>
                                 </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($addKpis as $kpi)
+                                @foreach($kpi->kpiBahagian as $bahagian)
+                                    <tr>
+                                        <td>{{ $kpi->pernyataan_kpi }}</td>
+                                        <td>{{ $kpi->sasaran }}</td>
+                                        <td>{{ $bahagian->peratus_pencapaian }}</td>
+                                        <td>
+                                            <span class="badge {{ $bahagian->peratus_pencapaian >= $kpi->sasaran ? 'bg-success' : 'bg-danger' }}">
+                                                {{ $bahagian->peratus_pencapaian >= $kpi->sasaran ? 'Achieved' : 'Not Achieved' }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                @endforeach
                             @endforeach
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    @endif
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/highcharts-3d.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const labels = @json($labels);
-    const data = @json($data);
-    const chartTitle = @json($chartTitle);
+    document.addEventListener('DOMContentLoaded', function () {
+        const chartData = @json($chartData);
+        const totalAchieved = {{ $totalAchieved }};
+        const totalNotAchieved = {{ $totalNotAchieved }};
 
-    const backgroundColors = [
-        'rgba(255, 99, 132, 0.2)',
-        'rgba(54, 162, 235, 0.2)',
-        'rgba(255, 206, 86, 0.2)',
-        'rgba(75, 192, 192, 0.2)',
-        'rgba(153, 102, 255, 0.2)',
-        'rgba(255, 159, 64, 0.2)'
-    ];
-
-    const borderColors = [
-        'rgba(255, 99, 132, 1)',
-        'rgba(54, 162, 235, 1)',
-        'rgba(255, 206, 86, 1)',
-        'rgba(75, 192, 192, 1)',
-        'rgba(153, 102, 255, 1)',
-        'rgba(255, 159, 64, 1)'
-    ];
-
-    // Performance Chart
-    const ctx1 = document.getElementById('performanceChart').getContext('2d');
-    const chart1 = new Chart(ctx1, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: chartTitle || 'Default Title',
-                data: data,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            maintainAspectRatio: false,
-        }
-    });
-
-    // KPI Status Distribution Chart
-    const ctx2 = document.getElementById('statusDistributionChart').getContext('2d');
-    const chart2 = new Chart(ctx2, {
-        type: 'pie', // Change to 'pie' or 'doughnut' if appropriate
-        data: {
-            labels: labels, // Ensure this is correct for pie chart
-            datasets: [{
-                label: chartTitle || 'Default Title',
-                data: data.length > 0 ? data : [1], // Ensure there's data to render
-                backgroundColor: data.length > 0 ? backgroundColors : ['#f0f0f0'], 
-                borderColor: data.length > 0 ? borderColors : ['#ccc'], 
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
+        Highcharts.chart('chart-container', {
+            chart: {
+                type: 'pie',
+                height: null, // Adjust automatically to the container
+                backgroundColor: '#f9f9f9',
+            },
+            title: {
+                text: 'Sektor Keselamatan dan Koreksional',
+                style: {
+                    fontSize: '20px',
+                    fontWeight: 'bold',
                 },
-                tooltip: {
-                    callbacks: {
-                        label: function(tooltipItem) {
-                            return `${tooltipItem.label}: ${tooltipItem.raw}`;
-                        }
-                    }
+            },
+            subtitle: {
+                text: `<div style="display: flex; justify-content: center; align-items: center;">
+                    <div style="background-color: green; color: white; border-radius: 5px; padding: 10px; margin-right: 5px;">
+                        <b>${totalAchieved}</b> Achieved
+                    </div>
+                    <div style="background-color: red; color: white; border-radius: 5px; padding: 10px;">
+                        <b>${totalNotAchieved}</b> Not Achieved
+                    </div>
+                </div>`,
+                useHTML: true,
+                align: 'center',
+            },
+            plotOptions: {
+                pie: {
+                    innerSize: '60%', // Donut effect
+                    startAngle: -90,
+                    endAngle: 90, // Semi-donut
+                    center: ['50%', '75%'],
+                    dataLabels: {
+                        enabled: true,
+                        distance: -30,
+                        style: {
+                            color: '#000',
+                            fontSize: '12px',
+                            fontWeight: 'bold',
+                            textOutline: 'none',
+                        },
+                        formatter: function () {
+                            // Display the Bahagian name and KPI breakdown inside the slice
+                            return `<div style="text-align: center;">
+                                <b>${this.point.name}</b><br>
+                                <span style="color:green;">${this.point.achieved}</span> /
+                                <span style="color:red;">${this.point.notAchieved}</span>
+                            </div>`;
+                        },
+                        useHTML: true,
+                    },
                 },
-                title: { 
-                    display: true,
-                    text: chartTitle || 'Default Pie Chart Title', // Display the dynamic or default title
-                    font: {
-                        size: 18, // Size of the title
-                    }
-                }
-            }
-        }
+            },
+            series: [
+                {
+                    name: 'KPI Breakdown',
+                    data: chartData.map(item => ({
+                        name: item.name,
+                        y: item.achieved + item.notAchieved,
+                        achieved: item.achieved,
+                        notAchieved: item.notAchieved,
+                        color: item.color,
+                    })),
+                },
+            ],
+            responsive: {
+                rules: [
+                    {
+                        condition: {
+                            maxWidth: 768, // Mobile responsiveness
+                        },
+                        chartOptions: {
+                            title: {
+                                style: {
+                                    fontSize: '16px',
+                                },
+                            },
+                            subtitle: {
+                                style: {
+                                    fontSize: '14px',
+                                },
+                            },
+                        },
+                    },
+                ],
+            },
+        });
     });
-
-    if (data.length === 0 || data.every(item => item === 0)) {
-        const ctx = ctx2;
-        ctx.font = "16px Arial";
-        ctx.textAlign = "center";
-        ctx.fillStyle = "#666"; // Grey color for the text
-        ctx.fillText("No Data Available", ctx.canvas.width / 2, ctx.canvas.height / 2);
-    }
-
-    function fetchKpiData(state) {
-        fetch(`/kpi-data/${state}`)
-            .then(response => response.json())
-            .then(data => {
-                const labels = data.labels;
-                const values = data.data;
-
-                // Update Performance Chart
-                chart1.data.labels = labels;
-                chart1.data.datasets[0].data = values;
-                chart1.update();
-
-                // Update KPI Status Distribution Chart
-                chart2.data.labels = labels;
-                chart2.data.datasets[0].data = values;
-                chart2.update();
-            })
-            .catch(error => {
-                console.error('Error fetching KPI data:', error);
-            });
-    }
-
-    document.getElementById('stateSelector').addEventListener('change', function() {
-        fetchKpiData(this.value);
-    });
-
-
 </script>
+
+
+
 @endsection
-
-@endcan
-

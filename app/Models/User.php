@@ -15,20 +15,13 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, CanResetPasswordTrait, HasRoles;
      
-
+    protected $guard_name = 'web';
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'state_id', 
-        'institution_id', 
-        'sector_id'
-    ];
+    protected $fillable = ['name', 'email', 'password', 'salt', 'state_id', 'institution_id', 'sector_id', 'bahagian_id'];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -50,45 +43,75 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function addKpis()
+    public function states()
     {
-        return $this->hasMany(AddKpi::class);
+        return $this->belongsToMany(State::class, 'user_entities', 'user_id', 'state_id');
     }
 
     public function state()
     {
-        return $this->belongsTo(State::class, 'kpi_state', 'user_id', 'state_id');
+        return $this->belongsTo(State::class, 'state_id');
     }
 
-    public function institution()
+    public function institutions()
     {
-        return $this->belongsTo(Institution::class);
+        return $this->belongsToMany(Institution::class, 'user_entities', 'user_id', 'institution_id');
     }
+
+    public function sectors()
+    {
+        return $this->belongsToMany(Sector::class, 'user_entities', 'user_id', 'sector_id');
+    }
+
+    public function bahagian()
+    {
+        return $this->belongsToMany(Bahagian::class, 'user_entities', 'user_id', 'bahagian_id');
+    }
+
+    public function userEntity()
+    {
+        return $this->hasOne(UserEntity::class, 'user_id');
+    }
+
+    // public function addKpis()
+    // {
+    //     return $this->hasMany(AddKpi::class);
+    // }
+
+    // public function state()
+    // {
+    //     return $this->belongsTo(State::class, 'kpi_state', 'user_id', 'state_id');
+    // }
+
+    // public function institution()
+    // {
+    //     return $this->belongsTo(Institution::class);
+    // }
 
     // public function kpis()
     // {
     //     return $this->belongsToMany(AddKpi::class, 'institution_add_kpi', 'institution_id', 'kpi_id');
     // }
 
-    public function addkpi()
-    {
-        return $this->belongsToMany(AddKpi::class, 'kpi_user');
-    }
+    // public function addkpi()
+    // {
+    //     return $this->belongsToMany(AddKpi::class, 'kpi_user');
+    // }
 
-    public function kpi()
-    {
-        return $this->belongsToMany(AddKpi::class, 'institution_add_kpi', 'institution_id', 'add_kpi_id');
-    }
+    // public function kpi()
+    // {
+    //     return $this->belongsToMany(AddKpi::class, 'institution_add_kpi', 'institution_id', 'add_kpi_id');
+    // }
 
-    // Institution Admin 
-    public function kpis()
-    {
-        return $this->belongsToMany(AddKpi::class, 'kpi_user', 'user_id', 'kpi_id');
-    }
+    // // Institution Admin 
+    // public function kpis()
+    // {
+    //     return $this->belongsToMany(AddKpi::class, 'kpi_user', 'user_id', 'kpi_id');
+    // }
 
-    public function sector()
-    {
-        return $this->belongsTo(Sector::class);
-    }
+    // public function sector()
+    // {
+    //     return $this->belongsTo(Sector::class);
+    // }
 }
 

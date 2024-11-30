@@ -19,9 +19,6 @@
     max-width: 150px; /* Tetapkan lebar maksimum yang sesuai */
 }
 
-   .table {
-    margin-bottom: 0; /* Remove margin at the bottom of the table */
-}
 .table th:first-child {
     border-top-left-radius: 12px;
 }
@@ -33,4 +30,10 @@
 }
 .table tbody tr:last-child td:last-child {
     border-bottom-right-radius: 12px;
+}
+
+table ul {
+    padding: 0;
+    margin: 0;
+    list-style: none; /* Optional: Remove bullet points */
 }

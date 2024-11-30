@@ -76,6 +76,16 @@
                             @endforeach
                         </select>
                     </div>
+
+                    <div class="mb-3" id="bahagian-container" style="display: none;">
+                        <label for="bahagian_id">Select bahagian:</label>
+                        <select name="bahagian_id" id="bahagian_id" class="form-control">
+                            <option value="">Select bahagian</option>
+                            @foreach($bahagians as $bahagian)
+                                <option value="{{ $bahagian->id }}">{{ $bahagian->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                    
                     <div class="mb-3">
                         <button type="submit" class="btn btn-primary">Save</button>
@@ -85,8 +95,6 @@
 
         </div>
   
- 
-
 <script>
      document.addEventListener('DOMContentLoaded', function () {
         // Inisialisasi fungsi untuk kontrol pemilihan peranan dan elemen yang ditunjukkan
@@ -94,9 +102,11 @@
         const stateContainer = document.getElementById('state-container');
         const institutionContainer = document.getElementById('institution-container');
         const sectorContainer = document.getElementById('sector-container');
+        const bahagianContainer = document.getElementById('bahagian-container');
         const stateSelect = document.getElementById('state_id');
         const institutionSelect = document.getElementById('institutions_id');
         const sectorSelect = document.getElementById('sector_id');
+        const bahagianSelect = document.getElementById('bahagian_id');
 
         // Fungsi untuk periksa peranan yang dipilih dan kontrol tampilan field
         function checkRoles() {
@@ -121,6 +131,10 @@
                 stateContainer.style.display = 'block';
             }
 
+            if (selectedRoles.includes('Admin Bahagian')) {
+                bahagianContainer.style.display = 'block';
+            }
+
             if (selectedRoles.includes('Institution Admin')) {
                 stateContainer.style.display = 'block';
                 institutionContainer.style.display = 'block';
@@ -143,15 +157,15 @@
                 .catch(error => console.error('Error fetching institutions:', error));
         }
 
-        // Dengarkan perubahan di select box state
-        stateSelect.addEventListener('change', function() {
-            const selectedStateId = this.value;
-            if (selectedStateId) {
-                fetchInstitutions(selectedStateId);
-            } else {
-                institutionSelect.innerHTML = '<option value="">Choose an institution</option>';
-            }
-        });
+        // // Dengarkan perubahan di select box state
+        // stateSelect.addEventListener('change', function() {
+        //     const selectedStateId = this.value;
+        //     if (selectedStateId) {
+        //         fetchInstitutions(selectedStateId);
+        //     } else {
+        //         institutionSelect.innerHTML = '<option value="">Choose an institution</option>';
+        //     }
+        // });
 
         // Awal periksa di muat halaman
         checkRoles();

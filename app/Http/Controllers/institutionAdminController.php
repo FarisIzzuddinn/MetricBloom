@@ -6,67 +6,134 @@ use Log;
 use App\Models\User;
 use App\Models\State;
 use App\Models\AddKpi;
-use App\Models\Institution;
 use App\Models\Sector;
+use App\Models\UserEntity;
+use App\Models\Institution;
 use Illuminate\Http\Request;
+use App\Models\KpiInstitution;
 use Illuminate\Support\Facades\Auth;
 
 class institutionAdminController extends Controller
 {
     public function index()
     {
-        $username = Auth::user();
-        $user = Auth::user(); // Get the authenticated user
-        $stateId = $user->state_id; // Get the state ID of the logged-in user
-        $institutionId = $user->institution_id; // Get the institution ID of the logged-in user
+        $username  = auth::user();
+        // Fetch the user entity for the authenticated user
+        $userEntity = UserEntity::where('user_id', Auth::id())->first();
 
-        // Get state details
-        $state = State::find($stateId); 
+        if ($userEntity && $userEntity->institution_id) {
+            // Get the institution using the institution_id
+            $institution = Institution::find($userEntity->institution_id);
+        } else {
+            $institution = null; // No institution assigned
+        }
 
-        // Fetch KPIs assigned to the institution by State Admin
-        $kpis = AddKpi::whereHas('institutions', function ($query) use ($institutionId) {
-            $query->where('institution_id', $institutionId);
-        })->get();
+        // Retrieve KPIs for the institution
+        $kpis = $institution ? $institution->kpis : collect();
 
-        // Count KPIs for the institution
-        $totalKPIs = $kpis->count(); 
-        $achievedKPIs = $kpis->where('status', 'completed')->count(); 
-        $notStartedKPIs = $kpis->where('status', 'not achieved')->count(); 
-
-        // Calculate completed and pending KPIs
-        $completedKPIs = $achievedKPIs;
-        $pendingKPIs = $totalKPIs - $completedKPIs;
-
-        // Custom method to calculate overall performance
-        $overallPerformance = $this->calculateOverallPerformance($institutionId);
-
-        // User statistics
-        $totalUsers = User::count(); 
-        // $activeUsers = $user->institution->users()->where('active', true)->count(); 
-        // $inactiveUsers = $user->institution->users()->where('active', false)->count(); 
-
-        // $this->chart();
-
-        // Calculate the average achievement percentage for all KPIs
-        $totalProgress = AddKpi::where('institution_id', $institutionId)->sum('peratus_pencapaian');
-        $averageAchievement = ($totalKPIs > 0) ? round($totalProgress / $totalKPIs, 2) : 0;
-
-        // Return view with all necessary data, including chart data
-        return view('institutionAdmin.dashboard.index', compact(
-            'username',
-            'institutionId', 
-            'kpis', 
-            'totalKPIs', 
-            'completedKPIs', // Pass to view
-            'pendingKPIs',   // Pass to view
-            'achievedKPIs', 
-            'notStartedKPIs', 
-            'overallPerformance', 
-            'totalUsers', 
-            'averageAchievement',
-            
-        ));
+        return view('institutionAdmin.dashboard.index', compact('institution', 'kpis', 'username'));
     }
+
+    public function kpiIndex()
+    {
+        $username = auth::user();
+        // Get the logged-in user
+        $user = Auth::user();
+    
+        // Retrieve the user's entity, which contains the institution_id
+        $userEntity = UserEntity::where('user_id', $user->id)->first();
+    
+        // Check if the user has an associated entity
+        if (!$userEntity || !$userEntity->institution_id) {
+            return redirect()->back()->with('error', 'You are not assigned to any institution.');
+        }
+    
+        // Retrieve the institution
+        $institution = Institution::find($userEntity->institution_id);
+    
+        if (!$institution) {
+            return redirect()->back()->with('error', 'Institution not found for your assignment.');
+        }
+    
+        // Fetch KPIs related to the institution
+        $kpis = KpiInstitution::with('kpi') // Assuming there is a relation to the KPI model
+            ->where('institution_id', $institution->id)
+            ->get();
+    
+        // Return the view with institution and KPIs
+        return view('institutionAdmin.kpi.index', compact('institution', 'kpis', 'username'));
+    }
+    
+
+    public function update(Request $request)
+    {
+        $request->validate([
+            'kpi_institutions_id' => 'required|exists:kpi_institutions,id',
+            'pencapaian' => 'required|numeric|min:0',
+        ]);
+
+        $kpiInstitution = KpiInstitution::find($request->kpi_institutions_id);
+        $kpiInstitution->pencapaian = $request->pencapaian;
+        $kpiInstitution->peratus_pencapaian = ($request->pencapaian / $kpiInstitution->kpi->sasaran) * 100;
+        $kpiInstitution->status = $kpiInstitution->peratus_pencapaian >= 100 ? 'achieved' : 'not achieved';
+        $kpiInstitution->save();
+
+        return redirect()->back()->with('success', 'KPI achievement updated successfully.');
+    }
+    // public function index()
+    // {
+    //     $username = Auth::user();
+    //     $user = Auth::user(); // Get the authenticated user
+    //     $stateId = $user->state_id; // Get the state ID of the logged-in user
+    //     $institutionId = $user->institution_id; // Get the institution ID of the logged-in user
+
+    //     // Get state details
+    //     $state = State::find($stateId); 
+
+    //     // Fetch KPIs assigned to the institution by State Admin
+    //     $kpis = AddKpi::whereHas('institutions', function ($query) use ($institutionId) {
+    //         $query->where('institution_id', $institutionId);
+    //     })->get();
+
+    //     // Count KPIs for the institution
+    //     $totalKPIs = $kpis->count(); 
+    //     $achievedKPIs = $kpis->where('status', 'completed')->count(); 
+    //     $notStartedKPIs = $kpis->where('status', 'not achieved')->count(); 
+
+    //     // Calculate completed and pending KPIs
+    //     $completedKPIs = $achievedKPIs;
+    //     $pendingKPIs = $totalKPIs - $completedKPIs;
+
+    //     // Custom method to calculate overall performance
+    //     $overallPerformance = $this->calculateOverallPerformance($institutionId);
+
+    //     // User statistics
+    //     $totalUsers = User::count(); 
+    //     // $activeUsers = $user->institution->users()->where('active', true)->count(); 
+    //     // $inactiveUsers = $user->institution->users()->where('active', false)->count(); 
+
+    //     // $this->chart();
+
+    //     // Calculate the average achievement percentage for all KPIs
+    //     $totalProgress = AddKpi::where('institution_id', $institutionId)->sum('peratus_pencapaian');
+    //     $averageAchievement = ($totalKPIs > 0) ? round($totalProgress / $totalKPIs, 2) : 0;
+
+    //     // Return view with all necessary data, including chart data
+    //     return view('institutionAdmin.dashboard.index', compact(
+    //         'username',
+    //         'institutionId', 
+    //         'kpis', 
+    //         'totalKPIs', 
+    //         'completedKPIs', // Pass to view
+    //         'pendingKPIs',   // Pass to view
+    //         'achievedKPIs', 
+    //         'notStartedKPIs', 
+    //         'overallPerformance', 
+    //         'totalUsers', 
+    //         'averageAchievement',
+            
+    //     ));
+    // }
 
 
     public function assignKpi(Request $request)
