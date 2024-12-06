@@ -24,7 +24,6 @@ class SuperAdminController extends Controller
         $username = Auth::User();
 
         // statistic card
-        $totalKpi = AddKpi::count();
         $totalState = State::count();
         $totalInstitution = Institution::count();
         $totalUser = User::count();
@@ -33,44 +32,58 @@ class SuperAdminController extends Controller
         $achievedKpi = $this->getStatusUpdate('achieved');
         $pendingKpi = $this->getStatusUpdate('pending');
         $notAchievedKpi = $this->getStatusUpdate('not achieved');
+        $totalKpi = $achievedKpi +  $notAchievedKpi;
+
+        if ($totalKpi > 0) {
+            $achievedPercentage = ($achievedKpi / $totalKpi) * 100;
+            $pendingPercentage = ($pendingKpi / $totalKpi) * 100;
+            $notAchievedPercentage = ($notAchievedKpi / $totalKpi) * 100;
+        } else {
+            $achievedPercentage = $pendingPercentage = $notAchievedPercentage = 0;
+        }
     
         // Fetch optional `status` parameter
         $status = $request->get('status');
 
-        // Fetch KPIs from kpi_bahagian
-        $kpiBahagian = DB::table('kpi_bahagian')
-            ->join('add_kpis', 'kpi_bahagian.add_kpi_id', '=', 'add_kpis.id')
-            ->select('add_kpis.id', 'add_kpis.pernyataan_kpi', 'add_kpis.sasaran', 'kpi_bahagian.pencapaian', 'kpi_bahagian.status')
-            ->when($status, function ($query, $status) {
-                return $query->where('kpi_bahagian.status', $status);
-            })
-            ->get();
+        
+        if($status){
+            // Fetch KPIs from kpi_bahagian
+            $kpiBahagian = DB::table('kpi_bahagian')
+                ->join('add_kpis', 'kpi_bahagian.add_kpi_id', '=', 'add_kpis.id')
+                ->select('add_kpis.id', 'add_kpis.pernyataan_kpi', 'add_kpis.sasaran', 'kpi_bahagian.pencapaian', 'kpi_bahagian.status')
+                ->when($status, function ($query, $status) {
+                    return $query->where('kpi_bahagian.status', $status);
+                })
+                ->get();
 
-        // Fetch KPIs from kpi_states
-        $kpiStates = DB::table('kpi_states')
-            ->join('add_kpis', 'kpi_states.add_kpi_id', '=', 'add_kpis.id')
-            ->select('add_kpis.id', 'add_kpis.pernyataan_kpi', 'add_kpis.sasaran', 'kpi_states.pencapaian', 'kpi_states.status')
-            ->when($status, function ($query, $status) {
-                return $query->where('kpi_states.status', $status);
-            })
-            ->get();
+            // Fetch KPIs from kpi_states
+            $kpiStates = DB::table('kpi_states')
+                ->join('add_kpis', 'kpi_states.add_kpi_id', '=', 'add_kpis.id')
+                ->select('add_kpis.id', 'add_kpis.pernyataan_kpi', 'add_kpis.sasaran', 'kpi_states.pencapaian', 'kpi_states.status')
+                ->when($status, function ($query, $status) {
+                    return $query->where('kpi_states.status', $status);
+                })
+                ->get();
 
-        // Fetch KPIs from kpi_institutions
-        $kpiInstitutions = DB::table('kpi_institutions')
-            ->join('add_kpis', 'kpi_institutions.add_kpi_id', '=', 'add_kpis.id')
-            ->select('add_kpis.id', 'add_kpis.pernyataan_kpi', 'add_kpis.sasaran', 'kpi_institutions.pencapaian', 'kpi_institutions.status')
-            ->when($status, function ($query, $status) {
-                return $query->where('kpi_institutions.status', $status);
-            })
-            ->get();
+            // Fetch KPIs from kpi_institutions
+            $kpiInstitutions = DB::table('kpi_institutions')
+                ->join('add_kpis', 'kpi_institutions.add_kpi_id', '=', 'add_kpis.id')
+                ->select('add_kpis.id', 'add_kpis.pernyataan_kpi', 'add_kpis.sasaran', 'kpi_institutions.pencapaian', 'kpi_institutions.status')
+                ->when($status, function ($query, $status) {
+                    return $query->where('kpi_institutions.status', $status);
+                })
+                ->get();
 
-        // Combine all KPIs into one collection
-        $kpis = collect()
-            ->merge($kpiBahagian)
-            ->merge($kpiStates)
-            ->merge($kpiInstitutions)
-            ->unique('id'); 
+            // Combine all KPIs into one collection
+            $kpis = collect()
+                ->merge($kpiBahagian)
+                ->merge($kpiStates)
+                ->merge($kpiInstitutions)
+                ->unique('id'); 
             
+            return response()->json($kpis);
+        }
+
         // Bahagian KPI Data
         $bahagianPerformance = DB::table('kpi_bahagian')
         ->join('add_kpis', 'kpi_bahagian.add_kpi_id', '=', 'add_kpis.id')
@@ -79,6 +92,26 @@ class SuperAdminController extends Controller
             DB::raw('AVG(CASE WHEN add_kpis.sasaran > 0 THEN (kpi_bahagian.pencapaian / add_kpis.sasaran * 100) ELSE 0 END) as avg_performance')
         )
         ->groupBy('kpi_bahagian.bahagian_id')
+        ->get();
+
+        // Get total KPI per bahagian
+        $kpiBahagianData = DB::table('kpi_bahagian')
+        ->join('bahagian', 'kpi_bahagian.bahagian_id', '=', 'bahagian.id')
+        ->join('add_kpis', 'kpi_bahagian.add_kpi_id', '=', 'add_kpis.id')
+        ->select(
+            'bahagian.nama_bahagian as name',
+            DB::raw('COUNT(kpi_bahagian.add_kpi_id) as total_kpi'),
+            DB::raw('JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    "name", add_kpis.pernyataan_kpi,
+                    "target", add_kpis.sasaran,
+                    "achievement", kpi_bahagian.pencapaian,
+                    "percentage", kpi_bahagian.peratus_pencapaian,
+                    "status", kpi_bahagian.status
+                )
+            ) as kpis')
+        )
+        ->groupBy('bahagian.id', 'bahagian.nama_bahagian')
         ->get();
     
         // Add 'name' for each bahagian
@@ -126,7 +159,7 @@ class SuperAdminController extends Controller
             'username', 'totalKpi', 'totalState', 'totalInstitution', 'totalUser',
             'achievedKpi', 'pendingKpi', 'notAchievedKpi', 'bahagianPerformance', 'bahagianStatus',
             'bahagianWithNames', 'statePerformance', 'stateTrends', 'institutionPerformance', 'institutionStatus',
-            'kpis'
+            'kpiBahagianData', 'achievedPercentage', 'notAchievedPercentage', 'pendingPercentage'
         ));
     }
 
@@ -148,6 +181,7 @@ class SuperAdminController extends Controller
 
         return $kpiBahagian + $kpiState + $kpiInstitution;
     }
+    
 
     // public function index(){
     //     // Dipslay username at navbar 

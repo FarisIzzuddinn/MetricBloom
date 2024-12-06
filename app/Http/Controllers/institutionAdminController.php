@@ -31,6 +31,10 @@ class institutionAdminController extends Controller
         // Retrieve KPIs for the institution
         $kpis = $institution ? $institution->kpis : collect();
 
+
+
+
+        
         return view('institutionAdmin.dashboard.index', compact('institution', 'kpis', 'username'));
     }
 
