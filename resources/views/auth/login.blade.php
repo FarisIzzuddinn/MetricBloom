@@ -140,9 +140,9 @@
                         </div>
                     @endif
 
-                    <div class="row">
+                    <!-- <div class="row">
                         <small style="color: white;">Don't have an account? <a href="{{ route('register') }}">Sign Up</a></small>
-                    </div>
+                    </div> -->
                     <div class="form-group row">
                         <div class="col-md-6 offset-md-4">
                             <div class="checkbox">
