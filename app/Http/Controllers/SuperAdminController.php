@@ -154,12 +154,77 @@ class SuperAdminController extends Controller
         $institutionStatus = KpiInstitution::selectRaw('institution_id, status, COUNT(*) as count')
             ->groupBy('institution_id', 'status')
             ->get();
+
+        // kpi summary
+        $summary = DB::table(function ($query) {
+            $query->select('states.name as state_name', 'kpi_states.peratus_pencapaian', 'states.id as state_id')
+                ->from('kpi_states')
+                ->join('states', 'kpi_states.state_id', '=', 'states.id')
+                ->unionAll(
+                    DB::table('kpi_institutions')
+                        ->join('institutions', 'kpi_institutions.institution_id', '=', 'institutions.id')
+                        ->join('states', 'institutions.state_id', '=', 'states.id')
+                        ->select('states.name as state_name', 'kpi_institutions.peratus_pencapaian', 'states.id as state_id')
+                );
+        }, 'kpi_data')
+        ->select(
+            'kpi_data.state_name',
+            DB::raw('COUNT(kpi_data.state_id) as total_kpis'),
+            DB::raw('AVG(kpi_data.peratus_pencapaian) as average_performance')
+        )
+        ->groupBy('kpi_data.state_name')
+        ->get();
+    
+        // Prepare drilldown data
+        $drilldownData = [];
+        $states = DB::table('states')->get();
+    
+        foreach ($states as $state) {
+            // Fetch state-level KPIs
+            $stateKpis = DB::table('kpi_states')
+                ->join('add_kpis', 'kpi_states.add_kpi_id', '=', 'add_kpis.id')
+                ->where('state_id', $state->id)
+                ->select(
+                    'add_kpis.pernyataan_kpi as name',
+                    DB::raw('COALESCE(kpi_states.pencapaian, 0) as target'),
+                    DB::raw('COALESCE(kpi_states.peratus_pencapaian, 0) as achievement'),
+                    'kpi_states.status'
+                )
+                ->get();
+    
+            // Fetch institution-level KPIs
+            $institutionKpis = DB::table('kpi_institutions')
+                ->join('institutions', 'kpi_institutions.institution_id', '=', 'institutions.id')
+                ->join('add_kpis', 'kpi_institutions.add_kpi_id', '=', 'add_kpis.id')
+                ->where('institutions.state_id', $state->id)
+                ->select(
+                    'institutions.name as institution_name',
+                    'add_kpis.pernyataan_kpi as name',
+                    DB::raw('COALESCE(kpi_institutions.pencapaian, 0) as target'),
+                    DB::raw('COALESCE(kpi_institutions.peratus_pencapaian, 0) as achievement'),
+                    'kpi_institutions.status'
+                )
+                ->get();
+    
+            // Structure the data
+            $drilldownData[strtolower($state->name)] = [
+                'state_kpis' => $stateKpis,
+                'institution_kpis' => $institutionKpis
+            ];
+        }
+
+        $stateNames = $summary->pluck('state_name');
+        $totalKpis = $summary->pluck('total_kpis');
+        $averagePerformance = $summary->pluck('average_performance');
+        
+  
     
         return view('superAdmin.Dashboard.index', compact(
             'username', 'totalKpi', 'totalState', 'totalInstitution', 'totalUser',
             'achievedKpi', 'pendingKpi', 'notAchievedKpi', 'bahagianPerformance', 'bahagianStatus',
             'bahagianWithNames', 'statePerformance', 'stateTrends', 'institutionPerformance', 'institutionStatus',
-            'kpiBahagianData', 'achievedPercentage', 'notAchievedPercentage', 'pendingPercentage'
+            'kpiBahagianData', 'achievedPercentage', 'notAchievedPercentage', 'pendingPercentage', 'drilldownData',
+            'summary', 'stateNames', 'totalKpis', 'averagePerformance'
         ));
     }
 
@@ -181,8 +246,6 @@ class SuperAdminController extends Controller
 
         return $kpiBahagian + $kpiState + $kpiInstitution;
     }
-    
-
     // public function index(){
     //     // Dipslay username at navbar 
     //     $username = Auth::User();

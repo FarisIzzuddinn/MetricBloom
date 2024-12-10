@@ -1,5 +1,6 @@
 <?php
 
+use Barryvdh\DomPDF\PDF;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SoController;
 use App\Http\Controllers\AuthController;
@@ -9,13 +10,14 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\TerasController;
 use App\Http\Controllers\AddKpiController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserKpiController;
 use App\Http\Controllers\PermissionController;
+use App\Http\Controllers\StateAdminController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\Auth\ForgotPassController;
 use App\Http\Controllers\institutionAdminController;
-use App\Http\Controllers\StateAdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,6 +65,10 @@ Route::middleware(['role:super admin'])->group(function () {
     Route::resource('users', UserController::class);
     Route::get('users/{userId}/delete', [UserController::class, 'destroy']);
     Route::get('/get-institutions/{stateId}', [UserController::class, 'getInstitutions']);
+
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/pdf', [ReportController::class, 'exportPDF'])->name('reports.pdf');
+    Route::get('/reports/csv', [ReportController::class, 'exportCSV'])->name('reports.csv');
 });
 
 Route::middleware(['role:Admin State'])->group(function () {

@@ -24,7 +24,10 @@ class KpiInstitution extends Model
         return $this->belongsTo(Institution::class, 'institution_id');
     }
 
-
+    public function institutions()
+    {
+        return $this->belongsTo(KpiInstitution::class, 'institution_id');
+    }
     public function kpi()
     {
         return $this->belongsTo(AddKpi::class, 'add_kpi_id');

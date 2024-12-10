@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\State;
 use App\Models\Teras;
 use App\Models\AddKpi;
@@ -8,8 +9,9 @@ use App\Models\Sector;
 use App\Models\Bahagian;
 use App\Models\Institution;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class AddKpiController extends Controller
 {
@@ -30,7 +32,7 @@ class AddKpiController extends Controller
     {
         return view('kpi.add');
     }
-
+    
     public function store(Request $request)
     {
         // Validate the request
@@ -42,89 +44,86 @@ class AddKpiController extends Controller
             'jenis_sasaran' => 'required|string|max:255',
             'owners' => 'nullable|array',
             'pdf_file_path' => 'nullable|file|mimes:pdf|max:10240',
+            'created_at' => 'nullable|date',
         ]);
-
-        // Create the KPI
-        // $bil = AddKpi::count() + 1;
-        // $data = $request->except(['_token', 'owners', 'pdf_file_path']);
-        // $data['bil'] = $bil;
-        // $data['kpi'] = 'KPI ' . $bil;
-        // Log::info('Validated data:', $data);
-
+    
+        // Handle created_at and quarter
+        $createdAt = $request->input('created_at', now()); // Use provided date or the current date
         $data = $request->except(['_token', 'owners', 'pdf_file_path']);
-        Log::info('Validated data:', $data);
+        $data['created_at'] = $createdAt; // Set the created_at value
+        $data['quarter'] = Carbon::parse($createdAt)->quarter; // Calculate the quarter based on created_at
     
         // Handle file upload
         if ($request->hasFile('pdf_file_path')) {
-            Log::info('File upload detected.');
-            
             $file = $request->file('pdf_file_path');
-            Log::info('Uploaded file details:', [
-                'original_name' => $file->getClientOriginalName(),
-                'mime_type' => $file->getMimeType(),
-                'size' => $file->getSize(),
-            ]);
-    
-            // Store the file and log its path
             $filePath = $file->store('kpi_files', 'public');
-            Log::info('File stored at:', ['path' => $filePath]);
-    
-            $data['pdf_file_path'] = $filePath;
-        } else {
-            Log::info('No file uploaded.');
+            $data['pdf_file_path'] = $filePath; // Save the file path
         }
-        
-
+    
+        // Create the KPI
         $kpi = AddKpi::create($data);
-
-
+    
         // Process owners
         if ($request->has('owners')) {
             foreach ($request->owners as $owner) {
-                Log::info('Processing Owner:', ['owner' => $owner]);
-
                 [$type, $id] = explode('-', $owner);
-
+    
                 switch ($type) {
                     case 'state':
                         $state = State::find($id);
                         if ($state) {
-                            $state->kpis()->attach($kpi->id);
+                            DB::table('kpi_states')->insert([
+                                'state_id' => $id,
+                                'add_kpi_id' => $kpi->id,
+                                'created_at' => $createdAt,
+                                'quarter' => $data['quarter'],
+                            ]);
                             Log::info("KPI assigned to state ID: {$id}");
                         } else {
                             Log::error("State not found: ID {$id}");
                         }
                         break;
-
+    
                     case 'institution':
                         $institution = Institution::find($id);
                         if ($institution) {
-                            $institution->kpis()->attach($kpi->id);
+                            DB::table('kpi_institutions')->insert([
+                                'institution_id' => $id,
+                                'add_kpi_id' => $kpi->id,
+                                'created_at' => $createdAt,
+                                'quarter' => $data['quarter'],
+                            ]);
                             Log::info("KPI assigned to institution ID: {$id}");
                         } else {
                             Log::error("Institution not found: ID {$id}");
                         }
                         break;
-
+    
                     case 'bahagian':
                         $bahagian = Bahagian::find($id);
                         if ($bahagian) {
-                            $bahagian->kpis()->attach($kpi->id);
+                            DB::table('kpi_bahagian')->insert([
+                                'bahagian_id' => $id,
+                                'add_kpi_id' => $kpi->id,
+                                'created_at' => $createdAt,
+                                'quarter' => $data['quarter'],
+                            ]);
                             Log::info("KPI assigned to bahagian ID: {$id}");
                         } else {
                             Log::error("Bahagian not found: ID {$id}");
                         }
                         break;
-
+    
                     default:
                         Log::warning('Unknown owner type:', ['type' => $type]);
                         break;
                 }
             }
         }
-
+    
         return redirect()->route('admin.kpi')->with('success', 'KPI created and assigned successfully.');
     }
+    
 
      
 

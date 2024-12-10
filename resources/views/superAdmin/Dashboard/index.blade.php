@@ -106,6 +106,21 @@
         </div>
     </div>
 
+    <!-- State KPI Overview -->
+    <div class="row mt-4">
+        <div id="kpi-chart" style="width: 100%; height: 400px;"></div>
+    </div>
+
+    <div class="row mt-4">
+        <!-- KPI Details Section -->
+        <div class="col-md-12">
+            <div id="detailsSections">
+                <ul id="detailsList" class="list-group"></ul>
+            </div>
+        </div>
+    </div>
+    
+
     {{-- bahagian  --}}
     <div class="row mt-4">
         <!-- KPI Total Bahagian Chart -->
@@ -146,9 +161,168 @@
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
 <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const stateData = @json($stateNames);
+        const totalKpis = @json($totalKpis);
+        const kpiDetails = @json($drilldownData);
+
+        Highcharts.chart('kpi-chart', {
+            chart: {
+                type: 'column',
+                borderColor: '#000', // Adds black border
+                borderWidth: 2, // Sets border width
+                spacing: [10, 10, 15, 10], // Adds spacing inside the border
+            },
+            title: {
+                text: 'State KPI Overview'
+            },
+            xAxis: {
+                categories: stateData,
+                title: {
+                    text: 'States'
+                }
+            },
+            yAxis: { 
+                title: {
+                    text: 'Total KPIs'
+                }
+            },
+            tooltip: {
+                shared: true
+            },
+            series: [
+                {
+                    name: 'Total KPIs',
+                    type: 'column',
+                    data: totalKpis,
+                    color: '#007bff',
+                    point: {
+                        events: {
+                            click: function () {
+                                const stateIndex = this.index; // Index of the clicked bar
+                                const stateName = stateData[stateIndex].toLowerCase(); // Convert state name to lowercase
+                                const details = kpiDetails[stateName]; // Fetch details using lowercase keys
+                                displayDetails(stateName, details); // Pass the normalized state name and details
+                            }
+                        }
+                    }
+                }
+            ],
+            credits: { enabled: false },
+            exporting: { enabled: true }
+        });
+        
+        // Function to display details of a state
+        function displayDetails(stateName, details) {
+            let detailsSection = document.getElementById('detailsSections');
+            if (!detailsSection) {
+                detailsSection = document.createElement('div');
+                detailsSection.id = 'detailsSections';
+                detailsSection.className = 'mt-4';
+                document.body.appendChild(detailsSection);
+            }
+
+            if (!details || (details.state_kpis.length === 0 && details.institution_kpis.length === 0)) {
+                detailsSection.innerHTML = `<div class="alert alert-warning">No KPI details available for ${stateName.charAt(0).toUpperCase() + stateName.slice(1)}.</div>`;
+                return;
+            }
+
+            // Render state-level KPIs
+            const stateRows = details.state_kpis
+                .map(kpi => `
+                    <tr>
+                        <td>${kpi.name}</td>
+                        <td class="text-center">${parseFloat(kpi.target).toFixed(2)}</td>
+                        <td class="text-center">${parseFloat(kpi.achievement).toFixed(2)}%</td>
+                        <td class="text-center">
+                            <span class="badge ${
+                                kpi.status === 'achieved'
+                                    ? 'bg-success'
+                                    : kpi.status === 'pending'
+                                    ? 'bg-warning text-dark'
+                                    : 'bg-danger'
+                            }">${kpi.status}</span>
+                        </td>
+                    </tr>
+                `)
+                .join('');
+
+            // Render institution-level KPIs
+            const institutionRows = details.institution_kpis
+                .map(kpi => `
+                    <tr>
+                        <td>${kpi.institution_name}</td>
+                        <td>${kpi.name}</td>
+                        <td class="text-center">${parseFloat(kpi.target).toFixed(2)}</td>
+                        <td class="text-center">${parseFloat(kpi.achievement).toFixed(2)}%</td>
+                        <td class="text-center">
+                            <span class="badge ${
+                                kpi.status === 'achieved'
+                                    ? 'bg-success'
+                                    : kpi.status === 'pending'
+                                    ? 'bg-warning text-dark'
+                                    : 'bg-danger'
+                            }">${kpi.status}</span>
+                        </td>
+                    </tr>
+                `)
+                .join('');
+
+            const tableHtml = `
+                <div class="card shadow-sm rounded fade-in">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">KPI Details for: ${stateName.charAt(0).toUpperCase() + stateName.slice(1)}</h5>
+                        <button id="hideTableButton" class="btn btn-sm btn-light">Hide Table</button>
+                    </div>
+                    <div class="card-body p-4">
+                        <h5>State KPIs</h5>
+                        <table class="table table-hover table-bordered">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>KPI Name</th>
+                                    <th class="text-center">Target</th>
+                                    <th class="text-center">Achievement</th>
+                                    <th class="text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${stateRows}
+                            </tbody>
+                        </table>
+
+                        <h5 class="mt-4">Institution KPIs</h5>
+                        <table class="table table-hover table-bordered">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>Institution Name</th>
+                                    <th>KPI Name</th>
+                                    <th class="text-center">Target</th>
+                                    <th class="text-center">Achievement</th>
+                                    <th class="text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${institutionRows}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            detailsSection.innerHTML = tableHtml;
+
+            // Attach the event listener AFTER the button is added to the DOM
+            const hideButton = document.getElementById('hideTableButton');
+            hideButton.addEventListener('click', function () {
+                detailsSection.innerHTML = ''; // Clear the content to hide the table
+            });
+        }
+    });
+
+
     // Total KPI bahagian
     document.addEventListener('DOMContentLoaded', function () {
         const kpiData = @json($kpiBahagianData);
@@ -316,7 +490,7 @@
                         </div>
                         <div class="card-body p-4">
                             <table class="table table-hover table-bordered">
-                                <thead class="table-light">
+                                <thead class="table-primary">
                                     <tr>
                                         <th>KPI Name</th>
                                         <th class="text-center">Target</th>
@@ -453,7 +627,8 @@
                     { name: 'Pending', y: {{ $pendingPercentage }}, color: '#ffcc02' },
                     { name: 'Not Achieved', y: {{ $notAchievedPercentage }}, color: '#f44336' }
                 ]
-            }]
+            }],
+            credits: { enabled: false }
         });
 
         // Fetch KPIs based on status via AJAX
@@ -486,8 +661,8 @@
             }
 
             const tableHtml = `
-                <table class="table table-bordered mt-2">
-                    <thead>
+               <table class="table table-bordered table-striped mt-2 text-center">
+                    <thead class="table-primary">
                         <tr>
                             <th>KPI Name</th>
                             <th>Target</th>
@@ -501,7 +676,11 @@
                                 <td>${item.pernyataan_kpi}</td>
                                 <td>${item.sasaran}</td>
                                 <td>${item.pencapaian}</td>
-                                <td>${item.status}</td>
+                                <td>
+                                    <span class="badge ${item.status === 'achieved' ? 'bg-success' : 'bg-danger'}">
+                                        ${item.status === 'achieved' ? 'achieved' : 'not achieved'}
+                                    </span>
+                                </td>
                             </tr>
                         `).join('')}
                     </tbody>

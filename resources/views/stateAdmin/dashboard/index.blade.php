@@ -127,7 +127,7 @@
         <div class="col-12">
             <div class="card shadow-sm">
                 <div class="card-header">
-                    KPIs Assigned to Your Bahagian
+                    KPI Assigned to State {{ $state->name }}
                 </div>
                 <div class="card-body">
                     @if($kpis->isEmpty())
