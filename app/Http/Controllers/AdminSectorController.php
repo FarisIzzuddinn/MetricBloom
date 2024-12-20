@@ -20,21 +20,21 @@ class AdminSectorController extends Controller
 
         // Check if the user is associated with a Bahagian
         if (!$user->userEntity || !$user->userEntity->sector_id) {
-            return redirect()->back()->withErrors('No Bahagian is associated with your account.');
+            return redirect()->back()->withErrors('No Sector is associated with your account.');
         }
 
-        $sector = $user->userEntity->sector; // Get the user's Bahagian
-        $bahagianId = $sector->bahagian_id; // Get the sector ID for the Bahagian
-        $bahagians = Bahagian::all(); // Get all sectors for the dropdown filter
-
-        // Get the selected sector ID from the request, defaulting to the user's sector
+        $sector = $user->userEntity->sector; // Get the user's Sector
+        $bahagianId = $sector->bahagian_id; // Get the Bahagian ID for the Sector
+    
+        // Retrieve Bahagians only related to the user's sector
+        $bahagians = Bahagian::where('sector_id', $sector->id)->get();
+    
+        // Get the selected Bahagian ID from the request, defaulting to the user's Bahagian
         $selectedBahagianId = $request->input('bahagian_id', $bahagianId);
-
-        // Retrieve KPIs for all Bahagians in the selected sector
-        $addKpis = AddKpi::whereHas('bahagians', function ($query) use ($selectedBahagianId) {
-            $query->whereHas('sector', function ($sectorQuery) use ($selectedBahagianId) {
-                $sectorQuery->where('id', $selectedBahagianId);
-            });
+    
+        // Retrieve KPIs related to the selected Bahagian
+        $addKpis = AddKpi::whereHas('kpiBahagian', function ($query) use ($selectedBahagianId) {
+            $query->where('bahagian_id', $selectedBahagianId);
         })->get();
 
         $sectorId = 1; // Example: Sektor Keselamatan dan Koreksional

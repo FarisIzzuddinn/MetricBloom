@@ -114,8 +114,8 @@ Route::middleware(['role:Admin Sector|super admin'])->group(function () {
 });
 
 Route::middleware(['role:Admin Sector'])->group(function () {
+    Route::get('/sectoradmin/dashboard', [AdminSectorController::class, 'index'])->name('adminSector.index');
 });
-Route::get('/sectoradmin/dashboard', [AdminSectorController::class, 'index'])->name('adminSector.index');
 
 Route::get('/storage/{path}', function ($path) {
     $file = storage_path('app/public/' . $path);
