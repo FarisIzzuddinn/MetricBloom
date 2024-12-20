@@ -30,10 +30,6 @@ class institutionAdminController extends Controller
 
         // Retrieve KPIs for the institution
         $kpis = $institution ? $institution->kpis : collect();
-
-
-
-
         
         return view('institutionAdmin.dashboard.index', compact('institution', 'kpis', 'username'));
     }
@@ -79,7 +75,14 @@ class institutionAdminController extends Controller
         $kpiInstitution = KpiInstitution::find($request->kpi_institutions_id);
         $kpiInstitution->pencapaian = $request->pencapaian;
         $kpiInstitution->peratus_pencapaian = ($request->pencapaian / $kpiInstitution->kpi->sasaran) * 100;
-        $kpiInstitution->status = $kpiInstitution->peratus_pencapaian >= 100 ? 'achieved' : 'not achieved';
+
+        if ($kpiInstitution->peratus_pencapaian > 100) {
+            $kpiInstitution->status = 'achieved';
+        } elseif ($kpiInstitution->peratus_pencapaian > 50) {
+            $kpiInstitution->status = 'pending';
+        } else {
+            $kpiInstitution->status = 'not achieved';
+        }
         $kpiInstitution->save();
 
         return redirect()->back()->with('success', 'KPI achievement updated successfully.');

@@ -1,5 +1,8 @@
 @extends('layout')
 @section('content')
+@php
+    $bahagianIds = session('bahagianIds', []);
+@endphp
 
 <style>
     .chart-container {
@@ -274,7 +277,7 @@
             const tableHtml = `
                 <div class="card shadow-sm rounded fade-in">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">KPI Details for: ${stateName.charAt(0).toUpperCase() + stateName.slice(1)}</h5>
+                        <h5 class="mb-0">KPI Details for  ${stateName.charAt(0).toUpperCase() + stateName.slice(1)}</h5>
                         <button id="hideTableButton" class="btn btn-sm btn-light">Hide Table</button>
                     </div>
                     <div class="card-body p-4">

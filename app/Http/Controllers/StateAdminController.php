@@ -80,33 +80,64 @@ class StateAdminController extends Controller
 //     ));
 // }
 
-    public function index()
-    {
-        // Fetch the authenticated user's state_id from the user_entities table
-        $username = Auth::User();
-        $userEntity = UserEntity::where('user_id', Auth::id())->first();
+public function index()
+{
+    $username = Auth::user();
+    $userEntity = UserEntity::where('user_id', Auth::id())->first();
 
-        if (!$userEntity || !$userEntity->state_id) {
-            // Handle the case where no state is assigned to the user
-            return view('stateAdmin.dashboard', [
-                    'state' => null,
-                    'institutions' => collect(), // Empty collection
-                    'addKpis' => collect(),  // Empty collection
-            ]);
-        }
-
-        $state = State::find($userEntity->state_id);
-
-        // Retrieve institutions related to the state
-        $institutions = Institution::where('state_id', $state->id)->get();
-
-        // Retrieve KPIs assigned to the state using the pivot table
-        $kpis =AddKpi::whereHas('states', function ($query) use ($state) {
-            $query->where('state_id', $state->id);
-        })->get();
-
-        return view('stateAdmin.dashboard.index', compact('username', 'state', 'institutions', 'kpis'));
+    if (!$userEntity || !$userEntity->state_id) {
+        return view('stateAdmin.dashboard.index', [
+            'username' => $username,
+            'state' => null,
+            'institutions' => collect(),
+            'kpis' => collect(),
+            'chartData' => collect(),
+        ]);
     }
+
+    $state = State::find($userEntity->state_id);
+
+    // Retrieve institutions related to the state and load KPIs
+    $institutions = Institution::where('state_id', $state->id)
+        ->with('kpis') // Use the correct relationship
+        ->get();
+
+    // Retrieve KPIs assigned to the state
+    $kpis = AddKpi::whereHas('states', function ($query) use ($state) {
+        $query->where('state_id', $state->id);
+    })->get();
+
+    // Prepare Data for Highcharts
+    $chartData = $institutions->map(function ($institution) {
+        $totalKpis = $institution->kpis->count();
+        $achievedKpis = $institution->kpis->filter(function ($kpi) {
+            return $kpi->pivot->status === 'achieved';
+        })->count();
+    
+        $achievement = $totalKpis > 0 ? ($achievedKpis / $totalKpis) * 100 : 0;
+    
+        return [
+            'name' => $institution->name,
+            'achievement' => round($achievement, 2),
+            'kpis' => $institution->kpis->map(function ($kpi) {
+                return [
+                    'name' => $kpi->pernyataan_kpi, // Replace with your actual KPI name field
+                    'target' => $kpi->sasaran ?? 0, // Assuming 'target' exists in the pivot
+                    'achievement' => $kpi->pivot->peratus_pencapaian ?? 0, // Assuming 'achievement' exists in the pivot
+                    'status' => $kpi->pivot->status,
+                ];
+            }),
+        ];
+    });
+    
+    
+    
+    
+    
+
+    return view('stateAdmin.dashboard.index', compact('username', 'state', 'institutions', 'kpis', 'chartData'));
+}
+
 
     public function manageKPI()
     {
@@ -153,7 +184,14 @@ class StateAdminController extends Controller
     
         $kpiState->pencapaian = $request->pencapaian;
         $kpiState->peratus_pencapaian = ($request->pencapaian / $kpiState->kpi->sasaran) * 100;
-        $kpiState->status = $kpiState->peratus_pencapaian >= 100 ? 'achieved' : 'not achieved';
+
+        if ($kpiState->peratus_pencapaian >= 100) {
+            $kpiState->status = 'achieved';
+        } elseif ($kpiState->peratus_pencapaian >= 50) {
+            $kpiState->status = 'pending';
+        } else {
+            $kpiState->status = 'not achieved';
+        }
     
         $kpiState->save();
     

@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Bahagian;
+use Exception;
 use App\Models\User;
 use App\Models\State;
 use App\Models\Sector;
+use App\Models\Bahagian;
 use App\Models\Institution;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Exception;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -93,42 +94,47 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {
+        Log::info("Entering update method for user ID: " . $id); 
         $request->validate([
-            'name' => 'required|string|regex:/^[\pL\s]+$/u|max:255',
-            'password' => 'nullable|string|min:8|max:20',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'password' => 'nullable|string|min:8',
             'roles' => 'required|string',
             'state_id' => 'nullable|exists:states,id',
             'institution_id' => 'nullable|exists:institutions,id',
             'sector_id' => 'nullable|exists:sectors,id',
             'bahagian_id' => 'nullable|exists:bahagian,id',
         ]);
-
+    
         try {
             $user = User::findOrFail($id);
-
-            // Update name
+            Log::info("Updating user with ID: " . $id);
+    
+            // Update user details
             $user->name = $request->name;
-
+            $user->email = $request->email;
+    
             // Update password if provided
             if ($request->filled('password')) {
                 $salt = bin2hex(random_bytes(16));
                 $hashedPassword = hash('sha512', $salt . $request->password);
-
+    
                 for ($i = 0; $i < 10000; $i++) {
                     $hashedPassword = hash('sha512', $hashedPassword);
                 }
-
+    
                 $user->password = $hashedPassword;
                 $user->salt = $salt;
             }
-
-            // Update roles
+    
+            // Sync roles
             $user->syncRoles($request->roles);
-
-            // Save the user
+    
+            // Save user details
             $user->save();
-
-            // Update or create user entity details
+            Log::info("User updated successfully: " . $user->id);
+    
+            // Update or create user entity
             $user->userEntity()->updateOrCreate(
                 ['user_id' => $user->id],
                 [
@@ -139,21 +145,20 @@ class UserController extends Controller
                     'updated_at' => now(),
                 ]
             );
-
+    
             return redirect('/users')->with([
                 'status' => 'User updated successfully.',
                 'alert-type' => 'success',
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Log::error("Failed to update user: " . $e->getMessage());
-
+    
             return redirect()->back()->with([
                 'status' => 'Failed to update user. Please try again.',
                 'alert-type' => 'danger',
             ]);
         }
-    }
-
+    }    
 
     public function destroy($userId)
     {

@@ -24,7 +24,7 @@ class AddKpi extends Model
     
     public function kpiStates()
     {
-        return $this->hasMany(KpiState::class, 'kpi_id');
+        return $this->hasMany(KpiState::class, 'add_kpi_id');
     }
     
     public function states()
@@ -34,7 +34,8 @@ class AddKpi extends Model
 
     public function institutions()
     {
-        return $this->belongsToMany(Institution::class, 'kpi_institutions', 'add_kpi_id', 'institution_id');
+        return $this->belongsToMany(Institution::class, 'kpi_institutions', 'add_kpi_id', 'institution_id')
+                    ->withPivot('status', 'pencapaian', 'peratus_pencapaian'); // Add all required pivot fields
     }
 
     public function bahagians()
@@ -71,9 +72,9 @@ class AddKpi extends Model
 
         static::saving(function ($kpi) {
             if ($kpi->peratus_pencapaian == 100) {
-                $kpi->status = 'completed';
+                $kpi->status = 'achieved';
             } elseif ($kpi->peratus_pencapaian >= 50) {
-                $kpi->status = 'on-going';
+                $kpi->status = 'pending';
             } else {
                 $kpi->status = 'not achieved';
             }

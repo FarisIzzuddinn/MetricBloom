@@ -14,7 +14,8 @@ class Institution extends Model
     // Assign the KPI
     public function kpis()
     {
-        return $this->belongsToMany(AddKpi::class, 'kpi_institutions', 'institution_id', 'add_kpi_id');
+        return $this->belongsToMany(AddKpi::class, 'kpi_institutions', 'institution_id', 'add_kpi_id')
+                    ->withPivot('status', 'pencapaian', 'peratus_pencapaian'); // Add all required pivot fields
     }
 
     // dashboard super admin

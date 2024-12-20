@@ -131,7 +131,7 @@
                 </div>
                 <div class="card-body">
                     @if($kpis->isEmpty())
-                        <p class="text-muted">No KPIs are assigned to the selected sector.</p>
+                        <p class="text-muted">No KPIs are assigned to the this state.</p>
                     @else
                         <table class="table table-bordered">
                             <thead>
@@ -149,9 +149,11 @@
                                         <td>{{ $kpi->sasaran }}</td>
                                         <td>{{ $kpi->peratus_pencapaian }}</td>
                                         <td>
-                                            <span class="badge {{ $kpi->peratus_pencapaian >= $kpi->sasaran ? 'bg-success' : 'bg-danger' }}">
-                                                {{ $kpi->peratus_pencapaian >= $kpi->sasaran ? 'Achieved' : 'Not Achieved' }}
+                                            <span class="badge 
+                                                {{ $kpi->peratus_pencapaian > 100 ? 'bg-success' : ($kpi->peratus_pencapaian > 50 ? 'bg-warning text-dark' : 'bg-danger') }}">
+                                                {{ $kpi->peratus_pencapaian > 100 ? 'Achieved' : ($kpi->peratus_pencapaian > 50 ? 'Pending' : 'Not Achieved') }}
                                             </span>
+
                                         </td>
                                     </tr>
                                 @endforeach
@@ -162,28 +164,135 @@
             </div>
         </div>
     </div> 
+    <div id="institution-kpi-chart" style="width: 100%; height: 500px;"></div>
+    <div id="detailsSection" style="margin-top: 20px;"></div>
+</div>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const institutions = @json($chartData->pluck('name'));
+    const achievements = @json($chartData->pluck('achievement'));
+    const kpiDetails = @json($chartData->pluck('kpis'));
 
-    <div class="row mb-4">
-        <div class="col-lg-6">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">Institutions in {{ $state->name }}</h5>
+    Highcharts.chart('institution-kpi-chart', {
+        chart: {
+            type: 'bar'
+        },
+        title: {
+            text: 'Institution-wise KPI Achievements'
+        },
+        xAxis: {
+            categories: institutions,
+            title: {
+                text: 'Institutions'
+            }
+        },
+        yAxis: {
+            min: 0,
+            max: 100,
+            title: {
+                text: 'Achievement (%)'
+            }
+        },
+        tooltip: {
+            valueSuffix: '%',
+            pointFormat: '<b>{point.y:.1f}% KPI Achieved</b>'
+        },
+        plotOptions: {
+            bar: {
+                dataLabels: {
+                    enabled: true,
+                    format: '{y}%'
+                },
+                point: {
+                    events: {
+                        click: function () {
+                            const institutionIndex = this.index; // Get the index of the clicked bar
+                            const institutionName = institutions[institutionIndex];
+                            const details = kpiDetails[institutionIndex];
+
+                            displayKpiDetails(institutionName, details);
+                        }
+                    }
+                }
+            }
+        },
+        series: [{
+            name: 'Achievement',
+            data: achievements,
+            colorByPoint: true
+        }],
+        credits: { enabled: false }
+    });
+
+    // Function to display KPI details
+    function displayKpiDetails(institutionName, details) {
+        let detailsSection = document.getElementById('detailsSection');
+        if (!detailsSection) {
+            detailsSection = document.createElement('div');
+            detailsSection.id = 'detailsSection';
+            document.body.appendChild(detailsSection);
+        }
+
+        if (!details || details.length === 0) {
+            detailsSection.innerHTML = `<div class="alert alert-warning">No KPI details available for ${institutionName}.</div>`;
+            return;
+        }
+
+        const kpiRows = details
+            .map(kpi => `
+                <tr>
+                    <td>${kpi.name}</td>
+                    <td class="text-center">${parseFloat(kpi.target).toFixed(2)}</td>
+                    <td class="text-center">${parseFloat(kpi.achievement).toFixed(2)}%</td>
+                    <td class="text-center">
+                        <span class="badge ${
+                            kpi.status === 'achieved'
+                                ? 'bg-success'
+                                : kpi.status === 'pending'
+                                ? 'bg-warning text-dark'
+                                : 'bg-danger'
+                        }">${kpi.status}</span>
+                    </td>
+                </tr>
+            `)
+            .join('');
+
+        const tableHtml = `
+            <div class="card shadow-sm rounded mt-4">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">KPI Details for ${institutionName}</h5>
+                    <button id="hideTableButton" class="btn btn-sm btn-light">Hide Table</button>
                 </div>
-                <div class="card-body">
-                    @if ($institutions->isEmpty())
-                        <p>No institutions found for this state.</p>
-                    @else
-                        <ul class="list-group">
-                            @foreach ($institutions as $institution)
-                                <li class="list-group-item">{{ $institution->name }}</li>
-                            @endforeach
-                        </ul>
-                    @endif
+                <div class="card-body p-4">
+                    <table class="table table-hover table-bordered">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>KPI Name</th>
+                                <th class="text-center">Target</th>
+                                <th class="text-center">Achievement</th>
+                                <th class="text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${kpiRows}
+                        </tbody>
+                    </table>
                 </div>
             </div>
-        </div>
-    </div>   
-</div>
+        `;
+
+        detailsSection.innerHTML = tableHtml;
+
+        // Add event listener to hide the table
+        document.getElementById('hideTableButton').addEventListener('click', function () {
+            detailsSection.innerHTML = '';
+        });
+    }
+});
+
+</script>
+    
 @endsection
 
 {{-- @extends('layout')

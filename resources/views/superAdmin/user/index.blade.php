@@ -342,86 +342,191 @@
             form.action = '{{ url('users') }}/' + userId;
         });
 
-        var editModal = document.getElementById('editModal');
-        editModal.addEventListener('show.bs.modal', function (event) {
-            var button = event.relatedTarget; // Button that triggered the modal
-            var userName = button.getAttribute('data-user-name'); // Extract info from data-* attributes
-            var userEmail = button.getAttribute('data-user-email');
-            var userId = button.getAttribute('data-user-id');
+     // Initialize function and get id based on container and input form for "Add User"
+    const rolesSelect = document.getElementById('addRole'); // Role dropdown
+    const stateContainer = document.getElementById('state-container'); // State container
+    const institutionContainer = document.getElementById('institution-container'); // Institution container
+    const sectorContainer = document.getElementById('sector-container'); // Sector container
+    const bahagianContainer = document.getElementById('bahagian-container'); // Bahagian container
+    const stateSelect = stateContainer.querySelector('select'); // State select
+    const institutionSelect = institutionContainer.querySelector('select'); // Institution select
+    const sectorSelect = document.getElementById('sector_id'); // Sector select
+    const bahagianSelect = document.getElementById('bahagian_id'); // Bahagian select
 
-            var form = editModal.querySelector('#editForm');
-            var userNameInput = editModal.querySelector('#editUserName');
-            var userEmailInput = editModal.querySelector('#editUserEmail');
+    // Function to show/hide related containers based on the selected roles for Add User
+    const checkRolesAdd = () => {
+        const selectedRoles = Array.from(rolesSelect.selectedOptions).map(option => option.value);
 
-            // Kemas kini borang modal dengan nama dan email pengguna yang betul
-            userNameInput.value = userName;
-            userEmailInput.value = userEmail;
-            form.action = '{{ url('users') }}/' + userId;
+        // Show or hide State dropdown
+        if (selectedRoles.includes('Admin State')) {
+            stateContainer.style.display = 'block';
+            stateSelect.setAttribute('required', 'required');
+        } else {
+            stateContainer.style.display = 'none';
+            stateSelect.removeAttribute('required');
+            stateSelect.value = ""; 
+        }
 
-            // Periksa peranan dan kemas kini elemen yang sesuai
-            checkRoles();
+        // Show or hide Institution dropdown
+        if (selectedRoles.includes('Institution Admin')) {
+            institutionContainer.style.display = 'block';
+            institutionSelect.setAttribute('required', 'required');
+        } else {
+            institutionContainer.style.display = 'none';
+            institutionSelect.removeAttribute('required');
+            institutionSelect.value = ""; 
+        }
+
+        // Show or hide Sector dropdown
+        if (selectedRoles.includes('Admin Sector')) {
+            sectorContainer.style.display = 'block';
+            sectorSelect.setAttribute('required', 'required');
+        } else {
+            sectorContainer.style.display = 'none';
+            sectorSelect.removeAttribute('required');
+            sectorSelect.value = ""; 
+        }
+
+        // Show or hide Bahagian dropdown
+        if (selectedRoles.includes('Admin Bahagian')) {
+            bahagianContainer.style.display = 'block';
+            bahagianSelect.setAttribute('required', 'required');
+        } else {
+            bahagianContainer.style.display = 'none';
+            bahagianSelect.removeAttribute('required');
+            bahagianSelect.value = ""; 
+        }
+    };
+
+    // Trigger the function when roles change for "Add User"
+    rolesSelect.addEventListener('change', checkRolesAdd);
+
+    // Run on page load to set initial visibility for "Add User"
+    checkRolesAdd();
+
+    // Function to show/hide related containers based on the selected roles for Edit User
+    const checkRolesEdit = (rolesSelect, stateContainer, institutionContainer, sectorContainer, bahagianContainer) => {
+        const selectedRoles = Array.from(rolesSelect.selectedOptions).map(option => option.value);
+
+        // Show or hide State dropdown
+        const stateSelect = stateContainer.querySelector('select');
+        if (selectedRoles.includes('Admin State')) {
+            stateContainer.style.display = 'block';
+            stateSelect.setAttribute('required', 'required');
+        } else {
+            stateContainer.style.display = 'none';
+            stateSelect.removeAttribute('required');
+            stateSelect.value = "";
+        }
+
+        // Show or hide Institution dropdown
+        const institutionSelect = institutionContainer.querySelector('select');
+        if (selectedRoles.includes('Institution Admin')) {
+            institutionContainer.style.display = 'block';
+            institutionSelect.setAttribute('required', 'required');
+        } else {
+            institutionContainer.style.display = 'none';
+            institutionSelect.removeAttribute('required');
+            institutionSelect.value = "";
+        }
+
+        // Show or hide Sector dropdown
+        const sectorSelect = sectorContainer.querySelector('select');
+        if (selectedRoles.includes('Admin Sector')) {
+            sectorContainer.style.display = 'block';
+            sectorSelect.setAttribute('required', 'required');
+        } else {
+            sectorContainer.style.display = 'none';
+            sectorSelect.removeAttribute('required');
+            sectorSelect.value = "";
+        }
+
+        // Show or hide Bahagian dropdown
+        const bahagianSelect = bahagianContainer.querySelector('select');
+        if (selectedRoles.includes('Admin Bahagian')) {
+            bahagianContainer.style.display = 'block';
+            bahagianSelect.setAttribute('required', 'required');
+        } else {
+            bahagianContainer.style.display = 'none';
+            bahagianSelect.removeAttribute('required');
+            bahagianSelect.value = "";
+        }
+    };
+
+    // Trigger the function when roles change for "Edit User"
+    const editRolesSelect = document.getElementById('editRole');
+    const editStateContainer = document.getElementById('editStateContainer');
+    const editInstitutionContainer = document.getElementById('editInstitutionContainer');
+    const editSectorContainer = document.getElementById('editSectorContainer');
+    const editBahagianContainer = document.getElementById('editBahagianContainer');
+
+    editRolesSelect.addEventListener('change', () => checkRolesEdit(editRolesSelect, editStateContainer, editInstitutionContainer, editSectorContainer, editBahagianContainer));
+
+    // Populate the modal with data on open (for editing a user)
+    const editUserModal = document.getElementById('editUserModal');
+    editUserModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget; // Button that triggered the modal
+        const userId = button.getAttribute('data-user-id');
+        const userName = button.getAttribute('data-user-name');
+        const userEmail = button.getAttribute('data-user-email');
+        const userRoles = button.getAttribute('data-user-roles').split(',');
+        const userStateId = button.getAttribute('data-user-state-id');
+        const userInstitutionId = button.getAttribute('data-user-institution-id');
+        const userSectorId = button.getAttribute('data-user-sector-id');
+        const userBahagianId = button.getAttribute('data-user-bahagian-id');
+
+        const formActionUrl = '/users/' + userId;
+        document.getElementById('editUserForm').action = formActionUrl;
+        console.log("User ID:", userId);
+        console.log("Form Action:", formActionUrl);
+        console.log('User Details:');
+        console.log('User Name:', userName);
+        console.log('User Email:', userEmail);
+        console.log('User Roles:', userRoles);
+        console.log('State ID:', userStateId);
+        console.log('Institution ID:', userInstitutionId);
+        console.log('Sector ID:', userSectorId);
+        console.log('Bahagian ID:', userBahagianId);
+
+        // Populate modal fields with user data
+        document.getElementById('editUserId').value = userId;
+        document.getElementById('editUsername').value = userName;
+        document.getElementById('editEmail').value = userEmail;
+        document.getElementById('editPassword').value = ''; // Reset password field (or keep empty)
+
+        // Populate roles (this will need to handle multi-select or checkbox inputs)
+        userRoles.forEach(role => {
+            const roleOption = document.querySelector(`#editRole option[value="${role}"]`);
+            if (roleOption) roleOption.selected = true;
         });
 
-        // Initialize function and get id based on container and input form
-        const rolesSelect = document.getElementById('addRole'); // Role dropdown
-        const stateContainer = document.getElementById('state-container'); // State container
-        const institutionContainer = document.getElementById('institution-container'); // Institution container
-        const sectorContainer = document.getElementById('sector-container'); // Sector container
-        const bahagianContainer = document.getElementById('bahagian-container'); // Sector container
-        const stateSelect = document.getElementById('state-container').querySelector('select'); // State select
-        const institutionSelect = document.getElementById('institution-container').querySelector('select'); // Institution select
-        const sectorSelect = document.getElementById('sector_id'); // Sector select
-        const bahagianSelect = document.getElementById('bahagian_id'); // Sector select
+        // Populate state, institution, sector, bahagian (if applicable)
+        if (userStateId) {
+            const stateSelect = document.getElementById('editStateContainer').querySelector('select');
+            stateSelect.value = userStateId;
+        }
 
-        const checkRoles = () => {
-            const selectedRoles = Array.from(rolesSelect.selectedOptions).map(option => option.value);
+        if (userInstitutionId) {
+            const institutionSelect = document.getElementById('editInstitutionContainer').querySelector('select');
+            institutionSelect.value = userInstitutionId;
+        }
 
-            // Show or hide State dropdown
-            if (selectedRoles.includes('Admin State')) {
-                stateContainer.style.display = 'block';
-                stateSelect.setAttribute('required', 'required');
-            } else {
-                stateContainer.style.display = 'none';
-                stateSelect.removeAttribute('required');
-                stateSelect.value = ""; 
-            }
+        if (userSectorId) {
+            const sectorSelect = document.getElementById('editSectorContainer').querySelector('select');
+            sectorSelect.value = userSectorId;
+        }
 
-            // Show or hide Institution dropdown
-            if (selectedRoles.includes('Institution Admin')) {
-                institutionContainer.style.display = 'block';
-                institutionSelect.setAttribute('required', 'required');
-            } else {
-                institutionContainer.style.display = 'none';
-                institutionSelect.removeAttribute('required');
-                institutionSelect.value = ""; 
-            }
+        if (userBahagianId) {
+            const bahagianSelect = document.getElementById('editBahagianContainer').querySelector('select');
+            bahagianSelect.value = userBahagianId;
+        }
 
-            // Show or hide Sector dropdown
-            if (selectedRoles.includes('admin')) {
-                sectorContainer.style.display = 'block';
-                sectorSelect.setAttribute('required', 'required');
-            } else {
-                sectorContainer.style.display = 'none';
-                sectorSelect.removeAttribute('required');
-                sectorSelect.value = ""; 
-            }
-
-            if (selectedRoles.includes('Admin Bahagian')) {
-                bahagianContainer.style.display = 'block';
-                bahagianSelect.setAttribute('required', 'required');
-            } else {
-                bahagianContainer.style.display = 'none';
-                bahagianSelect.removeAttribute('required');
-                bahagianSelect.value = ""; 
-            }
-        };
-
-        // Trigger the function when roles change
-        rolesSelect.addEventListener('change', checkRoles);
-
-        // Run on page load to set initial visibility
-        checkRoles();
+        // Trigger checkRoles to show/hide related fields based on the selected roles
+        checkRolesEdit(editRolesSelect, editStateContainer, editInstitutionContainer, editSectorContainer, editBahagianContainer);
     });
+
+});
+
 </script>
 
 @endsection

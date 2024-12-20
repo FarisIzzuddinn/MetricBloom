@@ -3,33 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Models\State;
-use App\Models\Report;
-use App\Models\Bahagian;
-use Barryvdh\DomPDF\PDF;
 use App\Models\Institution;
-use App\Models\KpiBahagian;
+use App\Models\Bahagian;
 use Illuminate\Http\Request;
-use App\Models\KpiAchievement;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\PDF;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 
 class ReportController extends Controller
 {
+    /**
+     * Prepare Report Data based on filters
+     */
     private function prepareReportData(Request $request)
     {
         $username = Auth::user();
-    
+
         // Collect filter values
-        $year = $request->input('year');
-        $quarter = $request->input('quarter'); // New quarter filter
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
         $stateId = $request->input('state_id');
         $institutionId = $request->input('institution_id');
         $bahagianId = $request->input('bahagian_id');
-    
-        // SQL Query with Positional Placeholders
+        $quarter = $request->input('quarter');
+
+        // SQL Query with filters
         $query = "
             SELECT 
                 'Bahagian' AS type,
@@ -45,11 +42,9 @@ class ReportController extends Controller
             JOIN add_kpis ak ON kb.add_kpi_id = ak.id
             WHERE (? IS NULL OR kb.bahagian_id = ?)
             AND (? IS NULL OR kb.quarter = ?)
-            AND (? IS NULL OR kb.quarter >= ?)
-            AND (? IS NULL OR kb.quarter <= ?)
             
             UNION
-            
+
             SELECT 
                 'Institution' AS type,
                 ak.pernyataan_kpi AS kpi_statement,
@@ -64,11 +59,9 @@ class ReportController extends Controller
             JOIN add_kpis ak ON ki.add_kpi_id = ak.id
             WHERE (? IS NULL OR ki.institution_id = ?)
             AND (? IS NULL OR ki.quarter = ?)
-            AND (? IS NULL OR ki.quarter >= ?)
-            AND (? IS NULL OR ki.quarter <= ?)
             
             UNION
-            
+
             SELECT 
                 'State' AS type,
                 ak.pernyataan_kpi AS kpi_statement,
@@ -83,85 +76,141 @@ class ReportController extends Controller
             JOIN add_kpis ak ON ks.add_kpi_id = ak.id
             WHERE (? IS NULL OR ks.state_id = ?)
             AND (? IS NULL OR ks.quarter = ?)
-            AND (? IS NULL OR ks.quarter >= ?)
-            AND (? IS NULL OR ks.quarter <= ?)
         ";
-    
+
         // Execute the query with parameters
         $reports = DB::select($query, [
-            $bahagianId, $bahagianId, 
-            $quarter, $quarter, $startDate, $startDate, $endDate, $endDate, 
-            $institutionId, $institutionId, 
-            $quarter, $quarter, $startDate, $startDate, $endDate, $endDate,
-            $stateId, $stateId, 
-            $quarter, $quarter, $startDate, $startDate, $endDate, $endDate
+            $bahagianId, $bahagianId, $quarter, $quarter,
+            $institutionId, $institutionId, $quarter, $quarter,
+            $stateId, $stateId, $quarter, $quarter
         ]);
-    
-        // Fetch data for dropdowns
+
+        // Summary Data
+        $summary = [
+            'achieved' => collect($reports)->where('status', 'achieved')->count(),
+            'not_achieved' => collect($reports)->where('status', 'not achieved')->count(),
+            'pending' => collect($reports)->where('status', 'pending')->count(),
+        ];
+
+        // Dropdown data
         $states = State::all();
         $institutions = Institution::all();
         $bahagian = Bahagian::all();
-    
-        return compact('reports', 'states', 'institutions', 'bahagian', 'username');
+
+        return compact('reports', 'states', 'institutions', 'bahagian', 'username', 'summary');
     }
+
+    /**
+     * Display the KPI Report
+     */
+    public function index(Request $request)
+    {
+        $data = $this->prepareReportData($request);
+        $data['visualData'] = $this->prepareVisualData(); // Add visual breakdown data
+        return view('reports.index', $data);
+    }
+
+    /**
+     * Export KPI Report as PDF
+     */
+    public function exportPDF(Request $request, PDF $pdf)
+    {
+        // Fetch filtered data
+        $data = $this->prepareReportData($request);
     
-
+        // Group data for visual breakdown
+        $data['statesGroupedData'] = collect($data['reports'])
+            ->where('type', 'State')
+            ->groupBy('entity_name')
+            ->map(function ($group) {
+                return [
+                    'achieved' => $group->where('status', 'achieved')->count(),
+                    'not_achieved' => $group->where('status', 'not achieved')->count(),
+                    'pending' => $group->where('status', 'pending')->count(),
+                ];
+            });
     
-public function index(Request $request)
-{
-    $data = $this->prepareReportData($request);
-    return view('reports.index', $data);
-}
+        $data['institutionsGroupedData'] = collect($data['reports'])
+            ->where('type', 'Institution')
+            ->groupBy('entity_name')
+            ->map(function ($group) {
+                return [
+                    'achieved' => $group->where('status', 'achieved')->count(),
+                    'not_achieved' => $group->where('status', 'not achieved')->count(),
+                    'pending' => $group->where('status', 'pending')->count(),
+                ];
+            });
+    
+        $data['bahagianGroupedData'] = collect($data['reports'])
+            ->where('type', 'Bahagian')
+            ->groupBy('entity_name')
+            ->map(function ($group) {
+                return [
+                    'achieved' => $group->where('status', 'achieved')->count(),
+                    'not_achieved' => $group->where('status', 'not achieved')->count(),
+                    'pending' => $group->where('status', 'pending')->count(),
+                ];
+            });
+    
+        // Generate PDF
+        $pdf = $pdf->loadView('reports.pdf', $data);
+        return $pdf->download('KPI_Report_' . now()->format('Y-m-d') . '.pdf');
+    }
 
-
-
-public function exportPDF(Request $request, PDF $pdf)
-{
-    $data = $this->prepareReportData($request);
-
-    // Load the PDF view with the fetched data
-    $pdf = $pdf->loadView('reports.pdf', $data);
-    return $pdf->download('KPI_Report.pdf');
-}
-
-
+    /**
+     * Export KPI Report as CSV
+     */
     public function exportCSV(Request $request)
-{
-    $reports = $this->prepareReportData($request); // Filter reports using your existing query
+    {
+        $data = $this->prepareReportData($request);
+        $reports = $data['reports'];
 
-    $csvHeaders = [
-        'KPI Statement', 'Entity Name', 
-        'Pencapaian', 'Peratus Pencapaian', 'Status', 'Quarter'
-    ];
-
-    $csvData = [];
-    foreach ($reports as $report) {
-        $csvData[] = [
-            $report->kpi_statement,
-            $report->entity_name,
-            $report->pencapaian,
-            $report->peratus_pencapaian,
-            $report->status,
-            $report->quarter,
+        $csvHeaders = [
+            'KPI Statement', 'Entity Name', 'Pencapaian', 'Peratus Pencapaian', 'Status', 'Quarter'
         ];
+
+        $csvData = [];
+        foreach ($reports as $report) {
+            $csvData[] = [
+                $report->kpi_statement,
+                $report->entity_name,
+                $report->pencapaian,
+                $report->peratus_pencapaian,
+                ucfirst($report->status),
+                $report->quarter,
+            ];
+        }
+
+        $fileName = 'KPI_Report_' . now()->format('Y-m-d') . '.csv';
+
+        // Create CSV
+        $output = fopen('php://output', 'w');
+        ob_start();
+
+        fputcsv($output, $csvHeaders);
+        foreach ($csvData as $row) {
+            fputcsv($output, $row);
+        }
+        fclose($output);
+        $content = ob_get_clean();
+
+        return Response::make($content, 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=$fileName",
+        ]);
     }
 
-    $fileName = 'KPI_Report.csv';
-    $output = fopen('php://output', 'w');
-    ob_start();
-
-    fputcsv($output, $csvHeaders);
-    foreach ($csvData as $row) {
-        fputcsv($output, $row);
+    private function prepareVisualData()
+    {
+        return DB::table('kpi_bahagian as kb')
+            ->join('bahagian as b', 'kb.bahagian_id', '=', 'b.id')
+            ->select(
+                'b.nama_bahagian as title',
+                DB::raw('SUM(CASE WHEN kb.status = "achieved" THEN 1 ELSE 0 END) as achieved'),
+                DB::raw('SUM(CASE WHEN kb.status = "not achieved" THEN 1 ELSE 0 END) as not_achieved'),
+                DB::raw('SUM(CASE WHEN kb.status = "pending" THEN 1 ELSE 0 END) as pending')
+            )
+            ->groupBy('b.nama_bahagian')
+            ->get();
     }
-
-    fclose($output);
-    $content = ob_get_clean();
-
-    return Response::make($content, 200, [
-        'Content-Type' => 'text/csv',
-        'Content-Disposition' => "attachment; filename=$fileName",
-    ]);
-}
-    
 }

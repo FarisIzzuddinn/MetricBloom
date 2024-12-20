@@ -33,6 +33,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'user state management',
             'view institutionAdmin dashboard',
             'kpi management institution',
+            'generate report',          
         ];
 
         foreach ($permissions as $permission) {
@@ -41,11 +42,12 @@ class RolesAndPermissionsSeeder extends Seeder
 
         $superadminRole = Role::create(['name' => 'super admin']);
         $superadminRole->givePermissionTo([
-            'view permissions',
-            'view roles',
             'view users',
+            'view teras',
+            'view so',
+            'view add kpi',
             'Super Admin Dashboard',
-            'Manage State',
+            'generate report',
             'Manage Institution'
         ]);
         
@@ -69,11 +71,6 @@ class RolesAndPermissionsSeeder extends Seeder
         $InstitutionAdmin->givePermissionTo([
             'view institutionAdmin dashboard',
             'kpi management institution'
-        ]);
-
-        $userRole = Role::create(['name' => 'user']);
-        $userRole->givePermissionTo([
-            'view user dashboard',
         ]);
 
         $superadmin = User::updateOrCreate(
@@ -113,15 +110,5 @@ class RolesAndPermissionsSeeder extends Seeder
         
         $admin->assignRole($adminRole);
         $admin1->assignRole($adminRole);
-
-        $user1 = User::updateOrCreate(
-            ['email' => 'userBiasa@gmail.com'],
-            [
-                'name' => 'user',
-                'password' => Hash::make('userBiasa@123'), 
-            ]
-        );
-
-        $user1->assignRole($userRole);
     }
 }

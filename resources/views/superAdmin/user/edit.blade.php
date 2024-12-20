@@ -1,77 +1,57 @@
-<button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editModal" data-user-name="{{ $user->name }}" data-user-email="{{ $user->email }}" data-user-id="{{ $user->id }}">
+<button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editUserModal"
+        data-user-id="{{ $user->id }}"
+        data-user-name="{{ $user->name }}"
+        data-user-email="{{ $user->email }}"
+        data-user-roles="{{ implode(',', $user->roles->pluck('name')->toArray()) }}"
+        data-user-state-id="{{ $user->state_id ?? '' }}"
+        data-user-institution-id="{{ $user->institution_id ?? '' }}"
+        data-user-sector-id="{{ $user->sector_id ?? '' }}"
+        data-user-bahagian-id="{{ $user->bahagian_id ?? '' }}">
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
         <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
         <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
     </svg>
 </button>
 
-
-<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+{{-- Edit User Modal --}}
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit User</h5>
+                <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="editForm" action="{{ url('users/' . $user->id) }}" method="POST">
+                <form action="" method="POST" id="editUserForm">
                     @csrf
                     @method('PUT')
 
+                    <input type="hidden" name="id" id="editUserId">
+
+                    {{-- Username --}}
+                    <x-floating-form id="editUsername" name="name" type="text" placeholder="Full Name" />
+
+                    {{-- email --}}
+                    <x-floating-form id="editEmail" name="email" type="email" placeholder="Email Address" />
+
                     <div class="mb-3">
-                        <label for="">Name</label>
-                        <input type="text" name="name" id="editUserName" class="form-control">
-                        @error('name')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div class="mb-3">
-                        <label for="">Email</label>
-                        <input type="text" name="email" id="editUserEmail" readonly class="form-control">
-                    </div>
-                    <div class="mb-3">
-                        <label for="">Password (leave blank to keep current password):</label>
-                        <input type="text" name="password" class="form-control">
-                        @error('password')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div class="mb-3">
-                        <label for="">Roles</label>
-                        <select name="roles" id="roles" class="form-control" required>
-                            <option value="">Select Role</option>
-                            @foreach($roles as $role)
-                                <option value="{{ $role }}">{{ $role }}</option>
-                            @endforeach
-                        </select>
-                        @error('roles')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
+                        <label for="editPassword" class="form-label">Password</label>
+                        <input type="password" name=password class="form-control" id="editPassword" placeholder="Password" autocomplete="off">
                     </div>
 
-                    <div class="mb-3" id="state-container" style="display: none;">
-                        <label for="state_id">Select State: (Assign as Admin State):</label>
-                        <select name="state_id" id="state_id" class="form-control">
-                            <option value="">Select State</option>
-                            @foreach($states as $state)
-                                <option value="{{ $state->id }}">{{ $state->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                    {{-- roles --}}
+                    <x-select-dropdown id="editRole" name="roles" :options="$roles" label="Role" />
 
-                    <div class="mb-3" id="institution-container" style="display: none;">
-                        <label for="institutions_id">Select Institution: (Assign as Institution Admin):</label>
-                        <select name="institution_id" id="institution_id" class="form-control">
-                            <option value="">Select Institution</option>
-                            @foreach($institutions as $institution)
-                                <option value="{{ $institution->id }}">{{ $institution->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                    {{-- state --}}
+                    <x-select-dropdown-none id="editStateContainer" name="state_id" style="display: none" :options="$states" label="State" />
 
-                    <div class="mb-3" id="sector-container" style="display: none;">
-                        <label for="sector_id">Select Sector:</label>
-                        <select name="sector_id" id="sector_id" class="form-control">
+                    {{-- institution --}}
+                    <x-select-dropdown-none id="editInstitutionContainer" name="institution_id" style="display: none" :options="$institutions" label="Institution" />
+
+                    {{-- sector --}}
+                    <div class="mb-3" id="editSectorContainer" style="display: none;">
+                        <label for="editSectorId">Select Sector:</label>
+                        <select name="sector_id" id="editSectorId" class="form-control">
                             <option value="">Select Sector</option>
                             @foreach($sectors as $sector)
                                 <option value="{{ $sector->id }}">{{ $sector->name }}</option>
@@ -79,12 +59,24 @@
                         </select>
                     </div>
 
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    {{-- bahagian --}}
+                    <div class="mb-3" id="editBahagianContainer" style="display: none;">
+                        <label for="editBahagianId">Select Bahagian:</label>
+                        <select name="bahagian_id" id="editBahagianId" class="form-control">
+                            <option value="">Select Bahagian</option>
+                            @foreach($bahagians as $bahagian)
+                                <option value="{{ $bahagian->id }}">{{ $bahagian->nama_bahagian }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </div>
+

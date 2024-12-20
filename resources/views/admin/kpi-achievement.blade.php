@@ -91,18 +91,49 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <!-- Hidden Field for KPI Bahagian ID -->
                     <input type="hidden" name="kpi_bahagian_id" id="modalKpiId">
+
+                    <!-- KPI Name (Read-Only) -->
                     <div class="mb-3">
-                        <label for="modalKpiName" class="form-label">KPI</label>
+                        <label for="modalKpiName" class="form-label">KPI Name</label>
                         <input type="text" id="modalKpiName" class="form-control" readonly>
                     </div>
+
+                    <!-- KPI Target (Read-Only) -->
                     <div class="mb-3">
                         <label for="modalKpiTarget" class="form-label">Target</label>
                         <input type="text" id="modalKpiTarget" class="form-control" readonly>
                     </div>
+
+                    <!-- Achievement Field -->
                     <div class="mb-3">
                         <label for="pencapaian" class="form-label">Achievement</label>
                         <input type="number" name="pencapaian" id="pencapaian" class="form-control" placeholder="Enter your achievement" required>
+                    </div>
+
+                    <!-- Numerator Field -->
+                    <div class="mb-3">
+                        <label for="numerator" class="form-label">Numerator</label>
+                        <input type="number" name="numerator" id="numerator" class="form-control" placeholder="Enter numerator value" required>
+                    </div>
+
+                    <!-- Denominator Field -->
+                    <div class="mb-3">
+                        <label for="denominator" class="form-label">Denominator</label>
+                        <input type="number" name="denominator" id="denominator" class="form-control" placeholder="Enter denominator value" required>
+                    </div>
+
+                    <!-- Calculation Result (Read-Only) -->
+                    <div class="mb-3">
+                        <label for="calculationResult" class="form-label">Calculated Percentage</label>
+                        <input type="text" id="calculationResult" class="form-control" readonly>
+                    </div>
+
+                    <!-- Status (Dynamic) -->
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Status</label>
+                        <input type="text" id="status" class="form-control" readonly>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -126,5 +157,32 @@
         document.getElementById('modalKpiName').value = kpiName;
         document.getElementById('modalKpiTarget').value = kpiTarget;
     });
+
+    document.getElementById('numerator').addEventListener('input', updateCalculation);
+document.getElementById('denominator').addEventListener('input', updateCalculation);
+
+function updateCalculation() {
+    const numerator = parseFloat(document.getElementById('numerator').value) || 0;
+    const denominator = parseFloat(document.getElementById('denominator').value) || 0;
+    const resultField = document.getElementById('calculationResult');
+    const statusField = document.getElementById('status');
+
+    if (denominator > 0) {
+        const percentage = (numerator / denominator) * 100;
+        resultField.value = `${percentage.toFixed(2)}%`;
+
+        if (percentage > 100) {
+            statusField.value = 'Achieved';
+        } else if (percentage > 50) {
+            statusField.value = 'Pending';
+        } else {
+            statusField.value = 'Not Achieved';
+        }
+    } else {
+        resultField.value = '';
+        statusField.value = '';
+    }
+}
+
 </script>
 @endsection

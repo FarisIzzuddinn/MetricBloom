@@ -12,36 +12,36 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
-    public function register()
-    {
-        return view('auth.register');
-    }
+    // public function register()
+    // {
+    //     return view('auth.register');
+    // }
 
-    public function registerPost(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|confirmed|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/',
-        ]);
+    // public function registerPost(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'name' => 'required|string|max:255',
+    //         'email' => 'required|string|email|max:255|unique:users',
+    //         'password' => 'required|string|confirmed|min:8|regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/',
+    //     ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
+    //     if ($validator->fails()) {
+    //         return redirect()->back()->withErrors($validator)->withInput();
+    //     }
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+    //     $user = User::create([
+    //         'name' => $request->name,
+    //         'email' => $request->email,
+    //         'password' => Hash::make($request->password),
+    //     ]);
 
-        // Assign role to the user
-        $user->assignRole('user');
+    //     // Assign role to the user
+    //     $user->assignRole('user');
 
-        Auth::login($user);
+    //     Auth::login($user);
 
-        return redirect()->route('login')->with('success', 'Registration successful. You can now log in.');
-    }
+    //     return redirect()->route('login')->with('success', 'Registration successful. You can now log in.');
+    // }
 
     public function login()
     {
@@ -70,12 +70,9 @@ class AuthController extends Controller
 
             if (password_verify($hashedPassword, $user->password)) {
                 Auth::login($user);
-                \Log::info('User logged in successfully with SHA-512 rehash', ['user_id' => $user->id]);
                 return $this->redirectToDashboard($user);
             }
         }
-
-        \Log::warning('Failed login attempt', ['email' => $request->email]);
         return redirect()->back()->withErrors(['email' => 'Wrong email or password'])->withInput();
     }
 

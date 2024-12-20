@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\State;
 use App\Models\Teras;
 use App\Models\AddKpi;
@@ -9,9 +10,11 @@ use App\Models\Sector;
 use App\Models\Bahagian;
 use App\Models\Institution;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\QueryException;
 
 class AddKpiController extends Controller
 {
@@ -19,7 +22,7 @@ class AddKpiController extends Controller
     {
         $sectors = Sector::all();
         $teras = Teras::all();
-        $addKpis = AddKpi::with('teras', 'sector')->get(); 
+        $addKpis = AddKpi::with(['teras', 'sector', 'bahagians', 'states', 'institutions'])->paginate(10); 
         $username = Auth::User();
         $states = State::all();
         $bahagians = Bahagian::all();
@@ -27,206 +30,164 @@ class AddKpiController extends Controller
         
         return view('admin.KPI.IndexKPI', compact('addKpis', 'bahagians','institutions', 'teras', 'username', 'sectors', 'states'));
     }
-
-    public function create()
-    {
-        return view('kpi.add');
-    }
     
     public function store(Request $request)
     {
-        // Validate the request
-        $request->validate([
-            'teras_id' => 'required|exists:teras,id',
-            'sectors_id' => 'required|exists:sectors,id',
-            'pernyataan_kpi' => 'required|string|max:255|unique:add_kpis,pernyataan_kpi',
-            'sasaran' => 'required|numeric',
-            'jenis_sasaran' => 'required|string|max:255',
-            'owners' => 'nullable|array',
-            'pdf_file_path' => 'nullable|file|mimes:pdf|max:10240',
-            'created_at' => 'nullable|date',
-        ]);
+        try {
+            // Validate the request
+            $request->validate([
+                'teras_id' => 'required|exists:teras,id',
+                'sectors_id' => 'required|exists:sectors,id',
+                'pernyataan_kpi' => 'required|string|max:255|unique:add_kpis,pernyataan_kpi',
+                'sasaran' => 'required|numeric',
+                'jenis_sasaran' => 'required|string|max:255',
+                'owners' => 'nullable|array',
+                'pdf_file_path' => 'nullable|file|mimes:pdf|max:10240',
+                'created_at' => 'nullable|date',
+            ]);
     
-        // Handle created_at and quarter
-        $createdAt = $request->input('created_at', now()); // Use provided date or the current date
-        $data = $request->except(['_token', 'owners', 'pdf_file_path']);
-        $data['created_at'] = $createdAt; // Set the created_at value
-        $data['quarter'] = Carbon::parse($createdAt)->quarter; // Calculate the quarter based on created_at
+            // Handle created_at and quarter
+            $createdAt = $request->input('created_at', now());
+            $data = $request->except(['_token', 'owners', 'pdf_file_path']);
+            $data['created_at'] = $createdAt;
+            $data['quarter'] = Carbon::parse($createdAt)->quarter;
     
-        // Handle file upload
-        if ($request->hasFile('pdf_file_path')) {
-            $file = $request->file('pdf_file_path');
-            $filePath = $file->store('kpi_files', 'public');
-            $data['pdf_file_path'] = $filePath; // Save the file path
-        }
+            // Handle file upload
+            if ($request->hasFile('pdf_file_path')) {
+                $file = $request->file('pdf_file_path');
+                $filePath = $file->store('kpi_files', 'public');
+                $data['pdf_file_path'] = $filePath;
+            }
     
-        // Create the KPI
-        $kpi = AddKpi::create($data);
+            // Create the KPI
+            $kpi = AddKpi::create($data);
     
-        // Process owners
-        if ($request->has('owners')) {
-            foreach ($request->owners as $owner) {
-                [$type, $id] = explode('-', $owner);
+            // Process owners
+            if ($request->has('owners')) {
+                foreach ($request->owners as $owner) {
+                    [$type, $id] = explode('-', $owner);
     
-                switch ($type) {
-                    case 'state':
-                        $state = State::find($id);
-                        if ($state) {
-                            DB::table('kpi_states')->insert([
-                                'state_id' => $id,
-                                'add_kpi_id' => $kpi->id,
-                                'created_at' => $createdAt,
-                                'quarter' => $data['quarter'],
-                            ]);
-                            Log::info("KPI assigned to state ID: {$id}");
-                        } else {
-                            Log::error("State not found: ID {$id}");
-                        }
-                        break;
-    
-                    case 'institution':
-                        $institution = Institution::find($id);
-                        if ($institution) {
-                            DB::table('kpi_institutions')->insert([
-                                'institution_id' => $id,
-                                'add_kpi_id' => $kpi->id,
-                                'created_at' => $createdAt,
-                                'quarter' => $data['quarter'],
-                            ]);
-                            Log::info("KPI assigned to institution ID: {$id}");
-                        } else {
-                            Log::error("Institution not found: ID {$id}");
-                        }
-                        break;
-    
-                    case 'bahagian':
-                        $bahagian = Bahagian::find($id);
-                        if ($bahagian) {
-                            DB::table('kpi_bahagian')->insert([
-                                'bahagian_id' => $id,
-                                'add_kpi_id' => $kpi->id,
-                                'created_at' => $createdAt,
-                                'quarter' => $data['quarter'],
-                            ]);
-                            Log::info("KPI assigned to bahagian ID: {$id}");
-                        } else {
-                            Log::error("Bahagian not found: ID {$id}");
-                        }
-                        break;
-    
-                    default:
-                        Log::warning('Unknown owner type:', ['type' => $type]);
-                        break;
+                    if ($type == 'state' && State::find($id)) {
+                        DB::table('kpi_states')->insert([
+                            'state_id' => $id,
+                            'add_kpi_id' => $kpi->id,
+                            'created_at' => $createdAt,
+                            'quarter' => $data['quarter'],
+                        ]);
+                        Log::info("KPI assigned to state ID: {$id}");
+                    } elseif ($type == 'institution' && Institution::find($id)) {
+                        DB::table('kpi_institutions')->insert([
+                            'institution_id' => $id,
+                            'add_kpi_id' => $kpi->id,
+                            'created_at' => $createdAt,
+                            'quarter' => $data['quarter'],
+                        ]);
+                        Log::info("KPI assigned to institution ID: {$id}");
+                    } elseif ($type == 'bahagian' && Bahagian::find($id)) {
+                        DB::table('kpi_bahagian')->insert([
+                            'bahagian_id' => $id,
+                            'add_kpi_id' => $kpi->id,
+                            'created_at' => $createdAt,
+                            'quarter' => $data['quarter'],
+                        ]);
+                        Log::info("KPI assigned to bahagian ID: {$id}");
+                    } else {
+                        Log::warning('Unknown or invalid owner type', ['type' => $type, 'id' => $id]);
+                    }
                 }
             }
+    
+            return redirect()->route('admin.kpi')->with([
+                'status' => 'KPI created and assigned successfully.',
+                'alert-type' => 'success'
+            ]);
+    
+        } catch (QueryException $e) {
+            Log::error('Database error during KPI creation', ['error' => $e->getMessage()]);
+            return redirect()->back()->withInput()->with([
+                'status' => 'A database error occurred. Please try again.',
+                'alert-type' => 'danger'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Unexpected error during KPI creation', ['error' => $e->getMessage()]);
+            return redirect()->back()->withInput()->with([
+                'status' => 'An unexpected error occurred. Please contact the administrator.',
+                'alert-type' => 'danger'
+            ]);
         }
+    }    
     
-        return redirect()->route('admin.kpi')->with('success', 'KPI created and assigned successfully.');
-    }
+    public function update(Request $request, $id)
+    {
+        try {
+            // Find the user record by ID
+            $user = User::findOrFail($id);
+            Log::info("Attempting to update User with ID: {$id}");
     
-
-     
-
-
-    // public function edit($id)
-    // {
-        
-    //     $addKpi = AddKpi::with('states')->findOrFail($id);
-    //     $states = State::all(); // Fetch all states
-
-    //     return view('kpi.edit', compact('addKpi', 'states'));
-    // }
-
-   public function update(Request $request, $id)
-    {
-        // Validate the request
-        $request->validate([
-            'teras_id' => 'required|exists:teras,id',
-            'sectorid' => 'required|string|max:255',
-            'pernyataan_kpi' => 'required|string|max:255|unique:add_kpis,pernyataan_kpi,' . $id,
-            'sasaran' => 'required|numeric',
-            'jenis_sasaran' => 'required|string|max:255',
-            'owners' => 'nullable|array',
-        ]);
-
-        // Find the existing KPI
-        $kpi = AddKpi::findOrFail($id);
-
-        // Update the KPI
-        $kpi->fill($request->except(['_token', 'owners']));
-        $kpi->save();
-
-        // Detach all previous owners and reassign
-        $kpi->states()->detach();
-        $kpi->institutions()->detach();
-        $kpi->bahagians()->detach();
-
-        if ($request->has('owners')) {
-            foreach ($request->owners as $owner) {
-                [$type, $id] = explode('-', $owner);
-
-                switch ($type) {
-                    case 'state':
-                        $state = State::findOrFail($id);
-                        $state->kpis()->attach($kpi->id);
-                        break;
-
-                    case 'institution':
-                        $institution = Institution::findOrFail($id);
-                        $institution->kpis()->attach($kpi->id);
-                        break;
-
-                    case 'bahagian':
-                        $bahagian = Bahagian::findOrFail($id);
-                        $bahagian->kpis()->attach($kpi->id);
-                        break;
-
-                    default:
-                        // Ignore unknown types
-                        break;
-                }
-            }
-        }
-
-        return redirect()->route('admin.kpi')->with('success', 'KPI updated and reassigned successfully.');
-    }
-
+            // Validate the input
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+                'password' => 'nullable|min:8|confirmed',
+                'roles' => 'required|array',
+                'state_id' => 'nullable|exists:states,id',
+                'institution_id' => 'nullable|exists:institutions,id',
+                'sector_id' => 'nullable|exists:sectors,id',
+                'bahagian_id' => 'nullable|exists:bahagians,id',
+            ]);
     
-
-    public function destroy(AddKpi $addKpi)
-    {
-        $addKpi->delete();
-        $this->recalculateBilAndKpi(); 
-
-        return redirect()->route('admin.kpi')->with('success', 'KPI deleted successfully.');
-    }
-
-    private function recalculateBilAndKpi()
-    {
-        $addKpis = AddKpi::orderBy('id')->get();
-        foreach ($addKpis as $index => $addKpi) {
-            $addKpi->update([
-                'bil' => $index + 1,
-                'kpi' => 'KPI ' . ($index + 1),
+            // Update the user data
+            $user->update([
+                'name' => $validatedData['name'],
+                'email' => $validatedData['email'],
+                'password' => $request->filled('password') ? bcrypt($request->password) : $user->password,
+                'state_id' => $validatedData['state_id'] ?? $user->state_id,
+                'institution_id' => $validatedData['institution_id'] ?? $user->institution_id,
+                'sector_id' => $validatedData['sector_id'] ?? $user->sector_id,
+                'bahagian_id' => $validatedData['bahagian_id'] ?? $user->bahagian_id,
+            ]);
+    
+            // Sync roles
+            $user->roles()->sync($validatedData['roles']);
+    
+            // Return success message
+            return redirect()->route('users.index')->with([
+                'status' => 'User updated successfully.',
+                'alert-type' => 'success',
+            ]);
+        } catch (QueryException $e) {
+            Log::error('Database error during User update', ['error' => $e->getMessage()]);
+            return redirect()->back()->with([
+                'status' => 'An error occurred while updating the user.',
+                'alert-type' => 'error',
             ]);
         }
     }
-
-    // private function validateKpi(Request $request)
-    // {
-    //     $request->validate([
-    //         'teras_id' => 'required|exists:teras,id',
-    //         'so_id' => 'required|string|max:255',
-    //         'states' => 'required|array',
-    //         'states.*' => 'exists:states,id',
-    //         'bahagians' => 'required|array',
-    //         'bahagians.*' => 'exists:bahagian,id',
-    //         'user_id' => 'nullable|exists:users,id',
-    //         'pernyataan_kpi' => 'required|string|max:255',
-    //         'sasaran' => 'required|numeric',
-    //         'jenis_sasaran' => 'required|string|max:255',
-    //         'pencapaian' => 'nullable|numeric',
-    //         'peratus_pencapaian' => 'nullable|numeric',
-    //     ]);
-    // }
+    
+    public function destroy($id)
+    {
+        try {
+            // Check if the KPI is associated with any records (e.g., state, institution, bahagian)
+            $kpi = AddKpi::findOrFail($id);
+    
+            // Check if the KPI is being used in other relationships (states, institutions, bahagians)
+            if ($kpi->states()->exists() || $kpi->institutions()->exists() || $kpi->bahagians()->exists()) {
+                // If it is associated with any state, institution, or bahagian, prevent deletion
+                return redirect()->route('admin.kpi')->with('status', 'This KPI is in use and cannot be deleted.')->with('alert-type', 'danger');
+            }
+    
+            // Proceed with deleting the KPI
+            $kpi->delete();
+    
+            // Return success message
+            return redirect()->route('admin.kpi')->with('status', 'KPI deleted successfully.')->with('alert-type', 'success');
+            
+        } catch (\Exception $e) {
+            // Log the error for debugging purposes
+            Log::error('Error deleting KPI: ' . $e->getMessage());
+    
+            // Return error message
+            return redirect()->route('admin.kpi')->with('status', 'An error occurred while trying to delete the KPI.')->with('alert-type', 'danger');
+        }
+    }    
 }

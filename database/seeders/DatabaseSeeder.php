@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             InstitutionsTableSeeder::class,
             BahagianSeeder::class,
             TerasSeeder::class,
+            KpiTableSeeder::class
         ]);
     }
 }

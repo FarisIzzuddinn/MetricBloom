@@ -44,9 +44,14 @@
                         @endif
                     </td>
                     <td>
-                        <span class="badge rounded-pill bg-{{ $kpiState->status == 'achieved' ? 'success' : 'danger' }}">
-                            {{ ucfirst($kpiState->status ?? 'Not Defined') }}
-                        </span>
+                        <span class="badge rounded-pill 
+                        bg-{{ 
+                            $kpiState->status === 'achieved' ? 'success' : 
+                            ($kpiState->status === 'pending' ? 'warning text-dark' : 'danger') 
+                        }}">
+                        {{ ucfirst($kpiState->status ?? 'Not Defined') }}
+                    </span>
+
                     </td>
                     <td>
                         <button class="btn btn-sm btn-outline-primary" 

@@ -64,11 +64,14 @@ Route::middleware(['role:super admin'])->group(function () {
 
     Route::resource('users', UserController::class);
     Route::get('users/{userId}/delete', [UserController::class, 'destroy']);
+    Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
     Route::get('/get-institutions/{stateId}', [UserController::class, 'getInstitutions']);
 
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/pdf', [ReportController::class, 'exportPDF'])->name('reports.pdf');
     Route::get('/reports/csv', [ReportController::class, 'exportCSV'])->name('reports.csv');
+    Route::get('/reports/visual', [ReportController::class, 'visualReport'])->name('reports.visual');
+
 });
 
 Route::middleware(['role:Admin State'])->group(function () {
