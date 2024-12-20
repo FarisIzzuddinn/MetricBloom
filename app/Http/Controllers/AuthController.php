@@ -92,7 +92,9 @@ class AuthController extends Controller
             return redirect()->route('institutionAdmin.dashboard')->with('success', 'Login Success');
         } elseif ($user->hasRole('Admin Bahagian', 'web')) {
             return redirect()->route('admin.index')->with('success', 'Login Success');
-        }
+        } elseif ($user->hasRole('Admin Sector', 'web')) {
+            return redirect()->route('adminSector.index')->with('success', 'Login Success');
+        } 
     
         return redirect()->route('unauthorized')->with('error', 'Role not recognized.');
     }

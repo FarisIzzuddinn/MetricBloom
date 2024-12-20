@@ -24,6 +24,11 @@ class UserEntity extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function sector()
+    {
+        return $this->belongsTo(Sector::class, 'sector_id');
+    }
+
     public function bahagian()
     {
         return $this->belongsTo(Bahagian::class, 'bahagian_id');

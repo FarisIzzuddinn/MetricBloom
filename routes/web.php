@@ -10,6 +10,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\TerasController;
 use App\Http\Controllers\AddKpiController;
+use App\Http\Controllers\AdminSectorController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserKpiController;
 use App\Http\Controllers\PermissionController;
@@ -94,7 +95,7 @@ Route::middleware(['role:Admin Bahagian'])->group(function () {
     Route::put('/kpi/update', [UserKpiController::class, 'update'])->name('user.kpi.update');
 });
 
-Route::middleware(['role:admin|super admin'])->group(function () {
+Route::middleware(['role:Admin Sector|super admin'])->group(function () {
     Route::get('/admin/kpi', [AddKpiController::class, 'index'])->name('admin.kpi');  
     Route::get('/kpi/add', [AddKpiController::class, 'create'])-> name('kpi.add');
     Route::post('/admin/kpi', [AddKpiController::class, 'store'])->name('kpi.store');
@@ -112,9 +113,9 @@ Route::middleware(['role:admin|super admin'])->group(function () {
     Route::get('sector/{sectorID}/delete', [SoController::class, 'destroy']);
 });
 
-// Route::middleware(['role:SectorAdmin'])->group(function () {
-//     Route::get('/sectoradmin/dashboard', [SectorAdminDashboardController::class, 'index']);
-// });
+Route::middleware(['role:Admin Sector'])->group(function () {
+});
+Route::get('/sectoradmin/dashboard', [AdminSectorController::class, 'index'])->name('adminSector.index');
 
 Route::get('/storage/{path}', function ($path) {
     $file = storage_path('app/public/' . $path);
