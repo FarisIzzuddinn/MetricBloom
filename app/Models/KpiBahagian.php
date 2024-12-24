@@ -24,6 +24,7 @@ class KpiBahagian extends Model
         return $this->belongsTo(Bahagian::class, 'bahagian_id', 'id');
     }
 
+
     public function kpi()
     {
         return $this->belongsTo(AddKpi::class, 'add_kpi_id');

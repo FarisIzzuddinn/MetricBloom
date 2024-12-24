@@ -32,6 +32,12 @@ class Bahagian extends Model
     {
         return $this->hasMany(KpiState::class, 'bahagian_id');
     }
+
+    public function kpiBahagians()
+    {
+        return $this->hasMany(KpiBahagian::class);
+    }
+
     
     public function kpiBahagian()
     {

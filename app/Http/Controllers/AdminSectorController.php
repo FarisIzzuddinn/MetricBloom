@@ -27,8 +27,8 @@ class AdminSectorController extends Controller
     
         // Retrieve Bahagians only related to the user's sector
         $bahagians = Bahagian::where('sector_id', $sector->id)
-                             ->with('kpis') // Eager load the kpis relationship
-                             ->get();
+        ->with('kpiBahagian.kpi') // Eager load the relationship
+        ->get();
     
         // Initialize counters
         $totalKpis = 0;
@@ -62,20 +62,26 @@ class AdminSectorController extends Controller
     
         // Retrieve KPI statuses grouped by Bahagian
         $chartData = $bahagians->map(function ($bahagian) {
-            $statuses = KpiBahagian::where('bahagian_id', $bahagian->id)
-                ->select('status')
-                ->get()
-                ->groupBy('status');
-    
+            // Group the statuses by 'status' field in kpi_bahagian table
+            $statuses = $bahagian->kpiBahagian->groupBy('status');
+        
             return [
                 'name' => $bahagian->nama_bahagian,
                 'achieved' => $statuses->get('achieved', collect())->count(),
                 'pending' => $statuses->get('pending', collect())->count(),
                 'notAchieved' => $statuses->get('not achieved', collect())->count(),
                 'color' => '#' . substr(md5($bahagian->id), 0, 6),
-                'kpis' => $bahagian->kpis,
+                'kpis' => $bahagian->kpiBahagian->map(function ($kpiBahagian) {
+                    return [
+                        'pernyataan_kpi' => $kpiBahagian->kpi->pernyataan_kpi, // From add_kpis table
+                        'sasaran' => $kpiBahagian->kpi->sasaran,               // From add_kpis table
+                        'pencapaian' => $kpiBahagian->pencapaian,                  // From kpi_bahagian table
+                        'status' => $kpiBahagian->status,
+                    ];
+                }),
             ];
         });
+        
     
         $totalAchieved = $chartData->sum('achieved');
         $totalNotAchieved = $chartData->sum('notAchieved');

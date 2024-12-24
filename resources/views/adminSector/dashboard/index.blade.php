@@ -249,118 +249,125 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const chartData = @json($chartData);
+ document.addEventListener('DOMContentLoaded', function () {
+    const chartData = @json($chartData);
 
-        console.log("Chart Data:", chartData); // Debug: Inspect the chart data
+    console.log("Chart Data:", chartData); // Debug: Inspect the chart data
+   
+    chartData.forEach((bahagian, index) => {
+        console.log(bahagian.kpiBahagians); 
+        Highcharts.chart(`chart-container-${index}`, {
+            chart: {
+                type: 'pie',
+                backgroundColor: '#f9f9f9',
+            },
+            title: {
+                text: null,
+            },
+            plotOptions: {
+                pie: {
+                    innerSize: '50%',
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.name}: {point.y}',
+                    },
+                    point: {
+                        events: {
+                            click: function () {
+                                const clickedKpiStatus = this.name;
+                                const clickedKpiData = this.y;
 
-        chartData.forEach((bahagian, index) => {
-            Highcharts.chart(`chart-container-${index}`, {
-                chart: {
-                    type: 'pie',
-                    backgroundColor: '#f9f9f9',
-                },
-                title: {
-                    text: null,
-                },
-                plotOptions: {
-                    pie: {
-                        innerSize: '50%',
-                        dataLabels: {
-                            enabled: true,
-                            format: '{point.name}: {point.y}',
-                        },
-                        point: {
-                            events: {
-                                click: function () {
-                                    const clickedKpiStatus = this.name;
-                                    const clickedKpiData = this.y;
+                                console.log("Clicked KPI Status:", clickedKpiStatus);
+                                console.log("Clicked KPI Data:", clickedKpiData);
+                                console.log("bahagian.kpis:", bahagian.kpis);
 
-                                    console.log("Clicked KPI Status:", clickedKpiStatus);
-                                    console.log("Clicked KPI Data:", clickedKpiData);
-                                    console.log("bahagian.kpis:", bahagian.kpis);
+                                if (Array.isArray(bahagian.kpis) && bahagian.kpis.length > 0) {
+                                    // Filter KPIs based on the clicked status
+                                    const filteredKpis = bahagian.kpis.filter(kpi => {
+                                        return kpi.status.trim().toLowerCase() === clickedKpiStatus.trim().toLowerCase();
+                                    });
 
-                                    if (bahagian.kpis && Array.isArray(bahagian.kpis)) {
-                                        const filteredKpis = bahagian.kpis.filter(kpi => {
-                                            return kpi.status.trim().toLowerCase() === clickedKpiStatus.trim().toLowerCase();
+                                    console.log("Filtered KPIs:", filteredKpis);
+
+                                    if (filteredKpis.length > 0) {
+                                        // Generate table HTML for the filtered KPIs
+                                        const rowsHtml = filteredKpis
+                                            .map(kpi => {
+                                                const targetFormatted = isNaN(kpi.sasaran) ? '-' : parseFloat(kpi.sasaran).toFixed(2);
+                                                const achievementFormatted = isNaN(kpi.pencapaian) ? '-' : parseFloat(kpi.pencapaian).toFixed(2);
+
+                                                return `
+                                                    <tr>
+                                                        <td>${kpi.pernyataan_kpi}</td>
+                                                        <td class="text-center">${targetFormatted}</td>
+                                                        <td class="text-center">${achievementFormatted}</td>
+                                                        <td class="text-center">
+                                                            <span class="badge ${kpi.status === 'achieved' ? 'bg-success' : kpi.status === 'pending' ? 'bg-warning text-dark' : 'bg-danger'}">${kpi.status}</span>
+                                                        </td>
+                                                    </tr>`;
+                                            })
+                                            .join('');
+
+                                        const tableHtml = `
+                                            <div class="card shadow-sm rounded">
+                                                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                                                    <h5 class="mb-0">KPI Details for: ${bahagian.name}</h5>
+                                                    <button id="hideTableButton" class="btn btn-sm btn-light">Hide Table</button>
+                                                </div>
+                                                <div class="card-body p-4">
+                                                    <table class="table table-hover table-bordered">
+                                                        <thead class="table-primary">
+                                                            <tr>
+                                                                <th>KPI Name</th>
+                                                                <th class="text-center">Target</th>
+                                                                <th class="text-center">Achievement</th>
+                                                                <th class="text-center">Status</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            ${rowsHtml}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        `;
+
+                                        // Insert the table into the content container
+                                        const contentContainer = document.getElementById('content-container');
+                                        contentContainer.innerHTML = tableHtml;
+
+                                        // Add hide button functionality
+                                        document.getElementById('hideTableButton').addEventListener('click', function () {
+                                            contentContainer.innerHTML = '';
                                         });
-
-                                        console.log("Filtered KPIs:", filteredKpis); 
-
-                                        if (filteredKpis.length > 0) {
-                                            const rowsHtml = filteredKpis
-                                                .map(kpi => {
-                                                    const targetFormatted = isNaN(kpi.sasaran) ? '-' : parseFloat(kpi.sasaran).toFixed(2);
-                                                    const achievementFormatted = isNaN(kpi.pencapaian) ? '-' : parseFloat(kpi.pencapaian).toFixed(2);
-
-                                                    return `
-                                                        <tr>
-                                                            <td>${kpi.pernyataan_kpi}</td>
-                                                            <td class="text-center">${targetFormatted}</td>
-                                                            <td class="text-center">${achievementFormatted}</td>
-                                                            <td class="text-center">
-                                                                <span class="badge ${kpi.status === 'achieved' ? 'bg-success' : kpi.status === 'pending' ? 'bg-warning text-dark' : 'bg-danger'}">${kpi.status}</span>
-                                                            </td>
-                                                        </tr>`;
-                                                })
-                                                .join('');
-
-                                            const tableHtml = `
-                                                <div class="card shadow-sm rounded">
-                                                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                                                        <h5 class="mb-0">KPI Details for: ${bahagian.name}</h5>
-                                                        <button id="hideTableButton" class="btn btn-sm btn-light">Hide Table</button>
-                                                    </div>
-                                                    <div class="card-body p-4">
-                                                        <p><strong>Details:</strong> ${clickedKpiStatus} - ${clickedKpiData}</p>
-                                                        <table class="table table-hover table-bordered">
-                                                            <thead class="table-primary">
-                                                                <tr>
-                                                                    <th>KPI Name</th>
-                                                                    <th class="text-center">Target</th>
-                                                                    <th class="text-center">Achievement</th>
-                                                                    <th class="text-center">Status</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                ${rowsHtml}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            `;
-
-                                            const contentContainer = document.getElementById('content-container');
-                                            contentContainer.innerHTML = tableHtml;
-
-                                            // Add hide button functionality
-                                            document.getElementById('hideTableButton').addEventListener('click', function () {
-                                                contentContainer.innerHTML = '';
-                                            });
-                                        } else {
-                                            // No data message
-                                            document.getElementById('content-container').innerHTML = `
-                                                <div class="alert alert-warning" role="alert">
-                                                    No KPIs match the selected status.
-                                                </div>
-                                            `;
-                                        }
+                                    } else {
+                                        // No data message
+                                        document.getElementById('content-container').innerHTML = `
+                                            <div class="alert alert-warning" role="alert">
+                                                No KPIs match the selected status.
+                                            </div>
+                                        `;
                                     }
-                                },
+                                } else {
+                                    console.log("No KPIs data found for this Bahagian.");
+                                }
                             },
                         },
                     },
                 },
-                series: [{
-                    name: 'KPIs',
-                    data: [
-                        { name: 'Achieved', y: bahagian.achieved, color: '#28a745' }, // Green
-                        { name: 'Pending', y: bahagian.pending, color: '#ffc107' },   // Yellow
-                        { name: 'Not Achieved', y: bahagian.notAchieved, color: '#dc3545' }, // Red
-                    ],
-                }],
-            });
+            },
+            series: [{
+                name: 'KPIs',
+                data: [
+                    { name: 'Achieved', y: bahagian.achieved, color: '#28a745' }, // Green
+                    { name: 'Pending', y: bahagian.pending, color: '#ffc107' },   // Yellow
+                    { name: 'Not Achieved', y: bahagian.notAchieved, color: '#dc3545' }, // Red
+                ],
+            }],
         });
     });
+});
+
+
 </script>
 @endsection
