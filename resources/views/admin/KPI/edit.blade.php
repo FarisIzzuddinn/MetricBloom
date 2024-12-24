@@ -156,7 +156,7 @@
                         </div>
                     </div>
 
-                    <div class="row mb-3 mt-3">
+                    {{-- <div class="row mb-3 mt-3">
                         <label for="pdf_file_path" class="col-sm-5 col-form-label">Current PDF File</label>
                         <div class="col-sm-7">
                             @if (!empty($currentPdfFilePath))
@@ -166,9 +166,9 @@
                                 <p class="text-muted">No PDF file currently uploaded.</p>
                             @endif
                         </div>
-                    </div>
+                    </div> --}}
 
-                    <div class="row mb-3">
+                    <div class="row mb-3 mt-3">
                         <label for="pdf_file_path" class="col-sm-5 col-form-label">Upload New PDF File</label>
                         <div class="col-sm-7">
                             <input type="file" name="pdf_file_path" id="pdf_file_path" class="form-control" accept="application/pdf">
@@ -186,3 +186,53 @@
         </div>
     </div>
 </div>
+
+<script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const editKpiModal = document.getElementById('editKpi');
+        editKpiModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget; // Button that triggered the modal
+            const modal = event.target; // Modal being shown
+
+            // Retrieve data attributes
+            const kpiId = button.getAttribute('data-kpi-id');
+            const terasId = button.getAttribute('data-teras-id');
+            const sectorsId = button.getAttribute('data-sectors-id');
+            const pernyataan = button.getAttribute('data-pernyataan');
+            const sasaran = button.getAttribute('data-sasaran');
+            const jenisSasaran = button.getAttribute('data-jenis-sasaran');
+            const owners = JSON.parse(button.getAttribute('data-owners') || '[]'); // Fallback to empty array
+
+            // Log the data to the console for debugging
+            console.log('KPI ID:', kpiId);  // This should print the correct kpi_id
+
+            // Populate modal fields
+            modal.querySelector('#editTeras').value = terasId;
+            modal.querySelector('#editSO').value = sectorsId;
+            modal.querySelector('#editPernyataanKpi').value = pernyataan;
+            modal.querySelector('[name="sasaran"]').value = sasaran;
+            modal.querySelector('[name="jenis_sasaran"]').value = jenisSasaran;
+
+            // Set the correct kpi_id in the hidden field
+            modal.querySelector('#editKpiId').value = kpiId;
+
+            // Update the form action URL dynamically to include the correct kpi_id
+            const formActionUrl = `/admin/addKpi/update/${kpiId}`; // Correct route URL
+            modal.querySelector('form').action = formActionUrl;
+
+            // Clear all owner checkboxes
+            const ownerCheckboxes = modal.querySelectorAll('input[name="owners[]"]');
+            ownerCheckboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+
+            // Check the correct owner checkboxes
+            owners.forEach(ownerId => {
+                const ownerCheckbox = modal.querySelector(`input[name="owners[]"][value="${ownerId}"]`);
+                if (ownerCheckbox) {
+                    ownerCheckbox.checked = true;
+                }
+            });
+        });
+    });
+</script>

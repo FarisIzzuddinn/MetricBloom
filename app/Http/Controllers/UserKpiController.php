@@ -52,10 +52,10 @@ class UserKpiController extends Controller
     {
         // Validate the input
         $request->validate([
-            'kpi_bahagian_id' => 'required|exists:kpi_bahagian,id',
+            'kpi_bahagian_id' => 'required|exists:kpi_bahagian,id', 
             'pencapaian' => 'required|numeric|min:0',
-            'numerator' => 'required|numeric|min:0', // Input numerator
-            'denominator' => 'required|numeric|min:1', // Input denominator to avoid division by zero
+            // 'numerator' => 'required|numeric|min:0', // Input numerator
+            // 'denominator' => 'required|numeric|min:1', // Input denominator to avoid division by zero
         ]);
 
         // Find the existing record in kpi_bahagian
@@ -73,19 +73,19 @@ class UserKpiController extends Controller
         }
 
         // Fetch PDF file URL for any future use
-        $pdfFileUrl = $kpi->pdf_file_path ? Storage::url($kpi->pdf_file_path) : null;
+        // $pdfFileUrl = $kpi->pdf_file_path ? Storage::url($kpi->pdf_file_path) : null;
 
         // Calculate the percentage based on the numerator and denominator
-        $numerator = $request->numerator;
-        $denominator = $request->denominator;
-        $percentage = ($numerator / $denominator) * 100;
+        // $numerator = $request->numerator;
+        // $denominator = $request->denominator;
+        // $percentage = ($numerator / $denominator) * 100;
 
         // Update the achievement and calculate percentage
         $kpiBahagian->pencapaian = $request->pencapaian;
         $kpiBahagian->peratus_pencapaian = ($request->pencapaian / $kpi->sasaran) * 100;
 
         // Determine the status dynamically
-        if ($kpiBahagian->peratus_pencapaian > 100) {
+        if ($kpiBahagian->peratus_pencapaian >= 100) {
             $kpiBahagian->status = 'achieved';
         } elseif ($kpiBahagian->peratus_pencapaian > 50) {
             $kpiBahagian->status = 'pending';
@@ -97,18 +97,17 @@ class UserKpiController extends Controller
         $kpiBahagian->save();
 
         // Prepare calculation summary
-        $calculationDetails = [
-            'numerator' => $numerator,
-            'denominator' => $denominator,
-            'percentage' => round($percentage, 2) . '%',
-            'status' => ucfirst($kpiBahagian->status), // Capitalize the status for better readability
-            'pdf_file_url' => $pdfFileUrl, // Optional: Include the PDF file URL
-        ];
+        // $calculationDetails = [
+        //     'numerator' => $numerator,
+        //     'denominator' => $denominator,
+        //     'percentage' => round($percentage, 2) . '%',
+        //     'status' => ucfirst($kpiBahagian->status), // Capitalize the status for better readability
+        //     'pdf_file_url' => $pdfFileUrl, // Optional: Include the PDF file URL
+        // ];
 
         // Return success response with calculation details
         return redirect()->route('user.kpi.index')
-            ->with('success', 'Achievement updated successfully.')
-            ->with('calculation_details', $calculationDetails);
+            ->with('success', 'Achievement updated successfully.');
     }
 
     

@@ -18,6 +18,7 @@ use App\Http\Controllers\StateAdminController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\Auth\ForgotPassController;
+use App\Http\Controllers\institusiReportController;
 use App\Http\Controllers\institutionAdminController;
 
 /*
@@ -50,6 +51,8 @@ Route::resource('profileEdit', AuthController::class);
 
 Route::middleware(['role:super admin'])->group(function () {
     Route::get('/Dashboard/SuperAdmin', [SuperAdminController::class, 'index'])->name('superAdminDashboard');  // Super Admin Dashboard 
+    Route::get('/kpis/all', [SuperAdminController::class, 'getAllKPIs'])->name('allKPIs'); //
+    Route::get('/achieved-kpis', [SuperAdminController::class, 'getAchievedKpis'])->name('achieved.kpis');
 
     Route::resource('states', StateController::class);
     Route::resource('institutions', InstitutionController::class);
@@ -79,7 +82,9 @@ Route::middleware(['role:Admin State'])->group(function () {
     Route::resource('admin-state-kpis', StateAdminController::class);
     Route::get('/state-admin/dashboard', [StateAdminController::class, 'index'])->name('stateAdmin.dashboard');
     Route::get('/state-admin/kpi-management', [StateAdminController::class, 'manageKPI'])->name('stateAdmin.kpi');
-    Route::put('/admin-state-kpis', [StateAdminController::class, 'updateKPI'])->name('stateAdmin.kpi.update');
+    Route::put('/admin-state-kpis', [StateAdminController::class, 'updateKPI'])->name('stateAdmin.kpi.update'); 
+    Route::get('/reports/state/{state}', [StateAdminController::class, 'generateReportInstitutions'])->name('reports.state');
+    Route::get('reports/export/{state}', [StateAdminController::class, 'exportStateReportToPdf'])->name('reports.export.state');
 });
 
 Route::middleware(['role:Institution Admin'])->group(function () {
@@ -88,7 +93,6 @@ Route::middleware(['role:Institution Admin'])->group(function () {
     Route::get('/institution-admin/kpi-management', [institutionAdminController::class, 'kpiIndex'])->name('institutionAdmin.kpi');
     Route::put('/institution-admin/kpi/assign', [institutionAdminController::class, 'update'])->name('institutionAdmin.kpi.assign');
 });
-
 Route::middleware(['role:Admin Bahagian'])->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
     Route::get('/adminBahagian/kpi', [UserKpiController::class, 'index'])->name('user.kpi.index');

@@ -8,25 +8,21 @@
 	<link rel="stylesheet" href="{{ asset('css/layout.css') }}">
 	<title>Jabatan Penjara Malaysia</title>
 </head>
-
 <body>
-
 	<!-- SIDEBAR -->
-<aside id="sidebar" class="sidebar-closed">
-    <a href="#" class="brand">
-        <div class="featured-image mb-3 text-center mt-4 ms-2">
-            <img src="{{ asset('picture/penjara_logo.png') }}" class="img-fluid " style="max-width: 60px;">
-        </div>
-		<span class="sidebar-text ms-3" style="display: block; color: #003300; font-weight: bold; font-size: 20px; margin-top: 10px;">
-		<span class="sidebar-text" style="display: block; color: #003300; font-weight: bold; font-size: 20px; margin-top: 10px; text-align: center;">
-    JABATAN PENJARA <br> MALAYSIA
-</span>
-		</a>
-    <nav class="side-menu">
-        @include('sidebar')
-    </nav>
-</aside>
-<!-- SIDEBAR -->
+    <aside id="sidebar" class="sidebar-closed">
+        <a href="#" class="brand">
+            <div class="featured-image mb-3 text-center mt-4 ms-2">
+                <img src="{{ asset('picture/penjara_logo.png') }}" class="img-fluid " style="max-width: 60px;">
+            </div>
+            <span class="sidebar-text ms-3" style="display: block; color: #003300; font-weight: bold; font-size: 20px; margin-top: 10px;">
+            <span class="sidebar-text" style="display: block; color: #003300; font-weight: bold; font-size: 20px; margin-top: 10px; text-align: center;">JABATAN PENJARA <br> MALAYSIA </span>
+        </a>
+        <nav class="side-menu">
+            @include('sidebar')
+        </nav>
+    </aside>
+    <!-- SIDEBAR -->
 
 	<!-- CONTENT -->
 	<section id="content">
@@ -37,7 +33,6 @@
                     <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
                 </svg>
             </div>
-
             <div class="d-flex align-items-center ms-auto">
                 <h4 class="mt-2 me-3 mb-0"> {{ $username->name }} </h4>
                 <li class="nav-item dropdown">
@@ -60,8 +55,6 @@
 		<!-- MAIN -->
 	</section>
 	<!-- CONTENT -->
-
-
 </body>
 
 <!-- Bootstrap JS -->
@@ -81,11 +74,11 @@
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
 <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
 
 <!-- DataTables -->
 <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
-
 
 <script>
     const allSideMenu = document.querySelectorAll('#sidebar .side-menu.top li a');
@@ -108,7 +101,5 @@
     menuBar.addEventListener('click', function () {
         sidebar.classList.toggle('hide');
     });
-
-
 </script>
 </html>

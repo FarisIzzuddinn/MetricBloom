@@ -1,20 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use Log;
 use App\Models\User;
 use App\Models\State;
-use App\Models\AddKpi;
-use App\Models\Sector;
-use App\Models\Bahagian;
-use App\Models\KpiState;
 use App\Models\Institution;
 use App\Models\KpiBahagian;
 use Illuminate\Http\Request;
 use App\Models\KpiInstitution;
 use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
@@ -213,6 +206,13 @@ class SuperAdminController extends Controller
             ];
         }
 
+        $status = $request->get('status');
+
+        $kpisData = null;
+        if ($status) {
+            $kpisData = $this->getKpisByStatus($status); // A method for fetching KPIs based on status
+        }
+
         $stateNames = $summary->pluck('state_name');
         $totalKpis = $summary->pluck('total_kpis');
         $averagePerformance = $summary->pluck('average_performance');
@@ -246,152 +246,37 @@ class SuperAdminController extends Controller
 
         return $kpiBahagian + $kpiState + $kpiInstitution;
     }
-    // public function index(){
-    //     // Dipslay username at navbar 
-    //     $username = Auth::User();
-        
-    //     // Retrieve all bahagians and their corresponding KPIs
-    //     $bahagians = Bahagian::with('kpis')->get();
-
-    //     // total KPI
-    //     $totalKPI = AddKpi::count(); 
-
-    //     // Get total KPI per bahagian
-    //     $kpiBahagianData = DB::table('kpi_bahagian')
-    //     ->join('bahagian', 'kpi_bahagian.bahagian_id', '=', 'bahagian.id')
-    //     ->select('bahagian.nama_bahagian as name', DB::raw('COUNT(kpi_bahagian.add_kpi_id) as total_kpi'))
-    //     ->groupBy('bahagian.id', 'bahagian.nama_bahagian')
-    //     ->get();
-
-    //     $totalAchieved = 40; // Total KPIs achieved in this quarter
-    //     $totalNotAchieved = 4; // Total KPIs not achieved in this quarter
-    //     $totalKpis = $totalAchieved + $totalNotAchieved;
-
-    //     $achievedPercentage = ($totalAchieved / $totalKpis) * 100;
-    //     $notAchievedPercentage = ($totalNotAchieved / $totalKpis) * 100;
-
-    //     // new one
-    //     $totalBahagian = KpiBahagian::count();
-    //     $totalState = KpiState::count();
-    //     $totalInstitution = KpiInstitution::count();
-
-    //     // Role-specific KPI performance percentages
-    //     $rolePerformance = [
-    //         'bahagian' => [
-    //             'onTrack' => $totalBahagian > 0 ? (KpiBahagian::where('status', 'on_track')->count() / $totalBahagian) * 100 : 0,
-    //             'overdue' => $totalBahagian > 0 ? (KpiBahagian::where('status', 'overdue')->count() / $totalBahagian) * 100 : 0,
-    //         ],
-    //         'state' => [
-    //             'onTrack' => $totalState > 0 ? (KpiState::where('status', 'on_track')->count() / $totalState) * 100 : 0,
-    //             'overdue' => $totalState > 0 ? (KpiState::where('status', 'overdue')->count() / $totalState) * 100 : 0,
-    //         ],
-    //         'institution' => [
-    //             'onTrack' => $totalInstitution > 0 ? (KpiInstitution::where('status', 'on_track')->count() / $totalInstitution) * 100 : 0,
-    //             'overdue' => $totalInstitution > 0 ? (KpiInstitution::where('status', 'overdue')->count() / $totalInstitution) * 100 : 0,
-    //         ],
-    //     ];
-
-    //     // KPI summary totals
-    //     $kpiStats = [
-    //         'total' => $totalBahagian + $totalState + $totalInstitution,
-    //         'onTrack' => KpiBahagian::where('status', 'on_track')->count() +
-    //                      KpiState::where('status', 'on_track')->count() +
-    //                      KpiInstitution::where('status', 'on_track')->count(),
-    //         'atRisk' => KpiBahagian::where('status', 'at_risk')->count() +
-    //                     KpiState::where('status', 'at_risk')->count() +
-    //                     KpiInstitution::where('status', 'at_risk')->count(),
-    //         'overdue' => KpiBahagian::where('status', 'overdue')->count() +
-    //                      KpiState::where('status', 'overdue')->count() +
-    //                      KpiInstitution::where('status', 'overdue')->count(),
-    //     ];
-
-        
-    //     $kpis = [
-    //         'Admin Bahagian' => KpiBahagian::with(['kpi'])->get(),
-    //         'Admin State' => KpiState::with(['kpi'])->get(),
-    //         'Institution Admin' => KpiInstitution::with(['kpi'])->get(),
-    //     ];
-
-    //     // Recent activities (optional, dummy data for now)
-    //     $recentActivities = [
-    //         ['timestamp' => now(), 'activity' => 'StateAdmin updated KPI ABC'],
-    //         ['timestamp' => now(), 'activity' => 'BahagianAdmin completed KPI XYZ'],
-    //     ];
-
-        // Get KPI by sector
-        // $sectors = Sector::withCount([
-        //     'kpis as achieved' => function ($query) {
-        //         $query->where('status', 'achieved');
-        //     },
-        //     'kpis as notAchieved' => function ($query) {
-        //         $query->where('status', 'not_achieved');
-        //     }
-        // ])->get();
-
-        // Get kpi by state
-        // $kpisPerState = State::withCount('kpis')->get();
-
-        // Card KPI overview
-        // $totalKpi = AddKpi::count();
-        // $kpisAchieved = AddKpi::where('peratus_pencapaian', '>=', 100)->count();
-        // $kpisOnGoing = AddKpi::whereBetween('peratus_pencapaian', [50, 99])->count();
-        // $kpisNotAchieved = AddKpi::whereBetween('peratus_pencapaian', [0, 49])->count();
-
-        // Percentage Kpi based on achieved -> on going -> not achieved
-        // $achievedPercentage = $totalKpi > 0 ? round(($kpisAchieved / $totalKpi) * 100, 2) : 0;
-        // $onGoingPercentage = $totalKpi > 0 ? round(($kpisOnGoing / $totalKpi) * 100, 2) : 0;
-        // $notAchievedPercentage = $totalKpi > 0 ? round(($kpisNotAchieved / $totalKpi) * 100, 2) : 0;
-
-       
-
-        // Reason KPI not achieved
-    //     $kpis = AddKpi::where('status', 'not achieved')->get();
-
-    //     // Group by reason and count each group
-    //     $reasons = $kpis->groupBy('reason')->map(function ($group) {
-    //         return ['reason' => $group->first()->reason, 'total' => $group->count()];
-    //     })->values();
-
-    //     // User overview
-    //     $totalUser = User::count();
-    //     $superAdmin = User::role('Super Admin')->count();
-    //     $admin = User::role('Admin')->count();
-    //     $stateAdmin = User::role('Admin State')->count();
-    //     $institutionAdmin = User::role('Institution Admin')->count();
-    //     $user = User::role('User')->count();
-    //     $recentUser = User::orderBy('created_at', 'desc')->limit(5)->get();
-        
-
-    //     // States overview
-    //     $totalState = State::count();
-    //     $totalInstitution = Institution::count();
-    //     $institutionPerState = State::withCount('institutions')->get();
-
-    //     return view('superAdmin.Dashboard.index', compact(
-    //         'username', 
-    //         'bahagians',
-    //         'totalKPI',
-    //         'kpiBahagianData', 
-    //         'totalAchieved',
-    //         'totalNotAchieved',
-    //         'totalKpis',
-    //         'achievedPercentage',
-    //         'notAchievedPercentage',
-    //         'kpiStats',
-    //         'recentActivities',
-    //         'rolePerformance',
-    //         'kpis',
-    //         'totalUser',
-    //         'superAdmin',
-    //         'admin',
-    //         'reasons',
-    //         'stateAdmin',
-    //         'institutionAdmin',
-    //         'user',
-    //         'recentUser',
-    //         'totalState',
-    //         'totalInstitution',
-    //         'institutionPerState',
-    //     ));
-    // }
 }
+
+    // public function getAllKpis(Request $request)
+    // {
+    //     // Fetch KPIs with optional search query
+    //     $searchQuery = $request->get('search', '');
+    //     $kpis = AddKpi::where('pernyataan_kpi', 'like', "%{$searchQuery}%")
+    //                     ->paginate(10); // Paginate the results to prevent large data overload
+    
+    //     // If it's an AJAX request, return the partial view with the paginated data
+    //     if ($request->ajax()) {
+    //         return view('superAdmin.Dashboard.totalKpi', compact('kpis'))->render();
+    //     }
+    
+    //     // Otherwise, return the whole page (for normal page loading)
+    //     return  $this->index($request);
+    // }
+ 
+    // public function getAchievedKpis()
+    // {
+    //     try {
+    //         // Fetch data from all three tables
+    //         $kpiBahagian = DB::table('kpi_bahagian')->where('status', 'achieved')->get(['pernyataan_kpi', 'target', 'status']);
+    //         $kpiStates = DB::table('kpi_states')->where('status', 'achieved')->get(['pernyataan_kpi', 'target', 'status']);
+    //         $kpiInstitutions = DB::table('kpi_institutions')->where('status', 'achieved')->get(['pernyataan_kpi', 'target', 'status']);
+    
+    //         // Merge the results into one collection
+    //         $achievedKpis = $kpiBahagian->merge($kpiStates)->merge($kpiInstitutions);
+    
+    //         return response()->json($achievedKpis, 200);
+    //     } catch (\Exception $e) {
+    //         return response()->json(['error' => 'Failed to fetch achieved KPIs.'], 500);
+    //     }
+    // }

@@ -50,8 +50,12 @@
                                 @endif
                             </td>
                             <td>
-                                <span class="badge bg-{{ $kpi->status == 'achieved' ? 'success' : 'danger' }}">
-                                    {{ ucfirst($kpi->status) }}
+                                <span class="badge rounded-pill 
+                                    bg-{{ 
+                                        $kpi->status === 'achieved' ? 'success' : 
+                                        ($kpi->status === 'pending' ? 'warning text-dark' : 'danger') 
+                                    }}">
+                                    {{ ucfirst($kpi->status ?? 'Not Defined') }}
                                 </span>
                             </td>
                             <td>
@@ -112,7 +116,7 @@
                         <input type="number" name="pencapaian" id="pencapaian" class="form-control" placeholder="Enter your achievement" required>
                     </div>
 
-                    <!-- Numerator Field -->
+                    {{-- <!-- Numerator Field -->
                     <div class="mb-3">
                         <label for="numerator" class="form-label">Numerator</label>
                         <input type="number" name="numerator" id="numerator" class="form-control" placeholder="Enter numerator value" required>
@@ -134,7 +138,7 @@
                     <div class="mb-3">
                         <label for="status" class="form-label">Status</label>
                         <input type="text" id="status" class="form-control" readonly>
-                    </div>
+                    </div> --}}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

@@ -28,4 +28,10 @@ class KpiBahagian extends Model
     {
         return $this->belongsTo(AddKpi::class, 'add_kpi_id');
     }
+
+    // In your Bahagian model
+    public function sector()
+    {
+        return $this->belongsTo(Sector::class);
+    }
 }

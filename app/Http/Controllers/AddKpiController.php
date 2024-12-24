@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Storage;
 
 class AddKpiController extends Controller
 {
@@ -120,49 +121,100 @@ class AddKpiController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            // Find the user record by ID
-            $user = User::findOrFail($id);
-            Log::info("Attempting to update User with ID: {$id}");
-    
-            // Validate the input
-            $validatedData = $request->validate([
-                'name' => 'required|string|max:255',
-                'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-                'password' => 'nullable|min:8|confirmed',
-                'roles' => 'required|array',
-                'state_id' => 'nullable|exists:states,id',
-                'institution_id' => 'nullable|exists:institutions,id',
-                'sector_id' => 'nullable|exists:sectors,id',
-                'bahagian_id' => 'nullable|exists:bahagians,id',
+            // Validate the request
+            $request->validate([
+                'teras_id' => 'required|exists:teras,id',
+                'sectors_id' => 'required|exists:sectors,id',
+                'pernyataan_kpi' => 'required|string|max:255|unique:add_kpis,pernyataan_kpi,' . $id,
+                'sasaran' => 'required|numeric',
+                'jenis_sasaran' => 'required|string|max:255',
+                'owners' => 'nullable|array',
+                'pdf_file_path' => 'nullable|file|mimes:pdf|max:10240',
             ]);
     
-            // Update the user data
-            $user->update([
-                'name' => $validatedData['name'],
-                'email' => $validatedData['email'],
-                'password' => $request->filled('password') ? bcrypt($request->password) : $user->password,
-                'state_id' => $validatedData['state_id'] ?? $user->state_id,
-                'institution_id' => $validatedData['institution_id'] ?? $user->institution_id,
-                'sector_id' => $validatedData['sector_id'] ?? $user->sector_id,
-                'bahagian_id' => $validatedData['bahagian_id'] ?? $user->bahagian_id,
-            ]);
+            // Find the KPI record
+            $kpi = AddKpi::findOrFail($id);
     
-            // Sync roles
-            $user->roles()->sync($validatedData['roles']);
+            // Update KPI data
+            $data = $request->except(['_token', '_method', 'owners', 'pdf_file_path']);
+            $data['quarter'] = Carbon::parse($kpi->created_at)->quarter; // Preserve existing quarter
     
-            // Return success message
-            return redirect()->route('users.index')->with([
-                'status' => 'User updated successfully.',
+            // Handle file upload
+            if ($request->hasFile('pdf_file_path')) {
+                // Delete the old file if exists
+                if ($kpi->pdf_file_path && Storage::disk('public')->exists($kpi->pdf_file_path)) {
+                    Storage::disk('public')->delete($kpi->pdf_file_path);
+                }
+    
+                // Store the new file
+                $file = $request->file('pdf_file_path');
+                $filePath = $file->store('kpi_files', 'public');
+                $data['pdf_file_path'] = $filePath;
+            }
+    
+            // Update the KPI record
+            $kpi->update($data);
+    
+            // Update owners
+            if ($request->has('owners')) {
+                // Clear existing owner relationships
+                DB::table('kpi_states')->where('add_kpi_id', $kpi->id)->delete();
+                DB::table('kpi_institutions')->where('add_kpi_id', $kpi->id)->delete();
+                DB::table('kpi_bahagian')->where('add_kpi_id', $kpi->id)->delete();
+    
+                // Add new owner relationships
+                foreach ($request->owners as $owner) {
+                    [$type, $ownerId] = explode('-', $owner);
+    
+                    if ($type == 'state' && State::find($ownerId)) {
+                        DB::table('kpi_states')->insert([
+                            'state_id' => $ownerId,
+                            'add_kpi_id' => $kpi->id,
+                            'created_at' => now(),
+                            'quarter' => $data['quarter'],
+                        ]);
+                        Log::info("KPI reassigned to state ID: {$ownerId}");
+                    } elseif ($type == 'institution' && Institution::find($ownerId)) {
+                        DB::table('kpi_institutions')->insert([
+                            'institution_id' => $ownerId,
+                            'add_kpi_id' => $kpi->id,
+                            'created_at' => now(),
+                            'quarter' => $data['quarter'],
+                        ]);
+                        Log::info("KPI reassigned to institution ID: {$ownerId}");
+                    } elseif ($type == 'bahagian' && Bahagian::find($ownerId)) {
+                        DB::table('kpi_bahagian')->insert([
+                            'bahagian_id' => $ownerId,
+                            'add_kpi_id' => $kpi->id,
+                            'created_at' => now(),
+                            'quarter' => $data['quarter'],
+                        ]);
+                        Log::info("KPI reassigned to bahagian ID: {$ownerId}");
+                    } else {
+                        Log::warning('Invalid owner type', ['type' => $type, 'id' => $ownerId]);
+                    }
+                }
+            }
+    
+            return redirect()->route('admin.kpi')->with([
+                'status' => 'KPI updated successfully.',
                 'alert-type' => 'success',
             ]);
         } catch (QueryException $e) {
-            Log::error('Database error during User update', ['error' => $e->getMessage()]);
-            return redirect()->back()->with([
-                'status' => 'An error occurred while updating the user.',
-                'alert-type' => 'error',
+            Log::error('Database error during KPI update', ['error' => $e->getMessage()]);
+            return redirect()->back()->withInput()->with([
+                'status' => 'A database error occurred. Please try again.',
+                'alert-type' => 'danger',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Unexpected error during KPI update', ['error' => $e->getMessage()]);
+            return redirect()->back()->withInput()->with([
+                'status' => 'An unexpected error occurred. Please contact the administrator.',
+                'alert-type' => 'danger',
             ]);
         }
     }
+    
     
     public function destroy($id)
     {

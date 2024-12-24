@@ -101,13 +101,13 @@
                         </div>
                         <div class="card-body text-center">
                             <div class="d-flex justify-content-center">
-                                <div class="badge bg-success mx-2" style="width: 50px; height: 50px; font-size: 20px; line-height: 50px;">
+                                <div class="badge bg-success mx-2 rounded-circle d-flex justify-content-center align-items-center" style="width: 50px; height: 50px; font-size: 20px;">
                                     {{ $data['achieved'] }}
-                                </div>
-                                <div class="badge bg-warning mx-2" style="width: 50px; height: 50px; font-size: 20px; line-height: 50px;">
+                                </div>                                    
+                                <div class="badge bg-warning mx-2 rounded-circle d-flex justify-content-center align-items-center" style="width: 50px; height: 50px; font-size: 20px;">
                                     {{ $data['pending'] }}
                                 </div>
-                                <div class="badge bg-danger mx-2" style="width: 50px; height: 50px; font-size: 20px; line-height: 50px;">
+                                <div class="badge bg-danger mx-2 rounded-circle d-flex justify-content-center align-items-center" style="width: 50px; height: 50px; font-size: 20px;">
                                     {{ $data['not_achieved'] }}
                                 </div>
                             </div>
@@ -147,13 +147,13 @@
                         </div>
                         <div class="card-body text-center">
                             <div class="d-flex justify-content-center">
-                                <div class="badge bg-success mx-2" style="width: 50px; height: 50px; font-size: 20px; line-height: 50px;">
+                                <div class="badge bg-success mx-2 rounded-circle d-flex justify-content-center align-items-center" style="width: 50px; height: 50px; font-size: 20px;">
                                     {{ $data['achieved'] }}
-                                </div>
-                                <div class="badge bg-warning mx-2" style="width: 50px; height: 50px; font-size: 20px; line-height: 50px;">
+                                </div>                                    
+                                <div class="badge bg-warning mx-2 rounded-circle d-flex justify-content-center align-items-center" style="width: 50px; height: 50px; font-size: 20px;">
                                     {{ $data['pending'] }}
                                 </div>
-                                <div class="badge bg-danger mx-2" style="width: 50px; height: 50px; font-size: 20px; line-height: 50px;">
+                                <div class="badge bg-danger mx-2 rounded-circle d-flex justify-content-center align-items-center" style="width: 50px; height: 50px; font-size: 20px;">
                                     {{ $data['not_achieved'] }}
                                 </div>
                             </div>
@@ -193,13 +193,13 @@
                         </div>
                         <div class="card-body text-center">
                             <div class="d-flex justify-content-center">
-                                <div class="badge bg-success mx-2" style="width: 50px; height: 50px; font-size: 20px; line-height: 50px;">
+                                <div class="badge bg-success mx-2 rounded-circle d-flex justify-content-center align-items-center" style="width: 50px; height: 50px; font-size: 20px;">
                                     {{ $data['achieved'] }}
-                                </div>
-                                <div class="badge bg-warning mx-2" style="width: 50px; height: 50px; font-size: 20px; line-height: 50px;">
+                                </div>                                    
+                                <div class="badge bg-warning mx-2 rounded-circle d-flex justify-content-center align-items-center" style="width: 50px; height: 50px; font-size: 20px;">
                                     {{ $data['pending'] }}
                                 </div>
-                                <div class="badge bg-danger mx-2" style="width: 50px; height: 50px; font-size: 20px; line-height: 50px;">
+                                <div class="badge bg-danger mx-2 rounded-circle d-flex justify-content-center align-items-center" style="width: 50px; height: 50px; font-size: 20px;">
                                     {{ $data['not_achieved'] }}
                                 </div>
                             </div>

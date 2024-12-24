@@ -130,6 +130,18 @@
         </li>
     @endcan
 
+    @can('generate report institution')
+    <li class="{{ request()->routeIs('reports.state') ? 'active' : '' }}">
+        <a href="{{ route('reports.state', ['state' => $state->id]) }}">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bx bi-binoculars me-3" viewBox="0 0 16 16">
+                <path d="M3 2.5A1.5 1.5 0 0 1 4.5 1h1A1.5 1.5 0 0 1 7 2.5V5h2V2.5A1.5 1.5 0 0 1 10.5 1h1A1.5 1.5 0 0 1 13 2.5v2.382a.5.5 0 0 0 .276.447l.895.447A1.5 1.5 0 0 1 15 7.118V14.5a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 14.5v-3a.5.5 0 0"/>
+            </svg>
+            <span class="link-text">Generate Report</span>
+        </a>
+    </li>
+@endcan
+
+
     @can('view sector dashboard')
     <li class="{{ request()->routeIs('adminSector.index') ? 'active' : '' }}">
             <a href="{{ route('adminSector.index') }}">

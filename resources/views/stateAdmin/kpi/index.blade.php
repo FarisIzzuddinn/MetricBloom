@@ -45,12 +45,12 @@
                     </td>
                     <td>
                         <span class="badge rounded-pill 
-                        bg-{{ 
-                            $kpiState->status === 'achieved' ? 'success' : 
-                            ($kpiState->status === 'pending' ? 'warning text-dark' : 'danger') 
-                        }}">
-                        {{ ucfirst($kpiState->status ?? 'Not Defined') }}
-                    </span>
+                            bg-{{ 
+                                $kpiState->status === 'achieved' ? 'success' : 
+                                ($kpiState->status === 'pending' ? 'warning text-dark' : 'danger') 
+                            }}">
+                            {{ ucfirst($kpiState->status ?? 'Not Defined') }}
+                        </span>
 
                     </td>
                     <td>

@@ -5,80 +5,100 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\State;
 use App\Models\AddKpi;
+use App\Models\Report;
 use App\Models\KpiState;
+use Barryvdh\DomPDF\PDF;
 use App\Models\UserEntity;
 use App\Models\Institution;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
 class StateAdminController extends Controller
 {
-//     public function index()
-// {
-//     // Retrieve the state ID of the logged-in user
-//     $stateId = auth()->user()->state_id;
-//     $username = Auth::user();
-//     $chartData = Auth::user();
-    
-//     // Retrieve all institutions within the state
-//     $institutions = Institution::where('state_id', $stateId)->get();
-    
-//     // Retrieve the state and its associated KPIs
-//     $state = State::with('kpis')->find($stateId);
-//     $kpis = $state ? $state->kpis : collect(); // Handle if state is null
-    
-//     // Calculate the total number of KPIs for the given state
-//     $totalKpis = $kpis->count();
-    
-//     // Calculate the number of KPIs that have been achieved (progress >= 100%)
-//     $achievedKpis = $kpis->where('peratus_pencapaian', '>=', 100)->count();
-    
-//     // Calculate the number of KPIs that are still pending (progress < 100%)
-//     $pendingKpis = $kpis->where('peratus_pencapaian', '<', 100)->count();
-    
-//     // Calculate the average achievement percentage for all KPIs
-//     $totalProgress = $kpis->sum('peratus_pencapaian');
-//     $averageAchievement = ($totalKpis > 0) ? round($totalProgress / $totalKpis, 2) : 0;
+    public function generateReportInstitutions(Request $request, $stateId)
+{
+    $username = Auth::user();
 
-//     $kpiCategories = $kpis->pluck('kpi')->unique();
+    // Fetch the state with related institutions and KPIs
+    $state = State::with(['institutions.kpis' => function ($query) {
+        $query->withPivot(['quarter', 'status', 'pencapaian', 'peratus_pencapaian']);
+    }])->findOrFail($stateId);
 
-//     $kpiData = $kpis->groupBy('category')->map(function ($group) {
-//         return $group->pluck('peratus_pencapaian'); // This will give you the percentage of achievement
-//     });
-    
-//     // Calculate KPI progress per institution
-//     $institutionNames = [];
-//     $kpiAchievements = [];
-//     $financialPerformance = [];
-//     $operationalEfficiency = [];
-//     $customerSatisfaction = [];
-    
-//     foreach ($institutions as $institution) {
-//         $institutionNames[] = $institution->name;
-//         $kpisGroup = $kpis->where('institution_id', $institution->id);
-        
-//         $averageAchievement = $institution->kpis->avg('peratus_pencapaian');
-//         $kpiAchievements[] = $averageAchievement ?: 0;
+    // Get filters
+    $quarter = $request->get('quarter', null);
 
-//         // Group KPIs by category
-//         $financialKpis = $kpisGroup->where('category', 'financial_performance');
-//         $operationalKpis = $kpisGroup->where('category', 'operational_efficiency');
-//         $customerKpis = $kpisGroup->where('category', 'customer_satisfaction');
-    
-//         // Calculate average achievement for each category
-//         $financialPerformance[] = $financialKpis->count() > 0 ? round($financialKpis->avg('peratus_pencapaian'), 2) : 0;
-//         $operationalEfficiency[] = $operationalKpis->count() > 0 ? round($operationalKpis->avg('peratus_pencapaian'), 2) : 0;
-//         $customerSatisfaction[] = $customerKpis->count() > 0 ? round($customerKpis->avg('peratus_pencapaian'), 2) : 0;
-//     }
+    // Generate reports
+    $reports = $state->institutions->map(function ($institution) use ($quarter) {
+        $kpis = $institution->kpis;
 
-//     return view('stateAdmin.dashboard.index', compact(
-//         'institutions', 'chartData', 'kpiData', 'totalKpis', 
-//         'averageAchievement', 'kpis', 'username', 'kpiCategories',
-//         'institutionNames', 'kpiAchievements', 'financialPerformance',
-//         'operationalEfficiency', 'customerSatisfaction', 'achievedKpis', 'pendingKpis'
-//     ));
-// }
+        // Log all KPIs before filtering
+        logger()->debug('All KPIs for Institution with Pivot:', $kpis->toArray());
+
+        // Filter KPIs by the selected quarter
+        if ($quarter) {
+            $quarter = (int) $quarter; // Ensure quarter is an integer
+            $kpis = $kpis->filter(fn($kpi) => (int) $kpi->pivot->quarter === $quarter);
+        }
+
+        // Log filtered KPIs
+        logger()->debug('Filtered KPIs: ', $kpis->toArray());
+
+        return [
+            'institution_name' => $institution->name,
+            'achieved' => $kpis->where('pivot.status', 'achieved')->count(),
+            'not_achieved' => $kpis->where('pivot.status', 'not achieved')->count(),
+            'pending' => $kpis->where('pivot.status', 'pending')->count(),
+        ];
+    });
+
+    // Log reports
+    logger()->debug('Reports: ', $reports->toArray());
+
+    // Pass data to the view
+    return view('stateAdmin.reports.index', compact('state', 'reports', 'quarter', 'username'));
+}
+
+    
+public function exportStateReportToPdf(PDF $pdf, $stateId)
+{
+    // Assuming $stateId is passed from the controller or route
+    $quarter = request('quarter');
+    $institutionId = request('institution_id');
+
+    // Fetch the report data based on raw SQL query
+    $reports = DB::select(
+        "SELECT 
+            'Institution' AS type,
+            ak.pernyataan_kpi AS kpi_statement,
+            i.name AS entity_name,
+            ki.institution_id AS entity_id,
+            ki.pencapaian,
+            ki.peratus_pencapaian,
+            ki.status,
+            ki.quarter
+        FROM kpi_institutions ki
+        JOIN institutions i ON ki.institution_id = i.id
+        JOIN add_kpis ak ON ki.add_kpi_id = ak.id
+        WHERE (? IS NULL OR ki.institution_id = ?)
+        AND (? IS NULL OR ki.quarter = ?)
+        AND (? IS NULL OR i.state_id = ?)",
+        [$institutionId, $institutionId, $quarter, $quarter, $stateId, $stateId]
+    );
+
+    // Fetch state data
+    $state = State::find($stateId); 
+
+    // Pass data to the view and generate the PDF
+    $pdf = $pdf->loadView('stateAdmin.reports.pdf', compact('state', 'reports'));
+
+    // Download the generated PDF
+    return $pdf->download('state_performance_report.pdf');
+}
+
+    
+    
 
 public function index()
 {
