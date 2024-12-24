@@ -36,21 +36,20 @@ class AdminSectorController extends Controller
         $pendingKpis = 0;
         $notAchievedKpis = 0;
     
-        // Loop through Bahagians and count the KPIs
+        // Loop through Bahagians and count the KPIs    
         foreach ($bahagians as $bahagian) {
             // Total KPIs
-            $totalKpis += $bahagian->kpis->count();
+            $totalKpis += $bahagian->kpiBahagian->count();
             
-            // Achieved KPIs (assuming status is 'achieved' when 100%)
-            $achievedKpis += $bahagian->kpis->where('status', 'achieved')->count();
-            
+            // Achieved KPIs (assuming status is 'achiekpiBahagianved' when 100%)
+            $achievedKpis += $bahagian->kpiBahagian->where('status', 'achieved')->count();
+
             // Pending KPIs (assuming status is 'pending' when between 1% and 99%)
-            $pendingKpis += $bahagian->kpis->where('status', 'pending')->count();
-            
+            $pendingKpis += $bahagian->kpiBahagian->where('status', 'pending')->count();
+
             // Not Achieved KPIs (assuming status is 'not achieved' when 0%)
-            $notAchievedKpis += $bahagian->kpis->where('status', 'not achieved')->count();
+            $notAchievedKpis += $bahagian->kpiBahagian->where('status', 'not achieved')->count();
         }
-        
     
         // Get the selected Bahagian ID from the request, defaulting to the user's Bahagian
         $selectedBahagianId = $request->input('bahagian_id', $bahagianId);
