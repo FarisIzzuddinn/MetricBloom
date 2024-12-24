@@ -96,7 +96,7 @@
     </div>
 
 {{-- statistic card  --}}
-<div class="row">
+<div class="row mb-3">
     <div class="col-md-3">
         <div class="card mb-1 bg-primary rounded-3 shadow-sm hover-shadow" data-aos="fade-up">
             <div class="card-body text-white">
@@ -157,70 +157,22 @@
     </div>
     
 
-    <div class="row">
-        <div class="col-lg-6 mb-3">
-            <div id="chart-container" style="height: 400px;"></div>
-        </div>
-    </div>
-
-    {{-- <!-- Sector Filter -->
-    <div class="row">
-        <div class="col-md-4 mb-3">
-            <form method="GET" action="{{ route('admin.index') }}">
-                <label for="sector_id" class="form-label">Select Sector:</label>
-                <select name="sector_id" id="sector_id" class="form-control" onchange="this.form.submit()">
-                    @foreach($sectors as $sector)
-                        <option value="{{ $sector->id }}" {{ $sector->id == $selectedSectorId ? 'selected' : '' }}>
-                            {{ $sector->name }}
-                        </option>
-                    @endforeach
-                </select>
-            </form>
-        </div>
-    </div>
-   
-    <!-- KPI Table -->
     <div class="row mt-4">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header">
-                    KPIs Assigned to Your Bahagian
-                </div>
-                <div class="card-body">
-                    @if($addKpis->isEmpty())
-                        <p class="text-muted">No KPIs are assigned to the selected sector.</p>
-                    @else
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>KPI Name</th>
-                                    <th>Target</th>
-                                    <th>Achievement (%)</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($addKpis as $kpi)
-                                @foreach($kpi->kpiBahagian as $bahagian)
-                                    <tr>
-                                        <td>{{ $kpi->pernyataan_kpi }}</td>
-                                        <td>{{ $kpi->sasaran }}</td>
-                                        <td>{{ $bahagian->peratus_pencapaian }}</td>
-                                        <td>
-                                            <span class="badge {{ $bahagian->peratus_pencapaian >= $kpi->sasaran ? 'bg-success' : 'bg-danger' }}">
-                                                {{ $bahagian->peratus_pencapaian >= $kpi->sasaran ? 'Achieved' : 'Not Achieved' }}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            @endforeach
-                            </tbody>
-                        </table>
-                    @endif
+        @foreach($chartData as $index => $data)
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-header">{{ $data['name'] }}</div>
+                    <div class="card-body">
+                        <!-- Chart container with unique ID -->
+                        <div id="chart-container-{{ $index }}" style="width: 100%; height: 400px;"></div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div> --}}
+        @endforeach
+    </div>
+
+    <div id="content-container" class="mt-4"></div>
+    
 </div>
 
 <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -231,98 +183,120 @@
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const chartData = @json($chartData);
-        const totalAchieved = {{ $totalAchieved }};
-        const totalNotAchieved = {{ $totalNotAchieved }};
+document.addEventListener('DOMContentLoaded', function () {
+    const chartData = @json($chartData); // assuming you have $chartData passed from your backend
 
-        Highcharts.chart('chart-container', {
+    // Dynamically create the charts
+    chartData.forEach((data, index) => {
+        // Initialize the Highcharts chart for each data entry
+        Highcharts.chart(`chart-container-${index}`, {
             chart: {
                 type: 'pie',
-                height: null, // Adjust automatically to the container
                 backgroundColor: '#f9f9f9',
             },
             title: {
-                text: 'Sektor Keselamatan dan Koreksional',
-                style: {
-                    fontSize: '20px',
-                    fontWeight: 'bold',
-                },
-            },
-            subtitle: {
-                text: `<div style="display: flex; justify-content: center; align-items: center;">
-                    <div style="background-color: green; color: white; border-radius: 5px; padding: 10px; margin-right: 5px;">
-                        <b>${totalAchieved}</b> Achieved
-                    </div>
-                    <div style="background-color: red; color: white; border-radius: 5px; padding: 10px;">
-                        <b>${totalNotAchieved}</b> Not Achieved
-                    </div>
-                </div>`,
-                useHTML: true,
-                align: 'center',
+                text: null,
             },
             plotOptions: {
                 pie: {
-                    innerSize: '60%', // Donut effect
-                    startAngle: -90,
-                    endAngle: 90, // Semi-donut
-                    center: ['50%', '75%'],
+                    innerSize: '50%',
                     dataLabels: {
                         enabled: true,
-                        distance: -30,
-                        style: {
-                            color: '#000',
-                            fontSize: '12px',
-                            fontWeight: 'bold',
-                            textOutline: 'none',
+                        format: '{point.name}: {point.y}',
+                    },
+                    point: {
+                        events: {
+                            click: function () {
+                                const clickedKpiStatus = this.name;
+                                const clickedKpiData = this.y;
+
+                                if (Array.isArray(data.kpis) && data.kpis.length > 0) {
+                                    // Filter KPIs based on the clicked status
+                                    const filteredKpis = data.kpis.filter(kpi => {
+                                        return kpi.status.trim().toLowerCase() === clickedKpiStatus.trim().toLowerCase();
+                                    });
+
+                                    if (filteredKpis.length > 0) {
+                                        // Generate table HTML for the filtered KPIs
+                                        const rowsHtml = filteredKpis
+                                            .map(kpi => {
+                                                const targetFormatted = isNaN(kpi.sasaran) ? '-' : parseFloat(kpi.sasaran).toFixed(2);
+                                                const achievementFormatted = isNaN(kpi.pencapaian) ? '-' : parseFloat(kpi.pencapaian).toFixed(2);
+
+                                                return `
+                                                    <tr>
+                                                        <td>${kpi.pernyataan_kpi}</td>
+                                                        <td class="text-center">${targetFormatted}</td>
+                                                        <td class="text-center">${achievementFormatted}</td>
+                                                        <td class="text-center">
+                                                            <span class="badge ${kpi.status === 'achieved' ? 'bg-success' : kpi.status === 'pending' ? 'bg-warning text-dark' : 'bg-danger'}">${kpi.status}</span>
+                                                        </td>
+                                                    </tr>`;
+                                            })
+                                            .join('');
+
+                                        const tableHtml = `
+                                            <div class="card shadow-sm rounded">
+                                                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                                                    <h5 class="mb-0">KPI Details for: ${data.name}</h5>
+                                                    <button id="hideTableButton-${index}" class="btn btn-sm btn-light">Hide Table</button>
+                                                </div>
+                                                <div class="card-body p-4">
+                                                    <table class="table table-hover table-bordered">
+                                                        <thead class="table-primary">
+                                                            <tr>
+                                                                <th>KPI Name</th>
+                                                                <th class="text-center">Target</th>
+                                                                <th class="text-center">Achievement</th>
+                                                                <th class="text-center">Status</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            ${rowsHtml}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        `;
+
+                                        // Insert the table into the content container
+                                        const contentContainer = document.getElementById('content-container');
+                                        contentContainer.innerHTML = tableHtml;
+
+                                        // Add hide button functionality
+                                        document.getElementById(`hideTableButton-${index}`).addEventListener('click', function () {
+                                            contentContainer.innerHTML = ''; // Clear the content
+                                        });
+                                    } else {
+                                        // No data message
+                                        document.getElementById('content-container').innerHTML = `
+                                            <div class="alert alert-warning" role="alert">
+                                                No KPIs match the selected status.
+                                            </div>
+                                        `;
+                                    }
+                                } else {
+                                    console.log("No KPIs data found for this data entry.");
+                                }
+                            },
                         },
-                        formatter: function () {
-                            // Display the Bahagian name and KPI breakdown inside the slice
-                            return `<div style="text-align: center;">
-                                <b>${this.point.name}</b><br>
-                                <span style="color:green;">${this.point.achieved}</span> /
-                                <span style="color:red;">${this.point.notAchieved}</span>
-                            </div>`;
-                        },
-                        useHTML: true,
                     },
                 },
             },
-            series: [
-                {
-                    name: 'KPI Breakdown',
-                    data: chartData.map(item => ({
-                        name: item.name,
-                        y: item.achieved + item.notAchieved,
-                        achieved: item.achieved,
-                        notAchieved: item.notAchieved,
-                        color: item.color,
-                    })),
-                },
-            ],
-            responsive: {
-                rules: [
-                    {
-                        condition: {
-                            maxWidth: 768, // Mobile responsiveness
-                        },
-                        chartOptions: {
-                            title: {
-                                style: {
-                                    fontSize: '16px',
-                                },
-                            },
-                            subtitle: {
-                                style: {
-                                    fontSize: '14px',
-                                },
-                            },
-                        },
-                    },
+            series: [{
+                name: 'KPIs',
+                data: [
+                    { name: 'Achieved', y: data.achieved, color: '#28a745' },
+                    { name: 'Pending', y: data.pending, color: '#ffc107' },
+                    { name: 'Not Achieved', y: data.notAchieved, color: '#dc3545' },
                 ],
-            },
+            }],
         });
     });
+});
+
+
+
 </script>
 
 

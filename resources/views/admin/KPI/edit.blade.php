@@ -73,15 +73,13 @@
                                     </h2>
                                     <div id="collapseStates" class="accordion-collapse collapse show" aria-labelledby="headingStates" data-bs-parent="#ownersAccordion">
                                         <div class="accordion-body">
-                                    
                                             @foreach ($states as $state)
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="owners[]" value="state-{{ $state->id }}" id="state-{{ $state->id }}"
-                                                @if($addKpi->states->contains('id', $state->id)) checked @endif>
-                                                <label class="form-check-label" for="state-{{ $state->id }}">{{ $state->name }}</label>
-                                            </div>
-                                        @endforeach
-
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" name="owners[]" value="state-{{ $state->id }}" id="state-{{ $state->id }}"
+                                                    @if($addKpi->states->contains('id', $state->id)) checked @endif>
+                                                    <label class="form-check-label" for="state-{{ $state->id }}">{{ $state->name }}</label>
+                                                </div>
+                                            @endforeach
                                         </div>
                                     </div>
                                 </div>

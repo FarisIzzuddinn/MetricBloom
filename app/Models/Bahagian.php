@@ -24,7 +24,7 @@ class Bahagian extends Model
     public function addKpis()
     {
         return $this->belongsToMany(AddKpi::class, 'kpi_bahagian')
-            ->withPivot('status') // Include the `status` column
+            ->withPivot('status', 'pencapaian') // Include the `status` column
             ->withTimestamps();
     }
 
