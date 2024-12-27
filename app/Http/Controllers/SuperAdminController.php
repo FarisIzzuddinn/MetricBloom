@@ -217,8 +217,6 @@ class SuperAdminController extends Controller
         $totalKpis = $summary->pluck('total_kpis');
         $averagePerformance = $summary->pluck('average_performance');
         
-  
-    
         return view('superAdmin.Dashboard.index', compact(
             'username', 'totalKpi', 'totalState', 'totalInstitution', 'totalUser',
             'achievedKpi', 'pendingKpi', 'notAchievedKpi', 'bahagianPerformance', 'bahagianStatus',

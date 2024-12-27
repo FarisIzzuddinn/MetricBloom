@@ -55,11 +55,19 @@ class AddKpiController extends Controller
     
             // Handle file upload
             if ($request->hasFile('pdf_file_path')) {
+                // Get the uploaded file
                 $file = $request->file('pdf_file_path');
-                $filePath = $file->store('kpi_files', 'public');
+                
+                // Get the original file name
+                $originalFileName = $file->getClientOriginalName();
+                
+                // Store the file with its original name in the 'kpi_files' folder under the 'public' disk
+                $filePath = $file->storeAs('kpi_files', $originalFileName, 'public');
+                
+                // Save the file path to the data array
                 $data['pdf_file_path'] = $filePath;
             }
-    
+            
             // Create the KPI
             $kpi = AddKpi::create($data);
     
@@ -141,16 +149,24 @@ class AddKpiController extends Controller
     
             // Handle file upload
             if ($request->hasFile('pdf_file_path')) {
-                // Delete the old file if exists
+                // Delete the old file if it exists
                 if ($kpi->pdf_file_path && Storage::disk('public')->exists($kpi->pdf_file_path)) {
                     Storage::disk('public')->delete($kpi->pdf_file_path);
                 }
-    
-                // Store the new file
+            
+                // Get the uploaded file
                 $file = $request->file('pdf_file_path');
-                $filePath = $file->store('kpi_files', 'public');
+                
+                // Get the original file name
+                $originalFileName = $file->getClientOriginalName();
+            
+                // Store the file with its original name in the 'kpi_files' folder
+                $filePath = $file->storeAs('kpi_files', $originalFileName, 'public');
+            
+                // Update the file path in the database
                 $data['pdf_file_path'] = $filePath;
             }
+            
     
             // Update the KPI record
             $kpi->update($data);

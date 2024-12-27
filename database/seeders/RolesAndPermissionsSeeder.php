@@ -33,7 +33,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'user state management',
             'view institutionAdmin dashboard',
             'kpi management institution',
-            'generate report',          
+            'generate report',
+            'view sector dashboard'
         ];
 
         foreach ($permissions as $permission) {
@@ -50,7 +51,19 @@ class RolesAndPermissionsSeeder extends Seeder
             'generate report',
             'Manage Institution'
         ]);
+
+        $bahagianAdmin = Role::create(['name' => 'Admin Bahagian']);
+        $bahagianAdmin->givePermissionTo([
+            'view dashboard',
+            'view admin bahagian KPI',
+        ]);
         
+        $sectorAdmin = Role::create(['name' => 'Admin Sector']);
+        $sectorAdmin->givePermissionTo([
+            'view add kpi',
+            'view sector dashboard'
+        ]);
+
         // Buat roles dan assign permissions
         $adminRole = Role::create(['name' => 'admin']);
         $adminRole->givePermissionTo([
