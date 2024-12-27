@@ -18,6 +18,7 @@ class KpiBahagian extends Model
         'pencapaian',
         'peratus_pencapaian',
         'status',
+        'reason'
     ];
     public function bahagian()
     {

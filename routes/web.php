@@ -92,6 +92,7 @@ Route::middleware(['role:Institution Admin'])->group(function () {
     Route::get('/institution-admin/dashboard', [institutionAdminController::class, 'index'])->name('institutionAdmin.dashboard');
     Route::get('/institution-admin/kpi-management', [institutionAdminController::class, 'kpiIndex'])->name('institutionAdmin.kpi');
     Route::put('/institution-admin/kpi/assign', [institutionAdminController::class, 'update'])->name('institutionAdmin.kpi.assign');
+    Route::get('/kpi-details/{status}', [institutionAdminController::class, 'getKpiDetails']);
 });
 Route::middleware(['role:Admin Bahagian'])->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');

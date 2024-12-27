@@ -35,11 +35,7 @@ class AdminController extends Controller
         $selectedSectorId = $request->input('sector_id', $sectorId);
     
         // Retrieve KPIs for all Bahagians in the selected sector
-        $addKpis = AddKpi::whereHas('bahagians', function ($query) use ($selectedSectorId) {
-            $query->whereHas('sector', function ($sectorQuery) use ($selectedSectorId) {
-                $sectorQuery->where('id', $selectedSectorId);
-            });
-        })->get();
+        $addKpis = \App\Models\KpiBahagian::all();
     
         // Assuming Bahagian model has a 'sector_id' relationship with sectors
         $bahagians = Bahagian::where('sector_id', $selectedSectorId)->get();
@@ -82,40 +78,6 @@ class AdminController extends Controller
             'addKpis', 'username', 'bahagian', 'bahagians', 
             'sectors', 'selectedSectorId', 'chartData', 'totalNotAchieved', 'totalAchieved'
         ));
-    }
-    
-    public function kpiCompleteRateByState(){
-        $states = State::withCount(['kpis as total_kpis_assigned', 'kpis as kpis_completed' => function($query) {
-            $query->where('status', 'achieved'); 
-        }])->get();
-        
-        $stateData = $states->map(function ($state) {
-            $completionRate = $state->total_kpis_assigned > 0
-                ? ($state->kpis_completed / $state->total_kpis_assigned) * 100
-                : 0;
-            return [
-                'state' => $state->name,
-                'completionRate' => $completionRate
-            ];
-        });
-
-        return $stateData;
-    }
-
-    public function getKpiDataByState($state)
-    {
-        // Fetch KPIs based on the selected state
-        $kpis = AddKpi::where('negeri', $state)->get();
-        
-        // Prepare labels and data
-        $labels = $kpis->pluck('kpi')->toArray();
-        $data = $kpis->pluck('peratus_pencapaian')->toArray();
-        
-        // Return the data in JSON format
-        return response()->json([
-            'labels' => $labels,
-            'data' => $data
-        ]);
     }
 }
  

@@ -17,21 +17,53 @@ class institutionAdminController extends Controller
 {
     public function index()
     {
-        $username  = auth::user();
-        // Fetch the user entity for the authenticated user
-        $userEntity = UserEntity::where('user_id', Auth::id())->first();
+        $username = auth()->user();
+    
+        // Fetch user entity
+        $userEntity = UserEntity::where('user_id', auth()->id())->first();
+    
+        // Fetch institution and related KPIs
+        $institution = $userEntity && $userEntity->institution_id
+            ? Institution::with('kpiInstitutions.kpi')->find($userEntity->institution_id)
+            : null;
+    
+        $kpis = $institution ? $institution->kpiInstitutions : collect();
 
-        if ($userEntity && $userEntity->institution_id) {
-            // Get the institution using the institution_id
-            $institution = Institution::find($userEntity->institution_id);
-        } else {
-            $institution = null; // No institution assigned
+        // Initialize counts
+        $totalKpis = 0;
+        $achievedCount = $pendingCount = $notAchievedCount = 0;
+    
+        if ($institution) {
+            $kpis = $institution->kpiInstitutions;
+    
+            $totalKpis = $kpis->count();
+            $achievedCount = $kpis->where('status', 'achieved')->count();
+            $pendingCount = $kpis->where('status', 'pending')->count();
+            $notAchievedCount = $kpis->where('status', 'not achieved')->count();
         }
-
-        // Retrieve KPIs for the institution
-        $kpis = $institution ? $institution->kpis : collect();
-        
-        return view('institutionAdmin.dashboard.index', compact('institution', 'kpis', 'username'));
+    
+        // Prepare chart data
+        $chartData = $institution
+            ? [
+                'name' => $institution->name,
+                'achieved' => $achievedCount,
+                'pending' => $pendingCount,
+                'notAchieved' => $notAchievedCount,
+                'kpiInstitutions' => $institution->kpiInstitutions->map(function ($kpi) {
+                    return [
+                        'name' => $kpi->kpi->pernyataan_kpi ?? 'N/A',
+                        'target' => $kpi->kpi->sasaran ?? 0,
+                        'achievement' => $kpi->pencapaian ?? 0,
+                        'status' => $kpi->status ?? 'unknown',
+                    ];
+                }),
+            ]
+            : [];
+    
+        return view('institutionAdmin.dashboard.index', compact(
+            'username', 'institution', 'chartData', 'totalKpis', 'achievedCount', 'pendingCount',
+            'kpis', 'notAchievedCount'
+        ));
     }
 
     public function kpiIndex()
@@ -76,9 +108,9 @@ class institutionAdminController extends Controller
         $kpiInstitution->pencapaian = $request->pencapaian;
         $kpiInstitution->peratus_pencapaian = ($request->pencapaian / $kpiInstitution->kpi->sasaran) * 100;
 
-        if ($kpiInstitution->peratus_pencapaian > 100) {
+        if ($kpiInstitution->peratus_pencapaian >= 100) {
             $kpiInstitution->status = 'achieved';
-        } elseif ($kpiInstitution->peratus_pencapaian > 50) {
+        } elseif ($kpiInstitution->peratus_pencapaian >= 50) {
             $kpiInstitution->status = 'pending';
         } else {
             $kpiInstitution->status = 'not achieved';
@@ -87,81 +119,26 @@ class institutionAdminController extends Controller
 
         return redirect()->back()->with('success', 'KPI achievement updated successfully.');
     }
-    // public function index()
-    // {
-    //     $username = Auth::user();
-    //     $user = Auth::user(); // Get the authenticated user
-    //     $stateId = $user->state_id; // Get the state ID of the logged-in user
-    //     $institutionId = $user->institution_id; // Get the institution ID of the logged-in user
-
-    //     // Get state details
-    //     $state = State::find($stateId); 
-
-    //     // Fetch KPIs assigned to the institution by State Admin
-    //     $kpis = AddKpi::whereHas('institutions', function ($query) use ($institutionId) {
-    //         $query->where('institution_id', $institutionId);
-    //     })->get();
-
-    //     // Count KPIs for the institution
-    //     $totalKPIs = $kpis->count(); 
-    //     $achievedKPIs = $kpis->where('status', 'completed')->count(); 
-    //     $notStartedKPIs = $kpis->where('status', 'not achieved')->count(); 
-
-    //     // Calculate completed and pending KPIs
-    //     $completedKPIs = $achievedKPIs;
-    //     $pendingKPIs = $totalKPIs - $completedKPIs;
-
-    //     // Custom method to calculate overall performance
-    //     $overallPerformance = $this->calculateOverallPerformance($institutionId);
-
-    //     // User statistics
-    //     $totalUsers = User::count(); 
-    //     // $activeUsers = $user->institution->users()->where('active', true)->count(); 
-    //     // $inactiveUsers = $user->institution->users()->where('active', false)->count(); 
-
-    //     // $this->chart();
-
-    //     // Calculate the average achievement percentage for all KPIs
-    //     $totalProgress = AddKpi::where('institution_id', $institutionId)->sum('peratus_pencapaian');
-    //     $averageAchievement = ($totalKPIs > 0) ? round($totalProgress / $totalKPIs, 2) : 0;
-
-    //     // Return view with all necessary data, including chart data
-    //     return view('institutionAdmin.dashboard.index', compact(
-    //         'username',
-    //         'institutionId', 
-    //         'kpis', 
-    //         'totalKPIs', 
-    //         'completedKPIs', // Pass to view
-    //         'pendingKPIs',   // Pass to view
-    //         'achievedKPIs', 
-    //         'notStartedKPIs', 
-    //         'overallPerformance', 
-    //         'totalUsers', 
-    //         'averageAchievement',
-            
-    //     ));
-    // }
-
 
     public function assignKpi(Request $request)
-{
-    // Validate the request
-    $request->validate([
-        'kpi_id' => 'required|exists:add_kpis,id', // Ensure the KPI exists
-        'user_id' => 'required|exists:users,id', // Ensure the user ID exists
-    ]);
+    {
+        // Validate the request
+        $request->validate([
+            'kpi_id' => 'required|exists:add_kpis,id', // Ensure the KPI exists
+            'user_id' => 'required|exists:users,id', // Ensure the user ID exists
+        ]);
 
-    // Find the selected KPI
-    $kpi = AddKpi::find($request->kpi_id);
+        // Find the selected KPI
+        $kpi = AddKpi::find($request->kpi_id);
 
-    // Attach the selected user to the KPI
-    $kpi->users()->attach($request->user_id);
+        // Attach the selected user to the KPI
+        $kpi->users()->attach($request->user_id);
 
-    // Get the currently authenticated user
-   
-    // Redirect back with a success message
-    return redirect()->route('institutionAdmin.kpi')->with('success', 'KPI assigned successfully to the selected user.');
-}
+        // Get the currently authenticated user
+    
+        // Redirect back with a success message
+        return redirect()->route('institutionAdmin.kpi')->with('success', 'KPI assigned successfully to the selected user.');
+    }
 
     
     public function manageKPI()
@@ -188,44 +165,6 @@ class institutionAdminController extends Controller
         return view('institutionAdmin.kpi.index', compact( 'kpis', 'institutions', 'users','username'));
     }
     
-    private function calculateOverallPerformance()
-    {
-        // Get the authenticated user
-        $user = Auth::user();
-
-        // Get all KPIs assigned to the user
-        $addKpis = $user->addKpis;
-
-        // Calculate the total number of KPIs
-        $totalKpis = $addKpis->count();
-
-        // If no KPIs are assigned, return 0 to avoid division by zero
-        if ($totalKpis === 0) {
-            return 0;
-        }
-
-        // Calculate the sum of achievement percentages for all KPIs
-        $totalAchievement = $addKpis->sum('peratus_pencapaian');
-
-        // Calculate the average performance
-        $averagePerformance = $totalAchievement / $totalKpis;
-
-        // Round to 2 decimal places if desired
-        return round($averagePerformance, 2);
-    }
-
-
-  
-    
-
-    public function assignToUsers($kpiId)
-    {
-        $kpi = AddKpi::findOrFail($kpiId);
-        $users = User::where('role', 'sector')->get(); // Assuming you have a 'sector' role
-
-        return view('kpis.assignToUsers', compact('kpi', 'users'));
-    }
-
     public function create()
     {
         $user = Auth::user(); // Get the authenticated user
@@ -281,46 +220,5 @@ class institutionAdminController extends Controller
         }
     
         return redirect()->route('institutionAdmin.kpi')->with('error', 'KPI assignment not found.');
-    }
-
-    public function chart() 
-    {
-        // Get the authenticated user
-        $user = Auth::user();
-
-        // Get all KPIs assigned to the user
-        $addKpis = $user->addKpis;
-
-        // Calculate the total number of KPIs
-        $totalKpis = $addKpis->count();
-        // Calculate the number of achieved, not started, and in progress KPIs
-        $achievedKpis = $addKpis->where('status', 'Achieved')->count();
-        $notStartedKpis = $addKpis->where('status', 'Not Started')->count();
-        $inProgressKpis = $totalKpis - $achievedKpis - $notStartedKpis;
-
-        // Create chart data
-        $chartData = [
-            'labels' => ['Achieved', 'Not Started', 'In Progress'],
-            'datasets' => [
-                [
-                    'label' => 'KPI Status',
-                    'data' => [$achievedKpis, $notStartedKpis, $inProgressKpis],
-                    'backgroundColor' => [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                    ],
-                    'borderColor' => [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                    ],
-                    'borderWidth' => 1,
-                ],
-            ],
-    ];
-
-    // Return chart data
-    return response()->json($chartData);
     }
 }

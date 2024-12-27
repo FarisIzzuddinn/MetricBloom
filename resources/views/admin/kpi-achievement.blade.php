@@ -8,12 +8,7 @@
     </div>
 
     <!-- Success Message -->
-    @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-    @endif
+    @include('alert')
 
     <!-- Loop Through Bahagian -->
     @forelse($groupedKpis as $bahagianName => $kpis)
@@ -32,6 +27,7 @@
                             <th>Current Achievement</th>
                             <th>Percentage (%)</th>
                             <th>Dictionary</th>
+                            <th>Reason</th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>
@@ -49,6 +45,7 @@
                                     <a href="{{ url('/storage/' . $kpi->kpi->pdf_file_path) }}" target="_blank">Download PDF</a>
                                 @endif
                             </td>
+                            <td>{{ $kpi->reason }}</td>
                             <td>
                                 <span class="badge rounded-pill 
                                     bg-{{ 
@@ -116,6 +113,28 @@
                         <input type="number" name="pencapaian" id="pencapaian" class="form-control" placeholder="Enter your achievement" required>
                     </div>
 
+                    <!-- Container for the calculated percentage -->
+                    <div class="mb-3">
+                        <label for="peratus_pencapaian" class="form-label">Achievement Percentage</label>
+                        <input type="text" name="peratus_pencapaian" id="peratus_pencapaian" class="form-control" readonly placeholder="Auto-calculated percentage">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reason">Reason</label>
+                        <select id="reason" name="reason" class="form-control" onchange="toggleReasonInput(this)">
+                            <option value="">--- Select Reason ---</option>
+                            <option value="Money">Money</option>
+                            <option value="Manpower">Manpower</option>
+                            <option value="Material">Material</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group mt-3" id="other-reason-container" style="display: none;">
+                        <label for="other_reason">Please specify:</label>
+                        <input type="text" id="other_reason" name="other_reason" class="form-control" placeholder="Enter your reason">
+                    </div>
+                
                     {{-- <!-- Numerator Field -->
                     <div class="mb-3">
                         <label for="numerator" class="form-label">Numerator</label>
@@ -151,6 +170,7 @@
 
 <script>
     const achievementModal = document.getElementById('achievementModal');
+
     achievementModal.addEventListener('show.bs.modal', function (event) {
         const button = event.relatedTarget;
         const kpiId = button.getAttribute('data-kpi-id');
@@ -162,31 +182,64 @@
         document.getElementById('modalKpiTarget').value = kpiTarget;
     });
 
-    document.getElementById('numerator').addEventListener('input', updateCalculation);
-document.getElementById('denominator').addEventListener('input', updateCalculation);
-
-function updateCalculation() {
-    const numerator = parseFloat(document.getElementById('numerator').value) || 0;
-    const denominator = parseFloat(document.getElementById('denominator').value) || 0;
-    const resultField = document.getElementById('calculationResult');
-    const statusField = document.getElementById('status');
-
-    if (denominator > 0) {
-        const percentage = (numerator / denominator) * 100;
-        resultField.value = `${percentage.toFixed(2)}%`;
-
-        if (percentage > 100) {
-            statusField.value = 'Achieved';
-        } else if (percentage > 50) {
-            statusField.value = 'Pending';
+    // display block other_reason when user chhose other for reason
+    function toggleReasonInput(select) {
+        const otherReasonContainer = document.getElementById('other-reason-container');
+        if (select.value === 'Other') {
+            otherReasonContainer.style.display = 'block';
         } else {
-            statusField.value = 'Not Achieved';
+            otherReasonContainer.style.display = 'none';    
         }
-    } else {
-        resultField.value = '';
-        statusField.value = '';
     }
-}
+
+    // display peratus_pencapain based on user achievement
+    function updatePercentage() {
+        // Get the value of the achievement input
+        const achievement = document.getElementById('pencapaian').value;
+        
+        // Calculate the percentage
+        const percentage = (achievement / targetValue) * 100;
+        
+        // Update the percentage input field
+        const percentageField = document.getElementById('peratus_pencapaian');
+        
+        // Display the calculated percentage, or 0 if the achievement is not entered
+        percentageField.value = achievement ? percentage.toFixed(2) + "%" : "0%";
+
+        // Show or hide the reason container based on achievement value
+        const reasonContainer = document.getElementById('reasonContainer');
+        if (achievement < 100) {
+            reasonContainer.style.display = 'block';
+        } else {
+            reasonContainer.style.display = 'none';
+        }
+    }
+
+    // document.getElementById('numerator').addEventListener('input', updateCalculation);
+    // document.getElementById('denominator').addEventListener('input', updateCalculation);
+
+    // function updateCalculation() {
+    //     const numerator = parseFloat(document.getElementById('numerator').value) || 0;
+    //     const denominator = parseFloat(document.getElementById('denominator').value) || 0;
+    //     const resultField = document.getElementById('calculationResult');
+    //     const statusField = document.getElementById('status');
+
+    //     if (denominator > 0) {
+    //         const percentage = (numerator / denominator) * 100;
+    //         resultField.value = `${percentage.toFixed(2)}%`;
+
+    //         if (percentage > 100) {
+    //             statusField.value = 'Achieved';
+    //         } else if (percentage > 50) {
+    //             statusField.value = 'Pending';
+    //         } else {
+    //             statusField.value = 'Not Achieved';
+    //         }
+    //     } else {
+    //         resultField.value = '';
+    //         statusField.value = '';
+    //     }
+    // }
 
 </script>
 @endsection

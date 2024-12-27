@@ -24,6 +24,11 @@ class Institution extends Model
         return $this->belongsTo(State::class);
     }
 
+    public function kpiInstitutions()
+{
+    return $this->hasMany(KpiInstitution::class);
+}
+
 
     // public function state()
     // {
