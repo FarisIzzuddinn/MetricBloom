@@ -47,7 +47,7 @@
                             <div class="row">
                                 <div class="mb-3 col-md-6">  
                                     <label for="name" class="form-label">Avatar: </label>
-                                    <input id="avatar" type="file" class="form-control @error('avatar') is-invalid @enderror" name="avatar" value="{{ old('avatar') }}"  autocomplete="avatar">
+                                    <input id="avatar" type="file" class="form-control @error('avatar') is-invalid @enderror" name="avatar" value="{{ old('avatar') }}" accept=".jpg,.jpeg" autocomplete="avatar">
                                     @error('avatar')
                                         <span role="alert" class="text-danger">
                                             <strong>{{ $message }}</strong>
@@ -55,7 +55,7 @@
                                     @enderror
                                 </div>
                                 <div class="mb-3 col-md-6">
-                                    <img src="/avatars/{{ auth()->user()->avatar }}" style="width:80px;margin-top: 10px;">
+                                    <img src="/avatars/{{ auth()->user()->avatar }}" style="width:80px;margin-top: 15px;">
                                 </div>
                             </div>
 

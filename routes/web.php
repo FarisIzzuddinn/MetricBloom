@@ -49,6 +49,7 @@ Route::get('reset-password/{token}', [ForgotPassController::class, 'showResetPas
 Route::post('reset-password', [ForgotPassController::class, 'submitResetPasswordForm'])->name('reset.password.post');
 
 // Route::resource('profileEdit', AuthController::class);
+//profile route
 Route::get('/profile', [ProfileController::class, 'index'])->name('user.profile');
 Route::post('/profile', [ProfileController::class, 'store'])->name('user.profile.store');
 

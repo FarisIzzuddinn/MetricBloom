@@ -7,6 +7,25 @@
 	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
 	<link rel="stylesheet" href="{{ asset('css/layout.css') }}">
 	<title>Jabatan Penjara Malaysia</title>
+    <style>
+        .avatar-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 50px; /* Adjust size as needed */
+            height: 50px; /* Adjust size as needed */
+            border-radius: 50%;
+            background-color: white; /* Inverted white border */
+            overflow: hidden; /* Ensures the image stays within the circle */
+            padding-top: 5px; /* Thickness of the white border */
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+    </style>
 </head>
 <body>
 	<!-- SIDEBAR -->
@@ -36,9 +55,11 @@
             <div class="d-flex align-items-center ms-auto">
                 <h4 class="mt-2 me-3 mb-0"> {{ auth()->user()->name }} </h4>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="{{ asset('avatars/' . auth()->user()->avatar ?? 'default-avatar.jpg') }}" alt="Profile" class="rounded-circle" style="width: 40px; height:40px">
-                    </a>
+                    <a class="nav-link " href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <div class="avatar-wrapper">
+                            <img src="{{ asset('avatars/' . auth()->user()->avatar ?? 'default_pic.jpg') }}" alt="Profile" class="avatar-img">
+                        </div>
+                    </a>                    
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="{{ route('user.profile') }}">Profile</a></li>
                         <li>@include('logout')</li>
