@@ -49,10 +49,10 @@
             <!-- User Profile Dropdown -->
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <img src="{{ asset('picture/profil_picture.jpg') }}" alt="Profile" class="rounded-circle" style="width: 40px; height:40px">
+                    <img src="{{ asset('avatars/' . auth()->user()->avatar ?? 'default-avatar.jpg') }}" alt="Profile" class="rounded-circle" style="width: 40px; height:40px">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <li><a class="dropdown-item" href="{{route('profileEdit.edit', 0)}}">Profile</a></li>
+                    <li><a class="dropdown-item" href="{{route('user.profile')}}">Profile</a></li>
                     <li>@include('logout')</li>
                 </ul>
             </li>

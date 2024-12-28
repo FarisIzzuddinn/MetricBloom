@@ -20,6 +20,7 @@ use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\Auth\ForgotPassController;
 use App\Http\Controllers\institusiReportController;
 use App\Http\Controllers\institutionAdminController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,7 +48,9 @@ Route::post('forget-password', [ForgotPassController::class, 'submitForgetPasswo
 Route::get('reset-password/{token}', [ForgotPassController::class, 'showResetPasswordForm'])->name('reset.password.get');
 Route::post('reset-password', [ForgotPassController::class, 'submitResetPasswordForm'])->name('reset.password.post');
 
-Route::resource('profileEdit', AuthController::class);
+// Route::resource('profileEdit', AuthController::class);
+Route::get('/profile', [ProfileController::class, 'index'])->name('user.profile');
+Route::post('/profile', [ProfileController::class, 'store'])->name('user.profile.store');
 
 Route::middleware(['role:super admin'])->group(function () {
     Route::get('/Dashboard/SuperAdmin', [SuperAdminController::class, 'index'])->name('superAdminDashboard');  // Super Admin Dashboard 
