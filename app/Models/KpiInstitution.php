@@ -17,6 +17,7 @@ class KpiInstitution extends Model
         'pencapaian',
         'peratus_pencapaian',
         'status',
+        'reason'
     ];
 
     public function institution()

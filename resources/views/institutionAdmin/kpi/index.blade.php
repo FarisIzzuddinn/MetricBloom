@@ -25,6 +25,7 @@
                     <th>Target</th>
                     <th>Current Achievement</th>
                     <th>Percentage (%)</th>
+                    <th>Reason</th>
                     <th>Dictionary</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -38,6 +39,7 @@
                     <td>{{ $kpiInstitution->kpi->sasaran ?? 'N/A' }}</td>
                     <td>{{ $kpiInstitution->pencapaian ?? 0 }}</td>
                     <td>{{ number_format($kpiInstitution->peratus_pencapaian ?? 0, 2) }}</td>
+                    <td>{{ $kpiInstitution->reason ?? '-' }}</td>
                     <td>
                         @if($kpiInstitution->kpi->pdf_file_path)
                             <a href="{{ url('/storage/' . $kpiInstitution->kpi->pdf_file_path) }}" target="_blank">Download PDF</a>
@@ -105,13 +107,13 @@
 
                       <!-- Container for 'peratus' -->
                       <div id="containerPeratus" style="display: none;">
+                          <div class="mb-3">
+                              <label for="totalValue" class="form-label">Total Value</label>
+                              <input type="number" name="totalValue" id="totalValue" class="form-control" placeholder="Enter total">
+                          </div>
                         <div class="mb-3">
                             <label for="pencapaian" class="form-label">Achievement</label>
                             <input type="number" name="pencapaian" id="pencapaianPeratus" class="form-control" placeholder="Enter your achievement">
-                        </div>
-                        <div class="mb-3">
-                            <label for="totalValue" class="form-label">Total Value</label>
-                            <input type="number" name="totalValue" id="totalValue" class="form-control" placeholder="Enter total">
                         </div>
                     </div>
 
@@ -133,7 +135,7 @@
                     <div class="form-group">
                         <label for="reason" class="form-label">Reason</label>
                         <select id="reason" name="reason" class="form-control" onchange="toggleReasonInput(this)">
-                            <option value="">--- Select Reason ---</option>
+                            <option value="" disabled selected>--- Select Reason ---</option>
                             <option value="Money">Money</option>
                             <option value="Manpower">Manpower</option>
                             <option value="Material">Material</option>
@@ -214,31 +216,42 @@
 
     // Update percentage
     function updatePercentage() {
-    const achievement = parseFloat(this.value) || 0;
-    const totalValue = parseFloat(document.getElementById('totalValue').value) || 0;
-    const kpiTarget = parseFloat(document.getElementById('modalKpiTarget').value) || 0;
-    const peratusPencapaianField = document.getElementById('peratus_pencapaian');
+        const achievement = parseFloat(this.value) || 0;
+        const totalValue = parseFloat(document.getElementById('totalValue').value) || 0;
+        const kpiTarget = parseFloat(document.getElementById('modalKpiTarget').value) || 0;
+        const peratusPencapaianField = document.getElementById('peratus_pencapaian');
 
-    if (!peratusPencapaianField) return;
+        if (!peratusPencapaianField) return;
 
-    let percentage = 0;
+        let percentage = 0;
 
-    if (this.id === 'pencapaianPeratus' && totalValue > 0) {
-        // Calculate percentage for peratus type
-        percentage = (achievement / totalValue) * 100;
-    } else if (this.id === 'pencapaianBilangan' && kpiTarget > 0) {
-        // Calculate percentage for bilangan type
-        percentage = (achievement / kpiTarget) * 100;
+        if (this.id === 'pencapaianPeratus' && totalValue > 0) {
+            // Calculate percentage for peratus type
+            percentage = (achievement / totalValue) * 100;
+        } else if (this.id === 'pencapaianBilangan' && kpiTarget > 0) {
+            // Calculate percentage for bilangan type
+            percentage = (achievement / kpiTarget) * 100;
+        }
+
+        // Set the value to the field without '%' for submission
+        if (isFinite(percentage) && percentage >= 0) {
+            // Remove the '%' and store only the number
+            peratusPencapaianField.value = percentage;
+        } else {
+            peratusPencapaianField.value = 0;
+        }
     }
 
-    // Set the value to the field without '%' for submission
-    if (isFinite(percentage) && percentage >= 0) {
-        // Remove the '%' and store only the number
-        peratusPencapaianField.value = percentage;
-    } else {
-        peratusPencapaianField.value = 0;
+    function toggleReasonInput(selectElement) {
+        const otherReasonContainer = document.getElementById('other-reason-container');
+        
+        // Show the "other-reason-container" if the selected value is "Other", otherwise hide it
+        if (selectElement.value === 'Other') {
+            otherReasonContainer.style.display = 'block';
+        } else {
+            otherReasonContainer.style.display = 'none';
+        }
     }
-}
 
     // Attach event listeners to fields
     const pencapaianPeratusField = document.getElementById('pencapaianPeratus');
@@ -251,6 +264,22 @@
     if (pencapaianBilanganField) {
         pencapaianBilanganField.addEventListener('input', updatePercentage);
     }
+
+    function toggleReasonInput(selectElement) {
+        const otherReasonContainer = document.getElementById('other-reason-container');
+        
+        // Show the "other-reason-container" if the selected value is "Other", otherwise hide it
+        if (selectElement.value === 'Other') {
+            otherReasonContainer.style.display = 'block';
+        } else {
+            otherReasonContainer.style.display = 'none';
+        }
+    }
+
+    const reasonDropdown = document.getElementById('reason');
+    reasonDropdown.addEventListener('change', function () {
+        toggleReasonInput(this);
+    });
 });
 </script>
 @endsection

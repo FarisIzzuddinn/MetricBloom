@@ -17,7 +17,8 @@ class KpiState extends Model
         'pencapaian',
         'peratus_pencapaian',
         'status',
-        'quarter'
+        'quarter',
+        'reason'
     ];
 
     /**

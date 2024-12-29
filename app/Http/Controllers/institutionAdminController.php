@@ -120,34 +120,34 @@ class institutionAdminController extends Controller
         $reason = $request->reason === 'Other' ? $request->other_reason : $request->reason;
         $kpiInstitution->pencapaian = $request->pencapaian;
     
-            // If peratus_pencapaian is not passed in the request, calculate it based on pencapaian and sasaran
-            if ($request->has('peratus_pencapaian')) {
-                $kpiInstitution->peratus_pencapaian = $request->peratus_pencapaian;
+        // If peratus_pencapaian is not passed in the request, calculate it based on pencapaian and sasaran
+        if ($request->has('peratus_pencapaian')) {
+            $kpiInstitution->peratus_pencapaian = $request->peratus_pencapaian;
+        } else {
+            // Calculate the peratus_pencapaian based on sasaran (target)
+            $kpiInstitution->peratus_pencapaian = ($kpiInstitution->pencapaian / $kpi->sasaran) * 100;
+        }
+
+        // Dynamically determine the status based on kpi_type (sasaran) and peratus_pencapaian
+        if ($kpi->jenis_sasaran == 'peratus') {
+            // If the KPI target (sasaran) is percentage-based
+            if ($kpiInstitution->peratus_pencapaian >= $kpi->sasaran) {
+                $kpiInstitution->status = 'achieved'; // Achieved if peratus_pencapaian >= sasaran
+            } elseif ($kpiInstitution->peratus_pencapaian > 0 && $kpiInstitution->peratus_pencapaian < $kpi->sasaran) {
+                $kpiInstitution->status = 'pending'; // Pending if between 1 and sasaran
             } else {
-                // Calculate the peratus_pencapaian based on sasaran (target)
-                $kpiInstitution->peratus_pencapaian = ($kpiInstitution->pencapaian / $kpi->sasaran) * 100;
+                $kpiInstitution->status = 'not achieved'; // Not achieved if 0
             }
-    
-            // Dynamically determine the status based on kpi_type (sasaran) and peratus_pencapaian
-            if ($kpi->jenis_sasaran == 'peratus') {
-                // If the KPI target (sasaran) is percentage-based
-                if ($kpiInstitution->peratus_pencapaian >= $kpi->sasaran) {
-                    $kpiInstitution->status = 'achieved'; // Achieved if peratus_pencapaian >= sasaran
-                } elseif ($kpiInstitution->peratus_pencapaian > 0 && $kpiInstitution->peratus_pencapaian < $kpi->sasaran) {
-                    $kpiInstitution->status = 'pending'; // Pending if between 1 and sasaran
-                } else {
-                    $kpiInstitution->status = 'not achieved'; // Not achieved if 0
-                }
+        } else {
+            // If the KPI target (sasaran) is count-based (numeric)
+            if ($kpiInstitution->pencapaian >= $kpi->sasaran) {
+                $kpiInstitution->status = 'achieved'; // Achieved if pencapaian >= sasaran
+            } elseif ($kpiInstitution->pencapaian > 0 && $kpiInstitution->pencapaian < $kpi->sasaran) {
+                $kpiInstitution->status = 'pending'; // Pending if between 1 and sasaran
             } else {
-                // If the KPI target (sasaran) is count-based (numeric)
-                if ($kpiInstitution->pencapaian >= $kpi->sasaran) {
-                    $kpiInstitution->status = 'achieved'; // Achieved if pencapaian >= sasaran
-                } elseif ($kpiInstitution->pencapaian > 0 && $kpiInstitution->pencapaian < $kpi->sasaran) {
-                    $kpiInstitution->status = 'pending'; // Pending if between 1 and sasaran
-                } else {
-                    $kpiInstitution->status = 'not achieved'; // Not achieved if 0
-                }
+                $kpiInstitution->status = 'not achieved'; // Not achieved if 0
             }
+        }
 
         $kpiInstitution->reason = $reason;
         $kpiInstitution->save();
