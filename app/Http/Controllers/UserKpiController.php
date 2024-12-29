@@ -66,7 +66,6 @@ class UserKpiController extends Controller
         }
     }
     
-    
     /**
      * Store the user's KPI achievement.
      */
@@ -75,10 +74,11 @@ class UserKpiController extends Controller
         try {
             // Validate the input
             $request->validate([
-                'kpi_bahagian_id' => 'required|exists:kpi_bahagian,id', 
+                'kpi_bahagian_id' => 'required|exists:kpi_bahagian,id',
                 'pencapaian' => 'required|numeric|min:0',
-                'reason' => 'required',
+                'reason' => 'nullable|string',
                 'other_reason' => 'required_if:reason,Other|max:255',
+                'peratus_pencapaian' => 'nullable|numeric|min:0|max:100', // Add validation for percentage
             ]);
     
             // Find the existing record in kpi_bahagian
@@ -91,7 +91,7 @@ class UserKpiController extends Controller
                 ]);
             }
     
-            // Fetch the related KPI details
+            // Fetch the related KPI details (sasaran = target)
             $kpi = AddKpi::find($kpiBahagian->add_kpi_id);
     
             if (!$kpi) {
@@ -106,16 +106,34 @@ class UserKpiController extends Controller
     
             // Update the kpi_bahagian record
             $kpiBahagian->pencapaian = $request->pencapaian;
-            
-            $kpiBahagian->peratus_pencapaian = ($request->pencapaian / $kpi->sasaran) * 100;
     
-            // Dynamically determine the status
-            if ($kpiBahagian->peratus_pencapaian >= 100) {
-                $kpiBahagian->status = 'achieved';
-            } elseif ($kpiBahagian->peratus_pencapaian > 50) {
-                $kpiBahagian->status = 'pending';
+            // If peratus_pencapaian is not passed in the request, calculate it based on pencapaian and sasaran
+            if ($request->has('peratus_pencapaian')) {
+                $kpiBahagian->peratus_pencapaian = $request->peratus_pencapaian;
             } else {
-                $kpiBahagian->status = 'not achieved';
+                // Calculate the peratus_pencapaian based on sasaran (target)
+                $kpiBahagian->peratus_pencapaian = ($kpiBahagian->pencapaian / $kpi->sasaran) * 100;
+            }
+    
+            // Dynamically determine the status based on kpi_type (sasaran) and peratus_pencapaian
+            if ($kpi->jenis_sasaran == 'peratus') {
+                // If the KPI target (sasaran) is percentage-based
+                if ($kpiBahagian->peratus_pencapaian >= 100) {
+                    $kpiBahagian->status = 'achieved'; // Achieved if peratus_pencapaian >= 100
+                } elseif ($kpiBahagian->peratus_pencapaian >= 1 && $kpiBahagian->peratus_pencapaian < 100) {
+                    $kpiBahagian->status = 'pending'; // Pending if between 1 and 99
+                } else {
+                    $kpiBahagian->status = 'not achieved'; // Not achieved if 0
+                }
+            } else {
+                // If the KPI target (sasaran) is count-based (numeric)
+                if ($kpiBahagian->pencapaian >= $kpi->sasaran) {
+                    $kpiBahagian->status = 'achieved'; // Achieved if pencapaian >= sasaran
+                } elseif ($kpiBahagian->pencapaian > 0 && $kpiBahagian->pencapaian < $kpi->sasaran) {
+                    $kpiBahagian->status = 'pending'; // Pending if between 1 and sasaran
+                } else {
+                    $kpiBahagian->status = 'not achieved'; // Not achieved if 0
+                }
             }
     
             // Save the reason and changes
@@ -134,5 +152,6 @@ class UserKpiController extends Controller
                 'alert-type' => 'danger',
             ]);
         }
-    }
+    }    
 }
+
