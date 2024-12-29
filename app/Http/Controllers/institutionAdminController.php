@@ -19,6 +19,13 @@ class institutionAdminController extends Controller
     {
         $username = auth()->user();
     
+        if (!$username) {
+            return redirect()->route('login')->with([
+                'status' => 'You must be logged in to access this page.',
+                'alert-type' => 'warning',
+            ]);
+        }
+
         // Fetch user entity
         $userEntity = UserEntity::where('user_id', auth()->id())->first();
     
@@ -102,19 +109,47 @@ class institutionAdminController extends Controller
         $request->validate([
             'kpi_institutions_id' => 'required|exists:kpi_institutions,id',
             'pencapaian' => 'required|numeric|min:0',
+            'reason' => 'nullable|string',
+            'other_reason' => 'required_if:reason,Other|max:255',
+            'peratus_pencapaian' => 'nullable|numeric|min:0|max:100',
         ]);
 
         $kpiInstitution = KpiInstitution::find($request->kpi_institutions_id);
-        $kpiInstitution->pencapaian = $request->pencapaian;
-        $kpiInstitution->peratus_pencapaian = ($request->pencapaian / $kpiInstitution->kpi->sasaran) * 100;
+        $kpi = AddKpi::find($kpiInstitution->add_kpi_id);
 
-        if ($kpiInstitution->peratus_pencapaian >= 100) {
-            $kpiInstitution->status = 'achieved';
-        } elseif ($kpiInstitution->peratus_pencapaian >= 50) {
-            $kpiInstitution->status = 'pending';
-        } else {
-            $kpiInstitution->status = 'not achieved';
-        }
+        $reason = $request->reason === 'Other' ? $request->other_reason : $request->reason;
+        $kpiInstitution->pencapaian = $request->pencapaian;
+    
+            // If peratus_pencapaian is not passed in the request, calculate it based on pencapaian and sasaran
+            if ($request->has('peratus_pencapaian')) {
+                $kpiInstitution->peratus_pencapaian = $request->peratus_pencapaian;
+            } else {
+                // Calculate the peratus_pencapaian based on sasaran (target)
+                $kpiInstitution->peratus_pencapaian = ($kpiInstitution->pencapaian / $kpi->sasaran) * 100;
+            }
+    
+            // Dynamically determine the status based on kpi_type (sasaran) and peratus_pencapaian
+            if ($kpi->jenis_sasaran == 'peratus') {
+                // If the KPI target (sasaran) is percentage-based
+                if ($kpiInstitution->peratus_pencapaian >= $kpi->sasaran) {
+                    $kpiInstitution->status = 'achieved'; // Achieved if peratus_pencapaian >= sasaran
+                } elseif ($kpiInstitution->peratus_pencapaian > 0 && $kpiInstitution->peratus_pencapaian < $kpi->sasaran) {
+                    $kpiInstitution->status = 'pending'; // Pending if between 1 and sasaran
+                } else {
+                    $kpiInstitution->status = 'not achieved'; // Not achieved if 0
+                }
+            } else {
+                // If the KPI target (sasaran) is count-based (numeric)
+                if ($kpiInstitution->pencapaian >= $kpi->sasaran) {
+                    $kpiInstitution->status = 'achieved'; // Achieved if pencapaian >= sasaran
+                } elseif ($kpiInstitution->pencapaian > 0 && $kpiInstitution->pencapaian < $kpi->sasaran) {
+                    $kpiInstitution->status = 'pending'; // Pending if between 1 and sasaran
+                } else {
+                    $kpiInstitution->status = 'not achieved'; // Not achieved if 0
+                }
+            }
+
+        $kpiInstitution->reason = $reason;
         $kpiInstitution->save();
 
         return redirect()->back()->with('success', 'KPI achievement updated successfully.');

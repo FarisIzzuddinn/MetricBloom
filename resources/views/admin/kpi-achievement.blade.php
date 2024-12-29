@@ -106,7 +106,7 @@
 
                     <!-- KPI Name (Read-Only) -->
                     <div class="mb-3">
-                        <label for="modalKpiName" class="form-label">KPI Name</label>
+                        <label for="modalKpiName" class="form-label">KPI</label>
                         <textarea id="modalKpiName" class="form-control" rows="3" readonly></textarea>
                     </div>
                     

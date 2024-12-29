@@ -27,13 +27,13 @@ class KpiState extends Model
     // Relationship to the KPI (assuming a KPI model exists)
     public function kpi()
     {
-        return $this->belongsTo(AddKpi::class, 'add_kpi_id');
+        return $this->belongsTo(AddKpi::class, 'add_kpi_id', 'id');
     }
 
     // Relationship to the State (assuming a State model exists)
     public function state()
     {
-        return $this->belongsTo(State::class, 'state_id');
+        return $this->belongsTo(State::class, 'state_id', 'id');
     }
 
     

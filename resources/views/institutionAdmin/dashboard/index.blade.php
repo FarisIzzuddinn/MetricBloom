@@ -57,7 +57,7 @@
 </style>
 
 <div class="container-fluid">
-    @if ($institution)
+    {{-- @if ($institution) --}}
         <div class="page-header">
             <h1>{{ $institution->name }} Dashboard</h1>
         </div>
@@ -95,7 +95,7 @@
         <div class="mt-3" id="detailsSection"></div>
 
         <!-- KPI Table -->
-        <div class="card shadow-sm">
+        {{-- <div class="card shadow-sm">
             <div class="card-header bg-primary text-white">
                 <h5 class="mb-0">KPIs Assigned to {{ $institution->name }}</h5>
             </div>
@@ -138,148 +138,153 @@
         <div class="alert alert-danger">
             <p>No institution assigned to this user. Please contact the administrator.</p>
         </div>
-    @endif
+    @endif --}}
 
 
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const institution = @json($chartData); // Pass the full chartData object
+  document.addEventListener('DOMContentLoaded', function () {
+    const institution = @json($chartData); // Pass the full chartData object
 
-        if (!institution) {
-            console.error('No institution data available.');
-            return;
-        }
+    if (!institution) {
+        console.error('No institution data available.');
+        return;
+    }
 
-        const achieved = institution.achieved || 0;
-        const pending = institution.pending || 0;
-        const notAchieved = institution.notAchieved || 0;
-        const kpiDetails = institution.kpiInstitutions || [];
+    const achieved = institution.achieved || 0;
+    const pending = institution.pending || 0;
+    const notAchieved = institution.notAchieved || 0;
+    const kpiDetails = institution.kpiInstitutions || [];
 
-        // Initialize the Highcharts pie chart
-        Highcharts.chart('institution-kpi-chart', {
-            chart: {
-                type: 'pie'
-            },
-            title: {
-                text: 'Institution-wise KPI Achievements'
-            },
-            tooltip: {
-                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> ({point.y})'
-            },
-            plotOptions: {
-                pie: {
-                    allowPointSelect: true,
-                    cursor: 'pointer',
-                    depth: 35,
-                    dataLabels: {
-                        enabled: true,
-                        format: '{point.name}: {point.percentage:.1f} %',
-                        style: {
-                            fontSize: '12px',
-                            fontWeight: 'bold'
-                        },
-                        distance: 20
+    // Initialize the Highcharts pie chart
+    Highcharts.chart('institution-kpi-chart', {
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: 'Institution-wise KPI Achievements'
+        },
+        tooltip: {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b> ({point.y})'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                depth: 35,
+                dataLabels: {
+                    enabled: true,
+                    format: '{point.name}: {point.percentage:.1f} %',
+                    style: {
+                        fontSize: '12px',
+                        fontWeight: 'bold'
                     },
-                    point: {
-                        events: {
-                            click: function () {
-                                displayKpiDetailsWithAnimation(kpiDetails);
-                            }
+                    distance: 20
+                },
+                point: {
+                    events: {
+                        click: function () {
+                            // Get the status clicked on: Achieved, Pending, or Not Achieved
+                            const status = this.name.toLowerCase();
+                            // Filter the KPI details based on the clicked status
+                            const filteredKpiDetails = kpiDetails.filter(kpi => kpi.status.toLowerCase() === status);
+                            displayKpiDetailsWithAnimation(filteredKpiDetails);
                         }
                     }
                 }
-            },
-            series: [{
-                name: 'KPI Achievements',
-                colorByPoint: true,
-                data: [{
-                    name: 'Achieved',
-                    y: achieved,
-                    color: '#4caf50' // Green color for achieved
-                }, {
-                    name: 'Pending',
-                    y: pending,
-                    color: '#ffcc02' // Yellow color for pending
-                }, {
-                    name: 'Not Achieved',
-                    y: notAchieved,
-                    color: '#f44336' // Red color for not achieved
-                }]
-            }],
-            credits: { enabled: false }
-        });
-
-        // Function to display KPI details with animation
-        function displayKpiDetailsWithAnimation(details) {
-            let detailsSection = document.getElementById('detailsSection');
-            if (!detailsSection) {
-                detailsSection = document.createElement('div');
-                detailsSection.id = 'detailsSection';
-                document.body.appendChild(detailsSection);
             }
-
-            if (!details || details.length === 0) {
-                detailsSection.innerHTML = `<div class="alert alert-warning">No KPI details available for this institution.</div>`;
-                return;
-            }
-
-            const kpiRows = details.map(kpi => `
-                <tr>
-                    <td>${kpi.name}</td>
-                    <td class="text-center">${parseFloat(kpi.target).toFixed(2)}</td>
-                    <td class="text-center">${parseFloat(kpi.achievement).toFixed(2)}%</td>
-                    <td class="text-center">
-                        <span class="badge ${
-                            kpi.status === 'achieved'
-                                ? 'bg-success'
-                                : kpi.status === 'pending'
-                                ? 'bg-warning text-dark'
-                                : 'bg-danger'
-                        }">${kpi.status}</span>
-                    </td>
-                </tr>
-            `).join('');
-
-            const tableHtml = `
-                <div class="card shadow-sm rounded mt-4 animated-fade-in">
-                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">KPI Details</h5>
-                        <button id="hideTableButton" class="btn btn-sm btn-light">Hide Table</button>
-                    </div>
-                    <div class="card-body p-4">
-                        <table class="table table-hover table-bordered">
-                            <thead class="table-primary">
-                                <tr>
-                                    <th>KPI Name</th>
-                                    <th class="text-center">Target</th>
-                                    <th class="text-center">Achievement</th>
-                                    <th class="text-center">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${kpiRows}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            `;
-
-            detailsSection.innerHTML = tableHtml;
-
-            // Attach the event listener to hide the table
-            document.getElementById('hideTableButton').addEventListener('click', hideKpiDetails);
-        }
-
-        // Function to hide the KPI details table
-        function hideKpiDetails() {
-            const detailsSection = document.getElementById('detailsSection');
-            if (detailsSection) {
-                detailsSection.innerHTML = ''; // Clear the section
-            }
-        }
+        },
+        series: [{
+            name: 'KPI Achievements',
+            colorByPoint: true,
+            data: [{
+                name: 'Achieved',
+                y: achieved,
+                color: '#4caf50' // Green color for achieved
+            }, {
+                name: 'Pending',
+                y: pending,
+                color: '#ffcc02' // Yellow color for pending
+            }, {
+                name: 'Not Achieved',
+                y: notAchieved,
+                color: '#f44336' // Red color for not achieved
+            }]
+        }],
+        credits: { enabled: false }
     });
+
+    // Function to display KPI details with animation
+    function displayKpiDetailsWithAnimation(details) {
+        let detailsSection = document.getElementById('detailsSection');
+        if (!detailsSection) {
+            detailsSection = document.createElement('div');
+            detailsSection.id = 'detailsSection';
+            document.body.appendChild(detailsSection);
+        }
+
+        if (!details || details.length === 0) {
+            detailsSection.innerHTML = `<div class="alert alert-warning">No KPI details available for this selection.</div>`;
+            return;
+        }
+
+        const kpiRows = details.map(kpi => `  
+            <tr>
+                <td>${kpi.name}</td>
+                <td class="text-center">${parseFloat(kpi.target).toFixed(2)}</td>
+                <td class="text-center">${parseFloat(kpi.achievement).toFixed(2)}%</td>
+                <td class="text-center">
+                    <span class="badge ${
+                        kpi.status === 'achieved'
+                            ? 'bg-success'
+                            : kpi.status === 'pending'
+                            ? 'bg-warning text-dark'
+                            : 'bg-danger'
+                    }">${kpi.status}</span>
+                </td>
+            </tr>
+        `).join('');
+
+        const tableHtml = `
+            <div class="card shadow-sm rounded mt-4 animated-fade-in">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">KPI Details</h5>
+                    <button id="hideTableButton" class="btn btn-sm btn-light">Hide Table</button>
+                </div>
+                <div class="card-body p-4">
+                    <table class="table table-hover table-bordered">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>KPI Name</th>
+                                <th class="text-center">Target</th>
+                                <th class="text-center">Achievement</th>
+                                <th class="text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${kpiRows}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+
+        detailsSection.innerHTML = tableHtml;
+
+        // Attach the event listener to hide the table
+        document.getElementById('hideTableButton').addEventListener('click', hideKpiDetails);
+    }
+
+    // Function to hide the KPI details table
+    function hideKpiDetails() {
+        const detailsSection = document.getElementById('detailsSection');
+        if (detailsSection) {
+            detailsSection.innerHTML = ''; // Clear the section
+        }
+    }
+});
+
 </script>
 @endsection
 

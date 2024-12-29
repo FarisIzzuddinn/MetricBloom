@@ -105,7 +105,7 @@
                             <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0z"/>
                         </svg> Total KPI
                     </h5>
-                    <h2 class="display-4">{{ $kpis->count() }}</h2>
+                    <h2 class="display-4">{{ $totalKpiState }}</h2>
                     {{-- <a href="#" class="btn btn-light btn-sm mt-3" data-bs-toggle="modal" data-bs-target="#kpiDetailsModal">View Details</a> --}}
                 </div>
             </div>
@@ -120,7 +120,7 @@
                             <path d="m10.97 4.97-.02.022-3.473 4.425-2.093-2.094a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05"/>
                         </svg>Achieved
                     </h5>
-                    <h2 class="display-4">{{ $kpis->where('peratus_pencapaian', '>=', 100)->count() }}</h2>
+                    <h2 class="display-4">{{ $achievedCount }}</h2>
                     {{-- <a href="#" class="btn btn-light btn-sm mt-3" data-bs-toggle="modal" data-bs-target="#achievedKpiModal">View Details</a> --}}
                 </div>
             </div>
@@ -134,7 +134,7 @@
                             <path d="M2.5 15a.5.5 0 1 1 0-1h1v-1a4.5 4.5 0 0 1 2.557-4.06c.29-.139.443-.377.443-.59v-.7c0-.213-.154-.451-.443-.59A4.5 4.5 0 0 1 3.5 3V2h-1a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-1v1a4.5 4.5 0 0 1-2.557 4.06c-.29.139-.443.377-.443.59v.7c0 .213.154.451.443.59A4.5 4.5 0 0 1 12.5 13v1h1a.5.5 0 0 1 0 1zm2-13v1c0 .537.12 1.045.337 1.5h6.326c.216-.455.337-.963.337-1.5V2zm3 6.35c0 .701-.478 1.236-1.011 1.492A3.5 3.5 0 0 0 4.5 13s.866-1.299 3-1.48zm1 0v3.17c2.134.181 3 1.48 3 1.48a3.5 3.5 0 0 0-1.989-3.158C8.978 9.586 8.5 9.052 8.5 8.351z"/>
                         </svg>Pending
                     </h5>
-                    <h2 class="display-4">{{ $kpis->whereBetween('peratus_pencapaian', [50,99])->count() }}</h2>
+                    <h2 class="display-4">{{ $pendingCount }}</h2>
                     {{-- <a href="#" class="btn btn-light btn-sm mt-3">View Details</a> --}}
                 </div>
             </div>
@@ -148,13 +148,16 @@
                             <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
                         </svg> Not Achieved
                     </h5>
-                    <h2 class="display-4">{{ $kpis->whereBetween('peratus_pencapaian', [0,49])->count() }}</h2>
+                    <h2 class="display-4">{{ $notAchievedCount }}</h2>
                     {{-- <a href="#" class="btn btn-light btn-sm mt-3">View Details</a> --}}
                 </div>
             </div>
         </div>
     </div>
 
+    <div id="institution-kpi-chart" style="width: 100%; height: 500px;"></div>
+    <div id="detailsSection" style="margin-top: 20px;"></div>
+    
     <div class="row mt-4 mb-3">
         <div class="col-12">
             <div class="card shadow-sm">
@@ -177,15 +180,16 @@
                             <tbody>
                                 @foreach($kpis as $kpi)
                                     <tr>
-                                        <td>{{ $kpi->pernyataan_kpi }}</td>
-                                        <td>{{ $kpi->sasaran }}</td>
+                                        <td>{{ $kpi->kpi->pernyataan_kpi }}</td>
+                                        <td>{{ $kpi->kpi->sasaran }}</td>
                                         <td>{{ $kpi->peratus_pencapaian }}</td>
                                         <td>
-                                            <span class="badge 
-                                                {{ $kpi->peratus_pencapaian > 100 ? 'bg-success' : ($kpi->peratus_pencapaian > 50 ? 'bg-warning text-dark' : 'bg-danger') }}">
-                                                {{ $kpi->peratus_pencapaian > 100 ? 'Achieved' : ($kpi->peratus_pencapaian > 50 ? 'Pending' : 'Not Achieved') }}
+                                            <span class="badge rounded-pill bg-{{ 
+                                                strtolower(trim($kpi->status)) === 'achieved' ? 'success' : 
+                                                (strtolower(trim($kpi->status)) === 'pending' ? 'warning text-dark' : 'danger') }}">
+                                                {{ ucfirst($kpi->status ?? 'Not Defined') }}
                                             </span>
-
+                                            
                                         </td>
                                     </tr>
                                 @endforeach
@@ -196,8 +200,7 @@
             </div>
         </div>
     </div> 
-    <div id="institution-kpi-chart" style="width: 100%; height: 500px;"></div>
-    <div id="detailsSection" style="margin-top: 20px;"></div>
+    
 </div>
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script>

@@ -57,7 +57,8 @@
                                 data-bs-target="#achievementModal" 
                                 data-kpi-id="{{ $kpiInstitution->id }}" 
                                 data-kpi-name="{{ $kpiInstitution->kpi->pernyataan_kpi ?? 'N/A' }}" 
-                                data-kpi-target="{{ $kpiInstitution->kpi->sasaran ?? 'N/A' }}">
+                                data-kpi-target="{{ $kpiInstitution->kpi->sasaran ?? 'N/A' }}"
+                                data-kpi-types="{{ $kpiInstitution->kpi->jenis_sasaran ?? 'N/A' }}">
                             <i class="bi bi-pencil-square"></i> Update
                         </button>
                     </td>
@@ -96,12 +97,54 @@
                         <input type="text" id="modalKpiTarget" class="form-control" readonly>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="pencapaian" class="form-label fw-bold">Achievement</label>
-                        <input type="number" name="pencapaian" id="pencapaian" class="form-control" placeholder="Enter your achievement" required>
-                        <div class="invalid-feedback">
-                            Please enter a valid achievement.
+                     <!-- KPI Target Type (Read-Only) -->
+                     <div class="mb-3">
+                        <label for="modalKpiType" class="form-label" style="display: none;">Target Types</label>
+                        <input type="text" id="modalKpiType" class="form-control" readonly style="display: none;">
+                    </div>
+
+                      <!-- Container for 'peratus' -->
+                      <div id="containerPeratus" style="display: none;">
+                        <div class="mb-3">
+                            <label for="pencapaian" class="form-label">Achievement</label>
+                            <input type="number" name="pencapaian" id="pencapaianPeratus" class="form-control" placeholder="Enter your achievement">
                         </div>
+                        <div class="mb-3">
+                            <label for="totalValue" class="form-label">Total Value</label>
+                            <input type="number" name="totalValue" id="totalValue" class="form-control" placeholder="Enter total">
+                        </div>
+                    </div>
+
+                    <!-- Container for 'bilangan' -->
+                    <div id="containerBilangan" style="display: none;">
+                        <div class="mb-3">
+                            <label for="pencapaian" class="form-label">Achievement</label>
+                            <input type="number" name="pencapaian" id="pencapaianBilangan" class="form-control" placeholder="Enter your achievement">
+                        </div>
+                    </div>
+
+                    <!-- Achievement Percentage -->
+                    <div class="mb-3">
+                        <label for="peratus_pencapaian" class="form-label">Achievement Percentage</label>
+                        <input type="text" name="peratus_pencapaian" id="peratus_pencapaian" class="form-control" readonly placeholder="Auto-calculated percentage">
+                    </div>
+
+                    <!-- Reason Dropdown -->
+                    <div class="form-group">
+                        <label for="reason" class="form-label">Reason</label>
+                        <select id="reason" name="reason" class="form-control" onchange="toggleReasonInput(this)">
+                            <option value="">--- Select Reason ---</option>
+                            <option value="Money">Money</option>
+                            <option value="Manpower">Manpower</option>
+                            <option value="Material">Material</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <!-- Other Reason Input -->
+                    <div class="form-group mt-3" id="other-reason-container" style="display: none;">
+                        <label for="other_reason">Please specify:</label>
+                        <input type="text" id="other_reason" name="other_reason" class="form-control" placeholder="Enter your reason">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -114,16 +157,100 @@
 </div>
 
 <script>
+   document.addEventListener('DOMContentLoaded', function () {
     const achievementModal = document.getElementById('achievementModal');
+    if (!achievementModal) return;  // Exit if the modal is not found
+    
     achievementModal.addEventListener('show.bs.modal', function (event) {
         const button = event.relatedTarget;
         const kpiId = button.getAttribute('data-kpi-id');
         const kpiName = button.getAttribute('data-kpi-name');
         const kpiTarget = button.getAttribute('data-kpi-target');
+        const kpiTypes = button.getAttribute('data-kpi-types');
 
-        document.getElementById('modalKpiId').value = kpiId;
-        document.getElementById('modalKpiName').value = kpiName;
-        document.getElementById('modalKpiTarget').value = kpiTarget;
+        // Ensure fields are present before accessing them
+        const modalKpiId = document.getElementById('modalKpiId');
+        const modalKpiName = document.getElementById('modalKpiName');
+        const modalKpiTarget = document.getElementById('modalKpiTarget');
+        const modalKpiType = document.getElementById('modalKpiType');
+
+        if (modalKpiId && modalKpiName && modalKpiTarget && modalKpiType) {
+            modalKpiId.value = kpiId;
+            modalKpiName.value = kpiName;
+            modalKpiTarget.value = kpiTarget;
+            modalKpiType.value = kpiTypes;
+        }
+
+        toggleKpiTypeContainers(kpiTypes);
     });
+
+    // Toggle KPI type containers (peratus/bilangan)
+    function toggleKpiTypeContainers(kpiType) {
+        const containerPeratus = document.getElementById('containerPeratus');
+        const containerBilangan = document.getElementById('containerBilangan');
+        const pencapaianPeratus = document.getElementById('pencapaianPeratus');
+        const pencapaianBilangan = document.getElementById('pencapaianBilangan');
+
+        if (!containerPeratus || !containerBilangan || !pencapaianPeratus || !pencapaianBilangan) return;
+
+        // Hide both containers initially
+        containerPeratus.style.display = 'none';
+        containerBilangan.style.display = 'none';
+
+        // Remove name attributes from both fields
+        pencapaianPeratus.removeAttribute('name');
+        pencapaianBilangan.removeAttribute('name');
+
+        if (kpiType === 'peratus') {
+            containerPeratus.style.display = 'block';
+            pencapaianPeratus.setAttribute('name', 'pencapaian');
+            console.log('KPI Type: Peratus - Showing Peratus Container');
+        } else if (kpiType === 'bilangan') {
+            containerBilangan.style.display = 'block';
+            pencapaianBilangan.setAttribute('name', 'pencapaian');
+            console.log('KPI Type: Bilangan - Showing Bilangan Container');
+        }
+    }
+
+    // Update percentage
+    function updatePercentage() {
+    const achievement = parseFloat(this.value) || 0;
+    const totalValue = parseFloat(document.getElementById('totalValue').value) || 0;
+    const kpiTarget = parseFloat(document.getElementById('modalKpiTarget').value) || 0;
+    const peratusPencapaianField = document.getElementById('peratus_pencapaian');
+
+    if (!peratusPencapaianField) return;
+
+    let percentage = 0;
+
+    if (this.id === 'pencapaianPeratus' && totalValue > 0) {
+        // Calculate percentage for peratus type
+        percentage = (achievement / totalValue) * 100;
+    } else if (this.id === 'pencapaianBilangan' && kpiTarget > 0) {
+        // Calculate percentage for bilangan type
+        percentage = (achievement / kpiTarget) * 100;
+    }
+
+    // Set the value to the field without '%' for submission
+    if (isFinite(percentage) && percentage >= 0) {
+        // Remove the '%' and store only the number
+        peratusPencapaianField.value = percentage;
+    } else {
+        peratusPencapaianField.value = 0;
+    }
+}
+
+    // Attach event listeners to fields
+    const pencapaianPeratusField = document.getElementById('pencapaianPeratus');
+    const pencapaianBilanganField = document.getElementById('pencapaianBilangan');
+
+    if (pencapaianPeratusField) {
+        pencapaianPeratusField.addEventListener('input', updatePercentage);
+    }
+
+    if (pencapaianBilanganField) {
+        pencapaianBilanganField.addEventListener('input', updatePercentage);
+    }
+});
 </script>
 @endsection
