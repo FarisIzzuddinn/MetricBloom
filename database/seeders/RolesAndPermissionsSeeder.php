@@ -34,7 +34,8 @@ class RolesAndPermissionsSeeder extends Seeder
             'view institutionAdmin dashboard',
             'kpi management institution',
             'generate report',
-            'view sector dashboard'
+            'view sector dashboard',
+            'view admin bahagian KPI',
         ];
 
         foreach ($permissions as $permission) {

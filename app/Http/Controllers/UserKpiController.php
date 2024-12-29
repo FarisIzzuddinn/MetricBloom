@@ -118,10 +118,10 @@ class UserKpiController extends Controller
             // Dynamically determine the status based on kpi_type (sasaran) and peratus_pencapaian
             if ($kpi->jenis_sasaran == 'peratus') {
                 // If the KPI target (sasaran) is percentage-based
-                if ($kpiBahagian->peratus_pencapaian >= 100) {
-                    $kpiBahagian->status = 'achieved'; // Achieved if peratus_pencapaian >= 100
-                } elseif ($kpiBahagian->peratus_pencapaian >= 1 && $kpiBahagian->peratus_pencapaian < 100) {
-                    $kpiBahagian->status = 'pending'; // Pending if between 1 and 99
+                if ($kpiBahagian->peratus_pencapaian >= $kpi->sasaran) {
+                    $kpiBahagian->status = 'achieved'; // Achieved if peratus_pencapaian >= sasaran
+                } elseif ($kpiBahagian->peratus_pencapaian > 0 && $kpiBahagian->peratus_pencapaian < $kpi->sasaran) {
+                    $kpiBahagian->status = 'pending'; // Pending if between 1 and sasaran
                 } else {
                     $kpiBahagian->status = 'not achieved'; // Not achieved if 0
                 }
