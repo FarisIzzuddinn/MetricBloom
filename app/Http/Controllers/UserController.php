@@ -59,12 +59,16 @@ class UserController extends Controller
             for ($i = 0; $i < 10000; $i++) {
                 $hashedPassword = hash('sha512', $hashedPassword);
             }
+            
+            // Default avatar path
+            $defaultAvatar = 'default_pic.jpg';
 
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => $hashedPassword,
                 'salt' => $salt,
+                'avatar' => $defaultAvatar,
             ]);
 
             $user->syncRoles($request->roles);
