@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\State;
+use App\Models\Sector;
 use App\Models\Institution;
 use App\Models\KpiBahagian;
 use Illuminate\Http\Request;
@@ -13,6 +14,73 @@ use Illuminate\Support\Facades\Auth;
 
 class SuperAdminController extends Controller
 {
+    public function showDataSectorStatusCard(){
+        $sectorId = [1,2,3,4];
+
+        $data = Sector::whereIn('id', $sectorId)
+            ->with(['bahagians.kpiBahagian'=> function($query){
+                $query->select('bahagian_id', 'status', DB::raw('count(*) as total'))
+                ->groupBy('status', 'bahagian_id');
+            }])
+            ->get();
+
+        // find the total status bahagian in same sector
+        $statusSector = $data->map(function($sector){
+            $countStatusSector = [
+                'achieved' => 0,
+                'pending' => 0,
+                'not achieved' => 0,
+            ];
+
+            foreach($sector->bahagians as $bahagian){
+                foreach($bahagian->kpiBahagian as $statusData){
+                    if ($statusData->status === 'achieved') {
+                        $countStatusSector['achieved'] += $statusData->total;
+                    } elseif ($statusData->status === 'pending') {
+                        $countStatusSector['pending'] += $statusData->total;
+                    } elseif ($statusData->status === 'not achieved') {
+                        $countStatusSector['not achieved'] += $statusData->total;
+                    }
+                }
+            }
+
+            $sector->aggregatedStatus = $countStatusSector;
+
+            return $sector;
+        });
+
+        return $statusSector;
+    }
+
+    // ----------------------- get API data sector details ------------------------
+
+    public function getSectorDetails($id, Request $request)
+    {
+        $status = $request->query('status'); // Get the status from the query string
+
+        $sector = Sector::with(['bahagians.kpiBahagian' => function($query) use ($status) {
+            if ($status) {
+                $query->where('status', $status); // Filter the KPI records by the selected status
+            }
+        }])->find($id);
+
+        if (!$sector) {
+            return response()->json(['error' => 'Sector not found'], 404);
+        }
+
+        $filteredKPIs = [];
+        foreach ($sector->bahagians as $bahagian) {
+            foreach ($bahagian->kpiBahagian as $kpi) {
+                $filteredKPIs[] = [
+                    'pernyataan_kpi' => $kpi->kpi->pernyataan_kpi,
+                ];
+            }
+        }
+
+        return response()->json($filteredKPIs); // Return the filtered KPIs based on the status
+    }
+
+
     public function index(Request $request){
         $username = Auth::User();
 
@@ -216,9 +284,13 @@ class SuperAdminController extends Controller
         $stateNames = $summary->pluck('state_name');
         $totalKpis = $summary->pluck('total_kpis');
         $averagePerformance = $summary->pluck('average_performance');
-        
+
+        $sectorStatusCard = $this->showDataSectorStatusCard();
+
+        // dd($sectorStatusCard); exit();
+
         return view('superAdmin.Dashboard.index', compact(
-            'username', 'totalKpi', 'totalState', 'totalInstitution', 'totalUser',
+            'username', 'totalKpi', 'totalState', 'totalInstitution', 'totalUser', 'sectorStatusCard',
             'achievedKpi', 'pendingKpi', 'notAchievedKpi', 'bahagianPerformance', 'bahagianStatus',
             'bahagianWithNames', 'statePerformance', 'stateTrends', 'institutionPerformance', 'institutionStatus',
             'kpiBahagianData', 'achievedPercentage', 'notAchievedPercentage', 'pendingPercentage', 'drilldownData',
@@ -245,36 +317,3 @@ class SuperAdminController extends Controller
         return $kpiBahagian + $kpiState + $kpiInstitution;
     }
 }
-
-    // public function getAllKpis(Request $request)
-    // {
-    //     // Fetch KPIs with optional search query
-    //     $searchQuery = $request->get('search', '');
-    //     $kpis = AddKpi::where('pernyataan_kpi', 'like', "%{$searchQuery}%")
-    //                     ->paginate(10); // Paginate the results to prevent large data overload
-    
-    //     // If it's an AJAX request, return the partial view with the paginated data
-    //     if ($request->ajax()) {
-    //         return view('superAdmin.Dashboard.totalKpi', compact('kpis'))->render();
-    //     }
-    
-    //     // Otherwise, return the whole page (for normal page loading)
-    //     return  $this->index($request);
-    // }
- 
-    // public function getAchievedKpis()
-    // {
-    //     try {
-    //         // Fetch data from all three tables
-    //         $kpiBahagian = DB::table('kpi_bahagian')->where('status', 'achieved')->get(['pernyataan_kpi', 'target', 'status']);
-    //         $kpiStates = DB::table('kpi_states')->where('status', 'achieved')->get(['pernyataan_kpi', 'target', 'status']);
-    //         $kpiInstitutions = DB::table('kpi_institutions')->where('status', 'achieved')->get(['pernyataan_kpi', 'target', 'status']);
-    
-    //         // Merge the results into one collection
-    //         $achievedKpis = $kpiBahagian->merge($kpiStates)->merge($kpiInstitutions);
-    
-    //         return response()->json($achievedKpis, 200);
-    //     } catch (\Exception $e) {
-    //         return response()->json(['error' => 'Failed to fetch achieved KPIs.'], 500);
-    //     }
-    // }

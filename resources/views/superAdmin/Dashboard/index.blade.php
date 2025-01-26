@@ -78,13 +78,26 @@
     min-width: 0; /* Prevent input from growing excessively */
 }
 
+/*  new style */
+
+.textSize{
+    font-size: 12px;
+}
+
+.card{
+    transition: all 0.3s ease-in-out; ;
+}
+
+.card-body{
+    transition: all 0.3s ease-in-out;;
+}
 </style>
 
 <div class="container-fluid">
     {{-- statistic card  --}}
     <div class="row">
-        <div class="col-md-3">
-            <div class="card mb-1 bg-primary rounded-3 shadow-sm hover-shadow" data-aos="fade-up">
+        <div class="col-sm-3">
+            <div class="card mb-1 bg-primary rounded-3 shadow-sm hover-shadow" data-aos="fade-right">
                 <div class="card-body text-white">
                     <h5><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-clipboard-check mb-1" viewBox="0 0 16 16">
                             <path fill-rule="evenodd" d="M10.854 7.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 9.793l2.646-2.647a.5.5 0 0 1 .708 0"/>
@@ -93,14 +106,12 @@
                         </svg> Total KPI
                     </h5>
                     <h2 class="display-4">{{ $totalKpi }}</h2>
-                    {{-- <a href="#" class="btn btn-light btn-sm mt-3" data-bs-toggle="modal" data-bs-target="#kpiDetailsModal">View Details</a> --}}
                 </div>
             </div>
         </div>
         
-    
-        <div class="col-md-3">
-            <div class="card mb-1 bg-success rounded-3 shadow-sm hover-shadow" data-aos="fade-up">
+        <div class="col-sm-3">
+            <div class="card mb-1 bg-success rounded-3 shadow-sm hover-shadow" data-aos="fade-right">
                 <div class="card-body text-white">
                     <h5><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-check-circle mb-1 me-1" viewBox="0 0 16 16">
                             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
@@ -108,27 +119,24 @@
                         </svg>Achieved
                     </h5>
                     <h2 class="display-4">{{ $achievedKpi }}</h2>
-                    {{-- <a href="#" class="btn btn-light btn-sm mt-3" data-bs-toggle="modal" data-bs-target="#achievedKpiModal">View Details</a> --}}
                 </div>
             </div>
         </div>
-        
     
-        <div class="col-md-3">
-            <div class="card mb-1 bg-warning rounded-3 shadow-sm hover-shadow" data-aos="fade-up">
+        <div class="col-sm-3">
+            <div class="card mb-1 bg-warning rounded-3 shadow-sm hover-shadow" data-aos="fade-right">
                 <div class="card-body text-white">
                     <h5><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-hourglass-split mb-1 me-1" viewBox="0 0 16 16">
                             <path d="M2.5 15a.5.5 0 1 1 0-1h1v-1a4.5 4.5 0 0 1 2.557-4.06c.29-.139.443-.377.443-.59v-.7c0-.213-.154-.451-.443-.59A4.5 4.5 0 0 1 3.5 3V2h-1a.5.5 0 0 1 0-1h11a.5.5 0 0 1 0 1h-1v1a4.5 4.5 0 0 1-2.557 4.06c-.29.139-.443.377-.443.59v.7c0 .213.154.451.443.59A4.5 4.5 0 0 1 12.5 13v1h1a.5.5 0 0 1 0 1zm2-13v1c0 .537.12 1.045.337 1.5h6.326c.216-.455.337-.963.337-1.5V2zm3 6.35c0 .701-.478 1.236-1.011 1.492A3.5 3.5 0 0 0 4.5 13s.866-1.299 3-1.48zm1 0v3.17c2.134.181 3 1.48 3 1.48a3.5 3.5 0 0 0-1.989-3.158C8.978 9.586 8.5 9.052 8.5 8.351z"/>
                         </svg>Pending
                     </h5>
                     <h2 class="display-4">{{ $pendingKpi }}</h2>
-                    {{-- <a href="#" class="btn btn-light btn-sm mt-3">View Details</a> --}}
                 </div>
             </div>
         </div>
     
-        <div class="col-md-3">
-            <div class="card mb-1 bg-danger rounded-3 shadow-sm hover-shadow" data-aos="fade-up">
+        <div class="col-sm-3">
+            <div class="card mb-1 bg-danger rounded-3 shadow-sm hover-shadow" data-aos="fade-right">
                 <div class="card-body text-white">
                     <h5><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-x-circle mb-1 me-1" viewBox="0 0 16 16">
                             <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
@@ -136,7 +144,6 @@
                         </svg> Not Achieved
                     </h5>
                     <h2 class="display-4">{{ $notAchievedKpi }}</h2>
-                    {{-- <a href="#" class="btn btn-light btn-sm mt-3">View Details</a> --}}
                 </div>
             </div>
         </div>
@@ -155,7 +162,60 @@
             </div>
         </div>
     </div>
+
+    {{-- ---------------------------------------------- KPI STATUS BY SECTOR ------------------------------------------------- --}}
+       
+    <div class="fw-bold mb-1">SECTOR KPI STATUS</div>
     
+    <div class="note text-size d-flex align-items-center mb-2">
+        <div class="d-flex align-items-center" style="font-size: 12px;">
+            <div class="d-flex align-items-center me-3">
+                <span class="rounded-circle bg-danger me-2" style="width: 12px; height: 12px;"></span>
+                <span class="fw-bold">Not Achieved</span>
+            </div>
+            <div class="d-flex align-items-center me-3">
+                <span class="rounded-circle bg-warning me-2" style="width: 12px; height: 12px;"></span>
+                <span class="fw-bold">Pending</span>
+            </div>
+            <div class="d-flex align-items-center">
+                <span class="rounded-circle bg-success me-2" style="width: 12px; height: 12px;"></span>
+                <span class="fw-bold">Achieved</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        @foreach($sectorStatusCard as $sector)
+            <div class="col-sm-3 mb-2">
+                <div class="card bg-success text-white textSize h-100">
+                    <div class="card-body justify-content-center align-items-center text-center">
+                        {{ $sector->name }}
+                    </div>
+                    <div class="d-flex justify-content-around p-3 bg-white">
+                        <div class="box bg-danger d-flex justify-content-center align-items-center text-center status-box" 
+                            style="width: 50px; height: 50px; border-radius: 4px;"
+                            data-status="not achieved" data-sector-id="{{ $sector->id }}">
+                            {{ $sector->aggregatedStatus['not achieved'] }}
+                        </div>
+                        <div class="box bg-warning d-flex justify-content-center align-items-center text-center status-box" 
+                            style="width: 50px; height: 50px; border-radius: 4px;"
+                            data-status="pending" data-sector-id="{{ $sector->id }}">
+                            {{ $sector->aggregatedStatus['pending'] }}
+                        </div>
+                        <div class="box bg-success d-flex justify-content-center align-items-center text-center status-box" 
+                            style="width: 50px; height: 50px; border-radius: 4px;"
+                            data-status="achieved" data-sector-id="{{ $sector->id }}">
+                            {{ $sector->aggregatedStatus['achieved'] }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    </div>
+
+    <div id="sector-kpi-status">
+        <ul id="sector-kpi-status-details" class="list-group"></ul>
+    </div>
 
     {{-- bahagian  --}}
     <div class="row mt-4">
@@ -184,144 +244,82 @@
     </div>
 </div>
 
-{{-- <!-- Achieved KPI Modal -->
-<div class="modal fade" id="achievedKpiModal" tabindex="-1" aria-labelledby="achievedKpiModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="achievedKpiModalLabel">Achieved KPIs</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="achievedKpiList">
-                    <div class="text-center" id="loadingSpinner">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- KPI Details Modal -->
-<div class="modal fade" id="kpiDetailsModal" tabindex="-1" aria-labelledby="kpiDetailsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content shadow-lg">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="kpiDetailsModalLabel"><i class="bi bi-clipboard-check"></i> All KPIs</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-12">
-                        <div class="input-group mb-3" style="max-width: 100%;">
-                            <span class="input-group-text bg-light" id="basic-addon1">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
-                                </svg>
-                            </span>
-                            <input 
-                                type="text" 
-                                id="kpiSearch" 
-                                class="form-control" 
-                                placeholder="Search KPI by title..." 
-                                aria-label="Search KPIs"
-                                aria-describedby="basic-addon1"
-                            />
-                        </div>
-                    </div>
-                </div>
-                
-
-                <!-- Display Paginated KPIs -->
-                <div id="kpiListContainer">
-                    <!-- Dynamic KPIs will be injected here -->
-                    <div class="text-center py-4">
-                        <div id="loadingSpinner" class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <p class="mt-2 text-muted">Fetching KPIs, please wait...</p>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div> --}}
-
 <!-- Include jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-//    function fetchAchievedKpis() {
-//         $.ajax({
-//             url: '/achieved-kpis', // Make sure this URL matches your route
-//             type: 'GET',
-//             success: function (data) {
-//                 if (data.length === 0) {
-//                     $('#kpiListContainer').html('<p>No achieved KPIs found.</p>');
-//                 } else {
-//                     let html = '';
-//                     data.forEach(kpi => {
-//                         html += `<li class="list-group-item">
-//                                     <strong>${kpi.pernyataan_kpi}</strong>
-//                                     <p>Status: ${kpi.status}</p>
-//                                 </li>`;
-//                     });
-//                     $('#kpiListContainer').html(`<ul class="list-group">${html}</ul>`);
-//                 }
-//             },
-//             error: function (xhr) {
-//                 console.error('Error fetching achieved KPIs:', xhr.responseText);
-//                 $('#kpiListContainer').html('<p class="text-danger">Failed to load data.</p>');
-//             }
-//         });
-//     }
 
-//     $(document).ready(function() {
-//         // When the modal opens
-//         $('#kpiDetailsModal').on('show.bs.modal', function () {
-//             loadKpis(); // Call the function to load the KPIs
-//         });
+    // -------------------------- sector kpi status --------------------------
 
-//         // Function to load the KPIs via AJAX
-//         function loadKpis(page = 1, searchQuery = '') {
-//             $.ajax({
-//                 url: '/kpis/all', // Ensure the correct URL for this route
-//                 method: 'GET',
-//                 data: {
-//                     page: page, // Pass the page for pagination
-//                     search: searchQuery // Pass the search query
-//                 },
-//                 beforeSend: function() {
-//                     $('#kpiListContainer').html('<p>Loading KPIs...</p>');
-//                 },
-//                 success: function(response) {
-//                     // Inject the HTML response into the container
-//                     $('#kpiListContainer').html(response);
-//                 },
-//                 error: function() {
-//                     $('#kpiListContainer').html('<p>Error loading KPIs.</p>');
-//                 }
-//             });
-//         }
+    document.addEventListener('DOMContentLoaded', () => {
+        const statusBoxes = document.querySelectorAll('.status-box');
+        const detailSection = document.getElementById('sector-kpi-status');
+        const detailList = document.getElementById('sector-kpi-status-details');
 
-//         // Handle Search Functionality
-//         $('#kpiSearch').on('input', function() {
-//             var query = $(this).val();
-//             loadKpis(1, query); // Reset to page 1 and apply the search query
-//         });
+        statusBoxes.forEach(box => {
+            box.addEventListener('click', async () => {
+                const status = box.getAttribute('data-status');
+                const sectorId = box.getAttribute('data-sector-id');
 
-//         // Handle Pagination (if required)
-//         $(document).on('click', '.pagination a', function (e) {
-//             e.preventDefault();
-//             var page = $(this).attr('href').split('page=')[1];
-//             loadKpis(page); // Call the function with the selected page number
-//         });
-//     });
+                try {
+                    const response = await fetch(`/api/sectors/${sectorId}/details?status=${status}`);
+                    const data = await response.json();
+
+                    detailList.innerHTML = ''; // Clear previous details
+
+                    if (data.length > 0) {
+                        const rows = data.map((item, index) => `
+                            <tr>
+                                <td class="textSize text-justify">${index + 1}</td>
+                                <td class="textSize text-justify">${item.pernyataan_kpi}</td>
+                            </tr>
+                        `).join('');
+
+                        const cardHtml = `
+                            <div class="card shadow-sm rounded fade-in">
+                                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                                    <h6 class="mt-2">Sector KPI Status Detail</h6>
+                                    <button id="hideTableButton" class="btn btn-sm btn-light textSize">Hide Table</button>
+                                </div>
+                                <div class="card-body p-4">
+                                    <table class="table table-hover table-bordered">
+                                        <thead class="table-primary">
+                                            <tr>
+                                                <th class="textSize">Bil.</th>
+                                                <th class="textSize">KPI</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${rows}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        `;
+
+                        detailList.innerHTML = cardHtml;
+
+                        // Hide table functionality
+                        document.getElementById('hideTableButton').addEventListener('click', () => {
+                            detailList.innerHTML = ''; 
+                        });
+
+                        detailSection.classList.remove('d-none'); 
+                    } else {
+                        detailList.innerHTML = `
+                            <div class="card shadow-sm rounded fade-in">
+                                <div class="card-body">
+                                    <p class="text-danger">No data available for this status.</p>
+                                </div>
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error("Error fetching sector details:", error);
+                }
+            });
+        });
+    });
+
 
     document.addEventListener('DOMContentLoaded', function () {
         const stateData = @json($stateNames);

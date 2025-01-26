@@ -20,12 +20,8 @@ class KpiBahagian extends Model
         'status',
         'reason'
     ];
-    public function bahagian()
-    {
-        return $this->belongsTo(Bahagian::class, 'bahagian_id', 'id');
-    }
-
-
+   
+    // -------------- get pernyataan kpi --------------------
     public function kpi()
     {
         return $this->belongsTo(AddKpi::class, 'add_kpi_id');
@@ -35,5 +31,11 @@ class KpiBahagian extends Model
     public function sector()
     {
         return $this->belongsTo(Sector::class);
+    }
+
+    // -------------- sector kpi --------------
+    public function bahagian()
+    {
+        return $this->belongsTo(Bahagian::class, 'bahagian_id', 'id');
     }
 }

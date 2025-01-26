@@ -338,7 +338,7 @@
 
                                         // Add hide button functionality
                                         document.getElementById('hideTableButton').addEventListener('click', function () {
-                                            contentContainer.innerHTML = '';
+                                            contentContainer.innerHTML = '';2
                                         });
                                     } else {
                                         // No data message

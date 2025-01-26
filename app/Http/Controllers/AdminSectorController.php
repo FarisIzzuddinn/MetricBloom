@@ -27,7 +27,7 @@ class AdminSectorController extends Controller
     
         // Retrieve Bahagians only related to the user's sector
         $bahagians = Bahagian::where('sector_id', $sector->id)
-        ->with('kpiBahagian.kpi') // Eager load the relationship
+        ->with('kpiBahagian.kpi') 
         ->get();
     
         // Initialize counters

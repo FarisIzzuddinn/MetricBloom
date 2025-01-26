@@ -38,12 +38,6 @@ class Bahagian extends Model
         return $this->hasMany(KpiBahagian::class);
     }
 
-    
-    public function kpiBahagian()
-    {
-        return $this->hasMany(KpiBahagian::class, 'bahagian_id');
-    }
-
     public function users()
     {
         return $this->hasMany(UserEntity::class);
@@ -54,7 +48,13 @@ class Bahagian extends Model
         return $this->belongsToMany(AddKpi::class, 'kpi_bahagian', 'bahagian_id', 'add_kpi_id');
     }
 
-    // Define the relationship with Sector
+    // ----------------- sector kpi ----------------------------
+
+    public function kpiBahagian()
+    {
+        return $this->hasMany(KpiBahagian::class, 'bahagian_id');
+    }
+    
     public function sector()
     {
         return $this->belongsTo(Sector::class, 'sector_id');

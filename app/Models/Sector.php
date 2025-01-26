@@ -19,7 +19,7 @@ class Sector extends Model
         return $this->hasMany(AddKpi::class);
     }
 
-    // Define the relationship with Bahagian
+    // --------------- sector kpi -----------------
     public function bahagians()
     {
         return $this->hasMany(Bahagian::class, 'sector_id');
