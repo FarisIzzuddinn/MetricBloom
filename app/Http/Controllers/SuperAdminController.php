@@ -73,6 +73,8 @@ class SuperAdminController extends Controller
             foreach ($bahagian->kpiBahagian as $kpi) {
                 $filteredKPIs[] = [
                     'pernyataan_kpi' => $kpi->kpi->pernyataan_kpi,
+                    'peratus_pencapaian' => $kpi->peratus_pencapaian,
+                    'nama_bahagian' => $kpi->bahagian->nama_bahagian,
                 ];
             }
         }
