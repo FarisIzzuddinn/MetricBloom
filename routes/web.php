@@ -3,24 +3,26 @@
 use Barryvdh\DomPDF\PDF;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SoController;
+use App\Http\Controllers\kjpController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\StateController;
 use App\Http\Controllers\TerasController;
+use App\Http\Controllers\accessController;
 use App\Http\Controllers\AddKpiController;
-use App\Http\Controllers\AdminSectorController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserKpiController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\StateAdminController;
 use App\Http\Controllers\SuperAdminController;
+use App\Http\Controllers\AdminSectorController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\Auth\ForgotPassController;
-use App\Http\Controllers\institusiReportController;
 use App\Http\Controllers\institutionAdminController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ViewerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -57,6 +59,11 @@ Route::middleware(['role:super admin'])->group(function () {
     Route::get('/Dashboard/SuperAdmin', [SuperAdminController::class, 'index'])->name('superAdminDashboard');  // Super Admin Dashboard 
     Route::get('/kpis/all', [SuperAdminController::class, 'getAllKPIs'])->name('allKPIs'); //
     Route::get('/achieved-kpis', [SuperAdminController::class, 'getAchievedKpis'])->name('achieved.kpis');
+
+    Route::get('access-kpi', [accessController::class, 'index'])->name('accessKpi');
+    Route::get('/access-kpi/filter', [accessController::class, 'filterAccess'])->name('accessKpi.filter');
+    Route::post('access-kpi-store', [accessController::class, 'store'])->name('accessKpi.store');
+    Route::delete('kpi-access/{id}', [accessController::class, 'destroy'])->name('accessKpi.destroy');
 
     Route::resource('states', StateController::class);
     Route::resource('institutions', InstitutionController::class);
@@ -102,6 +109,11 @@ Route::middleware(['role:Admin Bahagian'])->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
     Route::get('/adminBahagian/kpi', [UserKpiController::class, 'index'])->name('user.kpi.index');
     Route::put('/kpi/update', [UserKpiController::class, 'update'])->name('user.kpi.update');
+});
+
+Route::middleware(['role:Viewer'])->group(function () {
+    Route::get('/dashboard', [ViewerController::class, 'index'])->name('viewer.index');
+   
 });
 
 Route::middleware(['role:Admin Sector|super admin'])->group(function () {

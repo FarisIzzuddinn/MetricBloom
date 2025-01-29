@@ -231,16 +231,9 @@
     {{-- bahagian  --}}
     <div class="row mt-4">
         <!-- KPI Total Bahagian Chart -->
-        <div class="col-md-7">
+        <div class="col-md-12">
             <div class="chart-panel">
                 <div id="kpiTotalBahagian" style="height: 400px; width: 100%;"></div>
-            </div>
-        </div>
-    
-        <!-- KPI Summary Pie Chart -->
-        <div class="col-md-5">
-            <div class="chart-panel">
-                <div id="kpiSummaryPie" style="height: 400px; width: 100%;"></div>
             </div>
         </div>
     </div>
@@ -255,8 +248,9 @@
     </div>
 </div>
 
-<!-- Include jQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Include jQuery -->
 <script>
 
     // -------------------------- sector kpi status --------------------------
@@ -300,7 +294,7 @@
                                                 <th class="textSize">Bil.</th>
                                                 <th class="textSize">Department Name</th>
                                                 <th class="textSize">KPI</th>
-                                                <th class="textSize">Achievement Percentage(%)</th>
+                                                <th class="textSize">Achievement(%)</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -323,7 +317,7 @@
                         detailList.innerHTML = `
                             <div class="card shadow-sm rounded fade-in">
                                 <div class="card-body">
-                                    <p class="text-danger">No data available for this status.</p>
+                                    <p class="text-danger text-center">No data available for this status.</p>
                                 </div>
                             </div>
                         `;
@@ -337,55 +331,62 @@
 
 
     document.addEventListener('DOMContentLoaded', function () {
+    // window.onload = function(){
         const stateData = @json($stateNames);
         const totalKpis = @json($totalKpis);
         const kpiDetails = @json($drilldownData);
 
-        Highcharts.chart('kpi-chart', {
-            chart: {
-                type: 'column',
-                borderColor: '#000', // Adds black border
-                borderWidth: 2, // Sets border width
-                spacing: [10, 10, 15, 10], // Adds spacing inside the border
-            },
-            title: {
-                text: 'State KPI Overview'
-            },
-            xAxis: {
-                categories: stateData,
-                title: {
-                    text: 'States'
-                }
-            },
-            yAxis: { 
-                title: {
-                    text: 'Total KPIs'
-                }
-            },
-            tooltip: {
-                shared: true
-            },
-            series: [
-                {
-                    name: 'Total KPIs',
+        const kpiChart = document.getElementById('kpi-chart');
+
+        if (kpiChart){
+            Highcharts.chart('kpi-chart', {
+                chart: {
                     type: 'column',
-                    data: totalKpis,
-                    color: '#007bff',
-                    point: {
-                        events: {
-                            click: function () {
-                                const stateIndex = this.index; // Index of the clicked bar
-                                const stateName = stateData[stateIndex].toLowerCase(); // Convert state name to lowercase
-                                const details = kpiDetails[stateName]; // Fetch details using lowercase keys
-                                displayDetails(stateName, details); // Pass the normalized state name and details
+                    borderColor: '#000', // Adds black border
+                    borderWidth: 2, // Sets border width
+                    spacing: [10, 10, 15, 10], // Adds spacing inside the border
+                },
+                title: {
+                    text: 'State KPI Overview'
+                },
+                xAxis: {
+                    categories: stateData,
+                    title: {
+                        text: 'States'
+                    }
+                },
+                yAxis: { 
+                    title: {
+                        text: 'Total KPIs'
+                    }
+                },
+                tooltip: {
+                    shared: true
+                },
+                series: [
+                    {
+                        name: 'Total KPIs',
+                        type: 'column',
+                        data: totalKpis,
+                        color: '#007bff',
+                        point: {
+                            events: {
+                                click: function () {
+                                    const stateIndex = this.index; // Index of the clicked bar
+                                    const stateName = stateData[stateIndex].toLowerCase(); // Convert state name to lowercase
+                                    const details = kpiDetails[stateName]; // Fetch details using lowercase keys
+                                    displayDetails(stateName, details); // Pass the normalized state name and details
+                                }
                             }
                         }
                     }
-                }
-            ],
-            credits: { enabled: false },
-            exporting: { enabled: true }
-        });
+                ],
+                credits: { enabled: false },            
+                exporting: { enabled: true }
+            });
+        } else {
+            console.error("Chart container not found!");
+        }
         
         // Function to display details of a state
         function displayDetails(stateName, details) {
@@ -493,6 +494,7 @@
             });
         }
     });
+
 
     // Total KPI bahagian
     document.addEventListener('DOMContentLoaded', function () {

@@ -79,7 +79,7 @@ class SuperAdminController extends Controller
             }
         }
 
-        return response()->json($filteredKPIs); // Return the filtered KPIs based on the status
+        return response()->json($filteredKPIs); 
     }
 
 
