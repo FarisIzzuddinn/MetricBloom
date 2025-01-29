@@ -31,12 +31,25 @@ class KpiAccess extends Model
     {
         return $this->belongsTo(User::class);
     }
-
-    /**
-     * Relationship with the kpi
-     */
+    
     public function kpi()
     {
         return $this->belongsTo(AddKpi::class, 'kpi_id');
     }
+
+    public function bahagian()
+    {
+        return $this->belongsTo(KpiBahagian::class, 'bahagian_id');  
+    }
+
+    public function state()
+    {
+        return $this->belongsTo(KpiState::class, 'state_id');  
+    }
+
+    public function institution()
+    {
+        return $this->belongsTo(KpiInstitution::class, 'institution_id');  
+    }
+
 }

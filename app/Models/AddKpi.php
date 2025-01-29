@@ -29,7 +29,9 @@ class AddKpi extends Model
     
     public function states()
     {
-        return $this->belongsToMany(State::class, 'kpi_states', 'add_kpi_id', 'state_id');
+        return $this->belongsToMany(State::class, 'kpi_states', 'add_kpi_id', 'state_id')
+                    ->withPivot('status', 'peratus_pencapaian') // Include the 'status' column
+                    ->withTimestamps();   // Include timestamps from the pivot table
     }
 
     public function institutions()
@@ -41,7 +43,7 @@ class AddKpi extends Model
     public function bahagians()
     {
         return $this->belongsToMany(Bahagian::class, 'kpi_bahagian', 'add_kpi_id', 'bahagian_id')
-                    ->withPivot('status') // Include the 'status' column
+                    ->withPivot('status', 'peratus_pencapaian') // Include the 'status' column
                     ->withTimestamps();   // Include timestamps from the pivot table
     }
     

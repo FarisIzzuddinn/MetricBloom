@@ -112,8 +112,8 @@ Route::middleware(['role:Admin Bahagian'])->group(function () {
 });
 
 Route::middleware(['role:Viewer'])->group(function () {
-    Route::get('/dashboard', [ViewerController::class, 'index'])->name('viewer.index');
-   
+    Route::get('/dashboard', [ViewerController::class, 'index'])->name('viewerDashboard');
+    Route::get('/reports/viewer', [ViewerController::class, 'generateViewerReport'])->name('viewerReport');
 });
 
 Route::middleware(['role:Admin Sector|super admin'])->group(function () {
