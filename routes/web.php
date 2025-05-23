@@ -1,9 +1,9 @@
 <?php
 
-use Barryvdh\DomPDF\PDF;
+use App\Http\Controllers\Auth\loginController;
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\SoController;
-use App\Http\Controllers\kjpController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -25,7 +25,9 @@ use App\Http\Controllers\all\infografikController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\pelaporanKpiController;
 use App\Http\Controllers\Auth\ForgotPassController;
+use App\Http\Controllers\Auth\logoutController;
 use App\Http\Controllers\institutionAdminController;
+use Illuminate\Auth\Events\Logout;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,8 +43,8 @@ use App\Http\Controllers\institutionAdminController;
 // ===================== REGISTER & LOGIN ======================
 // Route::get('register', [AuthController::class, 'register'])->name('register');
 // Route::post('register', [AuthController::class, 'registerPost'])->name('register.post');
-Route::get('/', [AuthController::class, 'login'])->name('login');
-Route::post('/', [AuthController::class, 'loginPost'])->name('login.post');
+Route::get('/', [loginController::class, 'login'])->name('login');
+Route::post('/', [loginController::class, 'loginPost'])->name('login.post');
 
 Route::get('forget-password', [ForgotPassController::class, 'showForgetPasswordForm'])->name('forget.password.get');
 Route::post('forget-password', [ForgotPassController::class, 'submitForgetPasswordForm'])->name('forget.password.post'); 
@@ -177,12 +179,7 @@ Route::get('/storage/{path}', function ($path) {
     return response()->file($file);
 })->where('path', '.*');
 
-
-// ===================== UNAUTHORIZED USER ======================
-Route::get('/unauthorized', [AuthController::class, 'unauthorized']);
-
-
 // ===================== LOGOUT ======================
-Route::delete('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/logout', [logoutController::class, 'logout'])->name('logout');
 
 
