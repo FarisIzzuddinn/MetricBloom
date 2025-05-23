@@ -158,24 +158,24 @@ class SuperAdminController extends Controller
         ->get();
 
         // Get total KPI per bahagian
-        $kpiBahagianData = DB::table('kpi_bahagian')
-        ->join('bahagian', 'kpi_bahagian.bahagian_id', '=', 'bahagian.id')
-        ->join('add_kpis', 'kpi_bahagian.add_kpi_id', '=', 'add_kpis.id')
-        ->select(
-            'bahagian.nama_bahagian as name',
-            DB::raw('COUNT(kpi_bahagian.add_kpi_id) as total_kpi'),
-            DB::raw('JSON_ARRAYAGG(
-                JSON_OBJECT(
-                    "name", add_kpis.pernyataan_kpi,
-                    "target", add_kpis.sasaran,
-                    "achievement", kpi_bahagian.pencapaian,
-                    "percentage", kpi_bahagian.peratus_pencapaian,
-                    "status", kpi_bahagian.status
-                )
-            ) as kpis')
-        )
-        ->groupBy('bahagian.id', 'bahagian.nama_bahagian')
-        ->get();
+        // DB::table('kpi_bahagian')
+        // ->join('bahagian', 'kpi_bahagian.bahagian_id', '=', 'bahagian.id')
+        // ->join('add_kpis', 'kpi_bahagian.add_kpi_id', '=', 'add_kpis.id')
+        // ->select(
+        //     'bahagian.nama_bahagian as name',
+        //     DB::raw('COUNT(kpi_bahagian.add_kpi_id) as total_kpi'),
+        //     DB::raw('JSON_ARRAYAGG(
+        //         JSON_OBJECT(
+        //             "name", add_kpis.pernyataan_kpi,
+        //             "target", add_kpis.sasaran,
+        //             "achievement", kpi_bahagian.pencapaian,
+        //             "percentage", kpi_bahagian.peratus_pencapaian,
+        //             "status", kpi_bahagian.status
+        //         )
+        //     ) as kpis')
+        // )
+        // ->groupBy('bahagian.id', 'bahagian.nama_bahagian')
+        // ->get();
     
         // Add 'name' for each bahagian
         $bahagianWithNames = $bahagianPerformance->map(function ($item) {
@@ -295,7 +295,7 @@ class SuperAdminController extends Controller
             'username', 'totalKpi', 'totalState', 'totalInstitution', 'totalUser', 'sectorStatusCard',
             'achievedKpi', 'pendingKpi', 'notAchievedKpi', 'bahagianPerformance', 'bahagianStatus',
             'bahagianWithNames', 'statePerformance', 'stateTrends', 'institutionPerformance', 'institutionStatus',
-            'kpiBahagianData', 'achievedPercentage', 'notAchievedPercentage', 'pendingPercentage', 'drilldownData',
+            'achievedPercentage', 'notAchievedPercentage', 'pendingPercentage', 'drilldownData',
             'summary', 'stateNames', 'totalKpis', 'averagePerformance'
         ));
     }

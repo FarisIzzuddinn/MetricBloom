@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form KPI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .form-step {
+            display: none;
+        }
+        .form-step.active {
+            display: block;
+        }
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            position: relative;
+        }
+        .step.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+        .step.completed {
+            background-color: #198754;
+            color: white;
+        }
+        .step-connector {
+            flex-grow: 1;
+            height: 2px;
+            background-color: #e9ecef;
+            margin: 20px 10px;
+        }
+        .step-connector.active {
+            background-color: #0d6efd;
+        }
+        .form-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .help-icon {
+            color: #6c757d;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .preview-panel {
+            position: sticky;
+            top: 20px;
+        }
+        @media (max-width: 767.98px) {
+            .preview-panel {
+                position: static;
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-8">
+                <h2 class="mb-4">Form KPI</h2>
+                
+                <!-- Progress Steps -->
+                <div class="step-indicator mb-4">
+                    <div class="step active" id="step1-indicator">1</div>
+                    <div class="step-connector"></div>
+                    <div class="step" id="step2-indicator">2</div>
+                    <div class="step-connector"></div>
+                    <div class="step" id="step3-indicator">3</div>
+                    <div class="step-connector"></div>
+                    <div class="step" id="step4-indicator">4</div>
+                </div>
+                
+                <form id="kpi-form">
+                    <!-- Step 1: Informasi Umum -->
+                    <div class="form-step active" id="step1">
+                        <div class="form-card">
+                            <h4 class="mb-4">Informasi Umum</h4>
+                            
+                            <div class="mb-3">
+                                <label for="teras" class="form-label">Teras <span class="text-danger">*</span></label>
+                                <select class="form-select" id="teras" required>
+                                    <option value="" selected disabled>Pilih Teras</option>
+                                    <option value="teras1">Teras 1</option>
+                                    <option value="teras2">Teras 2</option>
+                                    <option value="teras3">Teras 3</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="strategi" class="form-label">Strategi <span class="text-danger">*</span></label>
+                                <select class="form-select" id="strategi" required>
+                                    <option value="" selected disabled>Pilih Strategi</option>
+                                    <option value="strategi1">Strategi 1</option>
+                                    <option value="strategi2">Strategi 2</option>
+                                    <option value="strategi3">Strategi 3</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="program" class="form-label">Program <span class="text-danger">*</span></label>
+                                <select class="form-select" id="program" required>
+                                    <option value="" selected disabled>Pilih Program</option>
+                                    <option value="program1">Program 1</option>
+                                    <option value="program2">Program 2</option>
+                                    <option value="program3">Program 3</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="sektor" class="form-label">Sektor <span class="text-danger">*</span></label>
+                                <select class="form-select" id="sektor" required>
+                                    <option value="" selected disabled>Pilih Sektor</option>
+                                    <option value="sektor1">Sektor 1</option>
+                                    <option value="sektor2">Sektor 2</option>
+                                    <option value="sektor3">Sektor 3</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end mt-3">
+                            <button type="button" class="btn btn-primary" onclick="nextStep(1)">Langkah Selanjutnya <i class="bi bi-arrow-right"></i></button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 2: Pemilik KPI -->
+                    <div class="form-step" id="step2">
+                        <div class="form-card">
+                            <h4 class="mb-4">Pemilik KPI</h4>
+                            
+                            <div class="mb-3">
+                                <label class="form-label d-block">Jenis Pemilik KPI <span class="text-danger">*</span></label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="jenisPemilik" id="komisioner" value="komisioner" onchange="togglePemilikOptions()">
+                                    <label class="form-check-label" for="komisioner">KPI Komisioner Jeneral Penjara</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="jenisPemilik" id="timbalan" value="timbalan" onchange="togglePemilikOptions()">
+                                    <label class="form-check-label" for="timbalan">KPI Timbalan Komisioner</label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3" id="timbalanOptions" style="display: none;">
+                                <label for="jenisTimbalanKPI" class="form-label">Jenis Timbalan KPI <span class="text-danger">*</span></label>
+                                <select class="form-select" id="jenisTimbalanKPI">
+                                    <option value="" selected disabled>Pilih Jenis Timbalan KPI</option>
+                                    <option value="keselamatan">Keselamatan & koreksional</option>
+                                    <option value="pemasyarakatan">Pemasyarakatan</option>
+                                    <option value="pengurusan">Pengurusan</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label d-block">Tingkat KPI <span class="text-danger">*</span></label>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="tingkatKPI" id="bahagian" value="bahagian" onchange="toggleTingkatOptions()">
+                                    <label class="form-check-label" for="bahagian">KPI Bahagian</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="tingkatKPI" id="institusi" value="institusi" onchange="toggleTingkatOptions()">
+                                    <label class="form-check-label" for="institusi">KPI Institusi</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="tingkatKPI" id="negeri" value="negeri" onchange="toggleTingkatOptions()">
+                                    <label class="form-check-label" for="negeri">KPI Negeri</label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3" id="bahagianOptions" style="display: none;">
+                                <label for="jenisBahagian" class="form-label">Bahagian <span class="text-danger">*</span></label>
+                                <select class="form-select" id="jenisBahagian">
+                                    <option value="" selected disabled>Pilih Bahagian</option>
+                                    <option value="bahagian1">Bahagian 1</option>
+                                    <option value="bahagian2">Bahagian 2</option>
+                                    <option value="bahagian3">Bahagian 3</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3" id="institusiOptions" style="display: none;">
+                                <label for="jenisInstitusi" class="form-label">Institusi <span class="text-danger">*</span></label>
+                                <select class="form-select" id="jenisInstitusi">
+                                    <option value="" selected disabled>Pilih Institusi</option>
+                                    <option value="institusi1">Institusi 1</option>
+                                    <option value="institusi2">Institusi 2</option>
+                                    <option value="institusi3">Institusi 3</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3" id="negeriOptions" style="display: none;">
+                                <label for="jenisNegeri" class="form-label">Negeri <span class="text-danger">*</span></label>
+                                <select class="form-select" id="jenisNegeri">
+                                    <option value="" selected disabled>Pilih Negeri</option>
+                                    <option value="johor">Johor</option>
+                                    <option value="kedah">Kedah</option>
+                                    <option value="kelantan">Kelantan</option>
+                                    <option value="melaka">Melaka</option>
+                                    <option value="negerisembilan">Negeri Sembilan</option>
+                                    <option value="pahang">Pahang</option>
+                                    <option value="perak">Perak</option>
+                                    <option value="perlis">Perlis</option>
+                                    <option value="penang">Pulau Pinang</option>
+                                    <option value="sabah">Sabah</option>
+                                    <option value="sarawak">Sarawak</option>
+                                    <option value="selangor">Selangor</option>
+                                    <option value="terengganu">Terengganu</option>
+                                    <option value="wp">Wilayah Persekutuan</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-3">
+                            <button type="button" class="btn btn-outline-secondary" onclick="prevStep(2)"><i class="bi bi-arrow-left"></i> Kembali</button>
+                            <button type="button" class="btn btn-primary" onclick="nextStep(2)">Langkah Selanjutnya <i class="bi bi-arrow-right"></i></button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3: Informasi KPI -->
+                    <div class="form-step" id="step3">
+                        <div class="form-card">
+                            <h4 class="mb-4">Informasi KPI</h4>
+                            
+                            <div class="mb-3">
+                                <label for="kategoriLaporan" class="form-label">Kategori Pelaporan <span class="text-danger">*</span> <i class="bi bi-info-circle help-icon" data-bs-toggle="tooltip" title="Pilih frekuensi pelaporan untuk KPI ini"></i></label>
+                                <select class="form-select" id="kategoriLaporan" required>
+                                    <option value="" selected disabled>Pilih Kategori</option>
+                                    <option value="bulanan">Bulanan</option>
+                                    <option value="3bulanan">Triwulan (3 bulan sekali)</option>
+                                    <option value="6bulanan">Semester (6 bulan sekali)</option>
+                                    <option value="tahunan">Tahunan</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="kpi" class="form-label">KPI <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="kpi" required placeholder="Masukkan nama KPI">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="aktivitiKPI" class="form-label">Aktiviti KPI <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="aktivitiKPI" rows="3" required placeholder="Jelaskan aktiviti KPI"></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="outcomeKPI" class="form-label">Outcome KPI <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="outcomeKPI" rows="3" required placeholder="Jelaskan outcome yang diharapkan"></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="keteranganKPI" class="form-label">Keterangan KPI <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="keteranganKPI" rows="3" required placeholder="Berikan keterangan tambahan"></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="justifikasiKPI" class="form-label">Justifikasi KPI</label>
+                                <textarea class="form-control" id="justifikasiKPI" rows="3" placeholder="Berikan justifikasi (opsional)"></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-3">
+                            <button type="button" class="btn btn-outline-secondary" onclick="prevStep(3)"><i class="bi bi-arrow-left"></i> Kembali</button>
+                            <button type="button" class="btn btn-primary" onclick="nextStep(3)">Langkah Selanjutnya <i class="bi bi-arrow-right"></i></button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 4: Target & Indikator -->
+                    <div class="form-step" id="step4">
+                        <div class="form-card">
+                            <h4 class="mb-4">Target & Indikator</h4>
+                            
+                            <div class="mb-3">
+                                <label for="rekodPencapaian" class="form-label">Rekod Pencapaian</label>
+                                <input type="text" class="form-control" id="rekodPencapaian" placeholder="Rekod pencapaian terdahulu">
+                            </div>
+                            
+                            <div class="accordion mb-3" id="sasaranAccordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingSasaran">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSasaran" aria-expanded="true" aria-controls="collapseSasaran">
+                                            Sasaran <span class="text-danger">*</span>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseSasaran" class="accordion-collapse collapse show" aria-labelledby="headingSasaran">
+                                        <div class="accordion-body">
+                                            <div id="sasaranContainer">
+                                                <div class="sasaran-item mb-3 p-3 border rounded">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Sasaran 1 <span class="text-danger">*</span></label>
+                                                        <input type="text" class="form-control" name="sasaran[]" required placeholder="Masukkan sasaran">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="addSasaran()"><i class="bi bi-plus-circle"></i> Tambah Sasaran</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion mb-3" id="indikatorAccordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="headingIndikator">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseIndikator" aria-expanded="true" aria-controls="collapseIndikator">
+                                            Indikator (Target Type) <span class="text-danger">*</span>
+                                        </button>
+                                    </h2>
+                                    <div id="collapseIndikator" class="accordion-collapse collapse show" aria-labelledby="headingIndikator">
+                                        <div class="accordion-body">
+                                            <div id="indikatorContainer">
+                                                <div class="indikator-item mb-3 p-3 border rounded">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Indikator 1 <span class="text-danger">*</span></label>
+                                                        <div class="row g-2">
+                                                            <div class="col-sm-4">
+                                                                <select class="form-select" name="jenisIndikator[]" required>
+                                                                    <option value="" selected disabled>Jenis</option>
+                                                                    <option value="peratus">Peratus (%)</option>
+                                                                    <option value="bilangan">Bilangan</option>
+                                                                    <option value="tempoh">Tempoh masa</option>
+                                                                    <option value="hari">Hari</option>
+                                                                    <option value="lain">Lain-lain</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col-sm-8">
+                                                                <input type="text" class="form-control" name="nilaiIndikator[]" required placeholder="Nilai indikator">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="addIndikator()"><i class="bi bi-plus-circle"></i> Tambah Indikator</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="kekerapan" class="form-label">Kekerapan <span class="text-danger">*</span></label>
+                                <select class="form-select" id="kekerapan" required>
+                                    <option value="" selected disabled>Pilih Kekerapan</option>
+                                    <option value="harian">Harian</option>
+                                    <option value="mingguan">Mingguan</option>
+                                    <option value="bulanan">Bulanan</option>
+                                    <option value="sukuan">Sukuan</option>
+                                    <option value="tahunan">Tahunan</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="kaedahPengukuran" class="form-label">Kaedah Pengukuran <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="kaedahPengukuran" rows="3" required placeholder="Jelaskan formula pengiraan"></textarea>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h5 class="mb-3">Maklumat Pegawai Penyelaras KPI <span class="text-danger">*</span></h5>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="namaPegawai" class="form-label">Nama</label>
+                                        <input type="text" class="form-control" id="namaPegawai" required placeholder="Nama pegawai">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="bahagianPegawai" class="form-label">Bahagian</label>
+                                        <input type="text" class="form-control" id="bahagianPegawai" required placeholder="Bahagian pegawai">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="telefonPegawai" class="form-label">No. Telefon</label>
+                                        <input type="tel" class="form-control" id="telefonPegawai" required placeholder="No. telefon pegawai">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between mt-3">
+                            <button type="button" class="btn btn-outline-secondary" onclick="prevStep(4)"><i class="bi bi-arrow-left"></i> Kembali</button>
+                            <button type="submit" class="btn btn-success"><i class="bi bi-check-circle"></i> Hantar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="col-lg-4">
+                <div class="preview-panel">
+                    <div class="form-card">
+                        <h4 class="mb-3">Ringkasan KPI</h4>
+                        <div id="preview-content">
+                            <div class="text-center text-muted p-4">
+                                <i class="bi bi-file-earmark-text" style="font-size: 2rem;"></i>
+                                <p class="mt-2">Isi formulir untuk melihat ringkasan KPI</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <div class="alert alert-info" role="alert">
+                            <h5 class="alert-heading"><i class="bi bi-info-circle"></i> Perhatian</h5>
+                            <p class="mb-0">Pastikan semua bidang yang bertanda <span class="text-danger">*</span> diisi sebelum mengirimkan formulir ini.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-card mt-4">
+                        <h5 class="mb-3">Kemajuan</h5>
+                        <div class="progress mb-3">
+                            <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100" id="progress-bar">25%</div>
+                        </div>
+                        <div class="text-muted small" id="progress-status">Langkah 1 dari 4</div>
+                        
+                        <div class="d-grid gap-2 mt-3">
+                            <button type="button" class="btn btn-outline-secondary" onclick="saveProgress()"><i class="bi bi-save"></i> Simpan Draf</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+
+        // Current step tracking
+        let currentStep = 1;
+        const totalSteps = 4;
+
+        // Functions to navigate between steps
+        function nextStep(step) {
+            document.getElementById(`step${step}`).classList.remove('active');
+            document.getElementById(`step${step+1}`).classList.add('active');
+            
+            document.getElementById(`step${step}-indicator`).classList.remove('active');
+            document.getElementById(`step${step}-indicator`).classList.add('completed');
+            document.getElementById(`step${step+1}-indicator`).classList.add('active');
+            
+            currentStep = step + 1;
+            updateProgress();
+            updatePreview();
+            window.scrollTo(0, 0);
+        }
+
+        function prevStep(step) {
+            document.getElementById(`step${step}`).classList.remove('active');
+            document.getElementById(`step${step-1}`).classList.add('active');
+            
+            document.getElementById(`step${step}-indicator`).classList.remove('active');
+            document.getElementById(`step${step-1}-indicator`).classList.remove('completed');
+            document.getElementById(`step${step-1}-indicator`).classList.add('active');
+            
+            currentStep = step - 1;
+            updateProgress();
+            window.scrollTo(0, 0);
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            const percentage = Math.round((currentStep / totalSteps) * 100);
+            document.getElementById('progress-bar').style.width = `${percentage}%`;
+            document.getElementById('progress-bar').textContent = `${percentage}%`;
+            document.getElementById('progress-status').textContent = `Langkah ${currentStep} dari ${totalSteps}`;
+        }
+
+        // Toggle form sections based on selections
+        function togglePemilikOptions() {
+            const timbalan = document.getElementById('timbalan').checked;
+            document.getElementById('timbalanOptions').style.display = timbalan ? 'block' : 'none';
+        }
+
+        function toggleTingkatOptions() {
+            const bahagian = document.getElementById('bahagian').checked;
+            const institusi = document.getElementById('institusi').checked;
+            const negeri = document.getElementById('negeri').checked;
+            
+            document.getElementById('bahagianOptions').style.display = bahagian ? 'block' : 'none';
+            document.getElementById('institusiOptions').style.display = institusi ? 'block' : 'none';
+            document.getElementById('negeriOptions').style.display = negeri ? 'block' : 'none';
+        }
+
+        // Add more sasaran
+        function addSasaran() {
+            const container = document.getElementById('sasaranContainer');
+            const itemCount = container.children.length + 1;
+            
+            const newItem = document.createElement('div');
+            newItem.className = 'sasaran-item mb-3 p-3 border rounded';
+            newItem.innerHTML = `
+                <div class="d-flex justify-content-between mb-2">
+                    <label class="form-label">Sasaran ${itemCount} <span class="text-danger">*</span></label>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeSasaran(this)"><i class="bi bi-trash"></i></button>
+                </div>
+                <div class="mb-2">
+                    <input type="text" class="form-control" name="sasaran[]" required placeholder="Masukkan sasaran">
+                </div>
+            `;
+            
+            container.appendChild(newItem);
+        }
+
+        function removeSasaran(button) {
+            const item = button.closest('.sasaran-item');
+            item.remove();
+            reindexSasaran();
+        }
+
+        function reindexSasaran() {
+            const items = document.querySelectorAll('.sasaran-item');
+            items.forEach((item, index) => {
+                const label = item.querySelector('label');
+                label.innerHTML = `Sasaran ${index + 1} <span class="text-danger">*</span>`;
+            });
+        }
+
+        // Add more indikator
+        function addIndikator() {
+            const container = document.getElementById('indikatorContainer');
+            const itemCount = container.children.length + 1;
+            
+            const newItem = document.createElement('div');
+            newItem.className = 'indikator-item mb-3 p-3 border rounded';
+            newItem.innerHTML = `
+                <div class="d-flex justify-content-between mb-2">
+                    <label class="form-label">Indikator ${itemCount} <span class="text-danger">*</span></label>
+                    <button type="button" class="btn btn-outline-danger btn-sm" onclick="removeIndikator(this)"><i class="bi bi-trash"></i></button>
+                </div>
+                <div class="mb-2">
+                    <div class="row g-2">
+                        <div class="col-sm-4">
+                            <select class="form-select" name="jenisIndikator[]" required>
+                                <option value="" selected disabled>Jenis</option>
+                                <option value="peratus">Peratus (%)</option>
+                                <option value="bilangan">Bilangan</option>
+                                <option value="tempoh">Tempoh masa</option>
+                                <option value="hari">Hari</option>
+                                <option value="lain">Lain-lain</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" name="nilaiIndikator[]" required placeholder="Nilai indikator">
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(newItem);
+        }
+
+        function removeIndikator(button) {
+            const item = button.closest('.indikator-item');
+            item.remove();
+            reindexIndikator();
+        }
+
+        function reindexIndikator() {
+            const items = document.querySelectorAll('.indikator-item');
+            items.forEach((item, index) => {
+                const label = item.querySelector('label');
+                label.innerHTML = `Indikator ${index + 1} <span class="text-danger">*</span>`;
+            });
+        }
+
+        // Update preview panel
+        function updatePreview() {
+            const previewContent = document.getElementById('preview-content');
+            let html = '';
+            
+            // Step 1 data
+            const teras = document.getElementById('teras');
+            const strategi = document.getElementById('strategi');
+            const program = document.getElementById('program');
+            const sektor = document.getElementById('sektor');
+            
+            // Step 3 data
+            const kpi = document.getElementById('kpi');
+            const kategoriLaporan = document.getElementById('kategoriLaporan');
+            
+            if (currentStep >= 1) {
+                html += `
+                    <div class="mb-3">
+                        <h5>Informasi Umum</h5>
+                        <div class="row">
+                            <div class="col-4 text-muted">Teras:</div>
+                            <div class="col-8">${teras.options[teras.selectedIndex]?.text || '-'}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4 text-muted">Strategi:</div>
+                            <div class="col-8">${strategi.options[strategi.selectedIndex]?.text || '-'}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4 text-muted">Program:</div>
+                            <div class="col-8">${program.options[program.selectedIndex]?.text || '-'}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4 text-muted">Sektor:</div>
+                            <div class="col-8">${sektor.options[sektor.selectedIndex]?.text || '-'}</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (currentStep >= 2) {
+                const jenisPemilik = document.querySelector('input[name="jenisPemilik"]:checked')?.value;
+                const tingkatKPI = document.querySelector('input[name="tingkatKPI"]:checked')?.value;
+                
+                html += `
+                    <div class="mb-3">
+                        <h5>Pemilik KPI</h5>
+                        <div class="row">
+                            <div class="col-4 text-muted">Jenis Pemilik:</div>
+                            <div class="col-8">${jenisPemilik === 'komisioner' ? 'KPI Komisioner Jeneral Penjara' : 
+                                                jenisPemilik === 'timbalan' ? 'KPI Timbalan Komisioner' : '-'}</div>
+                        </div>
+                `;
+                
+                if (jenisPemilik === 'timbalan') {
+                    const jenisTimbalanKPI = document.getElementById('jenisTimbalanKPI');
+                    html += `
+                        <div class="row">
+                            <div class="col-4 text-muted">Jenis Timbalan:</div>
+                            <div class="col-8">${jenisTimbalanKPI.options[jenisTimbalanKPI.selectedIndex]?.text || '-'}</div>
+                        </div>
+                    `;
+                }
+                
+                html += `
+                        <div class="row">
+                            <div class="col-4 text-muted">Tingkat KPI:</div>
+                            <div class="col-8">${tingkatKPI === 'bahagian' ? 'KPI Bahagian' : 
+                                                tingkatKPI === 'institusi' ? 'KPI Institusi' : 
+                                                tingkatKPI === 'negeri' ? 'KPI Negeri' : '-'}</div>
+                        </div>
+                `;
+                
+                if (tingkatKPI === 'bahagian') {
+                    const jenisBahagian = document.getElementById('jenisBahagian');
+                    html += `
+                        <div class="row">
+                            <div class="col-4 text-muted">Bahagian:</div>
+                            <div class="col-8">${jenisBahagian.options[jenisBahagian.selectedIndex]?.text || '-'}</div>
+                        </div>
+                    `;
+                } else if (tingkatKPI === 'institusi') {
+                    const jenisInstitusi = document.getElementById('jenisInstitusi');
+                    html += `
+                        <div class="row">
+                            <div class="col-4 text-muted">Institusi:</div>
+                            <div class="col-8">${jenisInstitusi.options[jenisInstitusi.selectedIndex]?.text || '-'}</div>
+                        </div>
+                    `;
+                } else if (tingkatKPI === 'negeri') {
+                    const jenisNegeri = document.getElementById('jenisNegeri');
+                    html += `
+                        <div class="row">
+                            <div class="col-4 text-muted">Negeri:</div>
+                            <div class="col-8">${jenisNegeri.options[jenisNegeri.selectedIndex]?.text || '-'}</div>
+                        </div>
+                    `;
+                }
+                
+                html += `</div>`;
+            }
+            
+            if (currentStep >= 3) {
+                html += `
+                    <div class="mb-3">
+                        <h5>Informasi KPI</h5>
+                        <div class="row">
+                            <div class="col-4 text-muted">KPI:</div>
+                            <div class="col-8">${kpi.value || '-'}</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4 text-muted">Kategori:</div>
+                            <div class="col-8">${kategoriLaporan.options[kategoriLaporan.selectedIndex]?.text || '-'}</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            if (currentStep >= 4) {
+                const kekerapan = document.getElementById('kekerapan');
+                
+                html += `
+                    <div class="mb-3">
+                        <h5>Target & Indikator</h5>
+                        <div class="row">
+                            <div class="col-4 text-muted">Kekerapan:</div>
+                            <div class="col-8">${kekerapan.options[kekerapan.selectedIndex]?.text || '-'}</div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-12 text-muted">Sasaran:</div>
+                        </div>
+                `;
+                
+                // Add sasaran items
+                const sasaranInputs = document.querySelectorAll('input[name="sasaran[]"]');
+                sasaranInputs.forEach((input, index) => {
+                    if (input.value) {
+                        html += `
+                            <div class="row">
+                                <div class="col-4 text-muted ps-4">${index + 1}.</div>
+                                <div class="col-8">${input.value}</div>
+                            </div>
+                        `;
+                    }
+                });
+                
+                html += `
+                        <div class="row mt-2">
+                            <div class="col-12 text-muted">Indikator:</div>
+                        </div>
+                `;
+                
+                // Add indikator items
+                const jenisIndikatorSelects = document.querySelectorAll('select[name="jenisIndikator[]"]');
+                const nilaiIndikatorInputs = document.querySelectorAll('input[name="nilaiIndikator[]"]');
+                
+                for (let i = 0; i < jenisIndikatorSelects.length; i++) {
+                    const jenis = jenisIndikatorSelects[i].options[jenisIndikatorSelects[i].selectedIndex]?.text || '-';
+                    const nilai = nilaiIndikatorInputs[i].value || '-';
+                    
+                    html += `
+                        <div class="row">
+                            <div class="col-4 text-muted ps-4">${i + 1}.</div>
+                            <div class="col-8">${nilai} (${jenis})</div>
+                        </div>
+                    `;
+                }
+                
+                html += `</div>`;
+            }
+            
+            previewContent.innerHTML = html || `
+                <div class="text-center text-muted p-4">
+                    <i class="bi bi-file-earmark-text" style="font-size: 2rem;"></i>
+                    <p class="mt-2">Isi formulir untuk melihat ringkasan KPI</p>
+                </div>
+            `;
+        }
+
+        // Save progress (could be enhanced with localStorage or API calls)
+        function saveProgress() {
+            alert('Draf telah disimpan!');
+            // You can implement localStorage saving or API calls here
+        }
+
+        // Form submit handler
+        document.getElementById('kpi-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Here you would normally validate all fields and submit to server
+            alert('Formulir KPI telah berhasil dikirim!');
+            
+            // For demo purposes, you might want to reset the form or redirect
+            // window.location.href = 'confirmation.html';
+        });
+
+        // Initialize preview on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgress();
+            updatePreview();
+            
+            // Add input event listeners to update preview in real-time
+            const formInputs = document.querySelectorAll('input, select, textarea');
+            formInputs.forEach(input => {
+                input.addEventListener('change', updatePreview);
+            });
+        });
+    </script>
+
+@extends('layout')
+@section('content')
+
+<div class="container-fluid">
+
+    <!-- ======================= year filter ====================== -->
+    <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+        Tahun Penilaian : 
+        <!-- Year Filter Dropdown -->
+        <div class="dropdown">
+            <button class="btn bg-pastel-blue dropdown-toggle" type="button" id="yearDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                {{ date('Y') }} <!-- Default to current year -->
+            </button>
+            
+            <ul class="dropdown-menu" aria-labelledby="yearDropdown">
+                <!-- Search box -->
+                <input type="text" id="yearSearch" class="form-control mb-2" placeholder="Search year...">
+                
+                @php
+                    $years = DB::table('add_kpis')
+                        ->selectRaw('DISTINCT year')
+                        ->whereNotNull('year')
+                        ->orderBy('year', 'desc')
+                        ->pluck('year');
+                @endphp
+    
+                @foreach ($years as $year)
+                    <li><a class="dropdown-item year-item" href="#">{{ $year }}</a></li>
+                @endforeach
+            </ul> 
+        </div>
+    </div>
+
+    <!-- ======================= card statistic ====================== -->
+
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3">
+        @php
+            $cards = [
+                ['title' => 'Jumlah KPI', 'value' => $totalKpi, 'color' => 'bg-pastel-grey', 'icon' => 'clipboard'],
+                ['title' => 'Sektor Keselamatan Dan Koreksional', 'value' => $skkKpi, 'color' => 'bg-pastel-blue', 'icon' => 'shield'],
+                ['title' => 'Sektor Pemasyarakatan', 'value' => $smKpi, 'color' => 'bg-pastel-yellow', 'icon' => 'users'],
+                ['title' => 'Sektor Pengurusan', 'value' => $spKpi, 'color' => 'bg-pastel-orange', 'icon' => 'bar-chart-2'],
+                ['title' => 'Bahagian & Unit', 'value' => $bduKpi, 'color' => 'bg-pastel-purple', 'icon' => 'briefcase'],
+            ];
+        @endphp
+    
+        @foreach ($cards as $card)
+            <div class="col mb-3 kpi-card" data-title="{{ $card['title'] }}">
+                <div class="card {{ $card['color'] }} text-dark shadow-sm h-100">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="kpi-icon me-3 flex-shrink-0">
+                            <i data-feather="{{ $card['icon'] }}" class="feather-lg"></i>
+                        </div>
+                        <div class="kpi-content flex-grow-1">
+                            <p class="text-uppercase mb-1" style="font-size: 12px;">{{ $card['title'] }}</p>
+                            <h4 class="mb-0 display-6">{{ $card['value'] }}</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+    </div>
+    
+
+    <!-- ======================= kpi owner ====================== -->
+
+    <div class="card">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <div class="w-100">
+                <h5 class="mb-0 text-center">Pemilik KPI</h5>
+            </div>
+            <div class="flex-shrink-0">
+                <button id="printBtn" class="btn btn-sm btn-light border">Print</button>
+                <button id="pngBtn" class="btn btn-sm btn-light border">PNG</button>
+                <button id="viewBtn" class="btn btn-sm btn-light border">View</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="chart" style="height: 400px;"></div>
+        </div>
+        {{-- <div class="card-footer text-end small text-muted">
+            Last updated: March 9, 2025
+        </div> --}}
+    </div>    
+</div>
+
+<script src="{{ asset('js/script.js') }}"></script><!-- custom js -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script> <!-- apex chart -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery -->
+<!-- ECharts CDN -->
+<script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#yearSearch').on('keyup', function() {
+            let filter = $(this).val().toLowerCase();
+            $('.year-item').each(function() {
+                let text = $(this).text().toLowerCase();
+                $(this).parent().toggle(text.includes(filter));
+            });
+        });
+        
+        $('.year-item').on('click', function() {
+            let selectedYear = $(this).text().trim();
+            $('#yearDropdown').text(selectedYear);
+            fetchKpiData(selectedYear);
+        });
+        
+        function fetchKpiData(year) {
+            $.ajax({
+                url: '/kpi/year-data',
+                type: 'GET',
+                data: { year: year },
+                dataType: 'json',
+                success: function(response) {
+                    updateKpiCards(response);
+                },
+                error: function(xhr) {
+                    console.error('Error:', xhr.responseText);
+                }
+            });
+        }
+        
+        function updateKpiCards(data) {
+            console.log('Data received:', data);
+            $('.kpi-card').each(function() {
+                let title = $(this).data('title').trim();
+                console.log('Updating card:', title); // Check if titles match
+                let newValue = data[title] ?? '0';
+                $(this).find('.card-body h4').text(newValue); // Ensure correct selector
+            });
+        }
+
+         // Number animation function
+        function animateNumber(element, start, end, duration) {
+            let range = end - start;
+            let startTime = null;
+
+            function animationStep(timestamp) {
+                if (!startTime) startTime = timestamp;
+                let progress = Math.min((timestamp - startTime) / duration, 1);
+                let currentValue = Math.floor(progress * range + start);
+                element.text(currentValue);
+                if (progress < 1) {
+                    requestAnimationFrame(animationStep);
+                }
+            }
+
+            requestAnimationFrame(animationStep);
+        }
+
+        function updateKpiCards(data) {
+            $('.kpi-card').each(function() {
+                let title = $(this).data('title').trim();
+                let newValue = parseInt(data[title]) || 0;
+                let numberElement = $(this).find('.card-body h4');
+                let currentValue = parseInt(numberElement.text().replace(/\D/g, '')) || 0; // Get current number
+                animateNumber(numberElement, currentValue, newValue, 800); // 800ms animation
+            });
+        }
+        
+        fetchKpiData(new Date().getFullYear()); // Load current year data by default
+
+        // kpi owner chart
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Make sure the chart element exists
+        const chartContainer = document.getElementById('chart');
+        if (!chartContainer) {
+            console.error('Chart container not found');
+            return;
+        }
+        
+        // Initialize chart
+        let chart = echarts.init(chartContainer);
+        if (!chart) {
+            console.error('Failed to initialize ECharts');
+            return;
+        }
+        
+        // Chart data
+        const categories = [
+            'Komisioner\nJeneral Penjara',
+            'Timbalan KJP\n[Keselamatan Dan \n Koreksional]',
+            'Timbalan KJP\n[Pemasyarakatan]',
+            'Timbalan KJP\n[Pengurusan]',
+            'Pengarah\nPenjara Negeri',
+            'Institusi-Institusi\nPenjara'
+        ];
+        
+        const values = [7, 7, 7, 14, 15, 13];
+        let isBarChart = true;
+        const themeColor = '#4CAF50';
+        
+        // Function to update chart
+        function updateChartType() {
+            const option = {
+                xAxis: {
+                    type: 'category',
+                    title: "PEMLIK KPI",
+                    data: categories,
+                    axisLabel: {
+                        fontSize: 12,
+                        lineHeight: 16,
+                        interval: 0
+                    }
+                },
+                yAxis: {
+                    type: 'value'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                series: [{
+                    data: values,
+                    type: isBarChart ? 'bar' : 'line',
+                    itemStyle: {
+                        color: themeColor
+                    },
+                    label: {
+                        show: true,
+                        position: 'top'
+                    },
+                    smooth: !isBarChart,
+                    areaStyle: isBarChart ? undefined : {
+                        opacity: 0.2
+                    }
+                }]
+            };
+            
+            chart.setOption(option);
+        }
+        
+        // Initial chart render
+        updateChartType();
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (chart) {
+                chart.resize();
+            }
+        });
+        
+        // View toggle button
+        const viewBtn = document.getElementById('viewBtn');
+        if (viewBtn) {
+            viewBtn.addEventListener('click', function() {
+                isBarChart = !isBarChart;
+                updateChartType();
+            });
+        }
+        
+        // Print button
+        const printBtn = document.getElementById('printBtn');
+        if (printBtn) {
+            printBtn.addEventListener('click', function() {
+                if (!chart) return;
+                
+                // Create print window
+                const printWindow = window.open('', '_blank');
+                if (!printWindow) {
+                    alert('Please allow pop-ups to print the chart.');
+                    return;
+                }
+                
+                try {
+                    // Get chart as image
+                    const imgUrl = chart.getDataURL({
+                        backgroundColor: '#fff'
+                    });
+                    
+                    // Write content to print window
+                    printWindow.document.write(`
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <title>Pemilik KPI</title>
+                            <style>
+                                body { font-family: Arial; padding: 20px; text-align: center; }
+                                img { max-width: 100%; }
+                            </style>
+                        </head>
+                        <body>
+                            <h2>Pemilik KPI</h2>
+                            <img src="${imgUrl}" alt="Chart" />
+                            <script>
+                                window.onload = function() {
+                                    setTimeout(function() { window.print(); }, 500);
+                                }
+                            <\/script>
+                        </body>
+                        </html>
+                    `);
+                    
+                    printWindow.document.close();
+                } catch (error) {
+                    console.error('Error printing chart:', error);
+                    printWindow.close();
+                    alert('Error printing chart. Please try again.');
+                }
+            });
+        }
+        
+        // PNG Export button
+        const pngBtn = document.getElementById('pngBtn');
+        if (pngBtn) {
+            pngBtn.addEventListener('click', function() {
+                if (!chart) return;
+                
+                try {
+                    // Get chart as image
+                    const imgUrl = chart.getDataURL({
+                        backgroundColor: '#fff'
+                    });
+                    
+                    // Create download link
+                    const link = document.createElement('a');
+                    link.download = 'carta-organisasi.png';
+                    link.href = imgUrl;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } catch (error) {
+                    console.error('Error exporting chart:', error);
+                    alert('Error exporting chart to PNG. Please try again.');
+                }
+            });
+        }
+    });
+</script>
+@endsection

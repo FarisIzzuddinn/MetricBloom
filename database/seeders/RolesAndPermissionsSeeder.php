@@ -17,6 +17,8 @@ class RolesAndPermissionsSeeder extends Seeder
 
         // Buat permissions
         $permissions = [
+            'view bahagian',
+            'infografik',
             'view permissions',
             'view roles',
             'view users',
@@ -45,6 +47,8 @@ class RolesAndPermissionsSeeder extends Seeder
 
         $superadminRole = Role::create(['name' => 'super admin']);
         $superadminRole->givePermissionTo([
+            'infografik',
+            'view bahagian',
             'view users',
             'view teras',
             'view so',
@@ -56,12 +60,14 @@ class RolesAndPermissionsSeeder extends Seeder
 
         $bahagianAdmin = Role::create(['name' => 'Admin Bahagian']);
         $bahagianAdmin->givePermissionTo([
+            'infografik',
             'view dashboard',
             'view admin bahagian KPI',
         ]);
         
         $sectorAdmin = Role::create(['name' => 'Admin Sector']);
         $sectorAdmin->givePermissionTo([
+            'infografik',
             'view add kpi',
             'view sector dashboard'
         ]);
@@ -69,6 +75,7 @@ class RolesAndPermissionsSeeder extends Seeder
         // Buat roles dan assign permissions
         $adminRole = Role::create(['name' => 'admin']);
         $adminRole->givePermissionTo([
+            'infografik',
             'view dashboard',
             'view add kpi',
             'view so',
@@ -78,6 +85,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
         $AdminState = Role::create(['name' => 'Admin State']);
         $AdminState->givePermissionTo([
+            'infografik',
             'view stateAdmin dashboard',
             'kpi management',
             'generate report institution'
@@ -85,6 +93,7 @@ class RolesAndPermissionsSeeder extends Seeder
 
         $InstitutionAdmin = Role::create(['name' => 'Institution Admin']);
         $InstitutionAdmin->givePermissionTo([
+            'infografik',
             'view institutionAdmin dashboard',
             'kpi management institution'
         ]);

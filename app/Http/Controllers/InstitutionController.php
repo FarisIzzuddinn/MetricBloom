@@ -12,7 +12,7 @@ class InstitutionController extends Controller
 {
     public function index()
     {
-        $institutions = Institution::with('state')->get();
+        $institutions = Institution::with('state')->paginate(20);
         $states = State::all();
         $username = Auth::User();
         return view('superAdmin.Institution.index', compact('institutions', 'states', 'username'));
@@ -25,10 +25,10 @@ class InstitutionController extends Controller
 
     public function store(Request $request)
     {
+        // dd($request->all());
         $request->validate([
             'name' => 'required|string|max:255',
-            'state_id' => 'required|exists:states,id',
-            'description' => 'nullable|string',
+            'state_id' => 'nullable|exists:states,id',
         ]);
 
         Institution::create($request->all());
@@ -46,27 +46,18 @@ class InstitutionController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'state_id' => 'required|exists:states,id',
-            'description' => 'nullable|string',
+            'state_id' => 'nullable|exists:states,id', // Ensure state_id is valid
         ]);
 
+        // Update institution with all request data
         $institution->update($request->all());
 
         return redirect()->route('institutions.index')->with('success', 'Institution updated successfully.');
     }
 
-    public function renumberItems(){
-        $items = Institution::orderBy('created_at')->get();
-        foreach ($items as $index => $item) {
-            $item->update(['position' => $index + 1]);
-        }
-    }
-
-    public function destroy(Institution $institution)
-    {
+    public function destroy($id){
+        $institution = Institution::findOrFail($id);
         $institution->delete();
-        $this->renumberItems();
-
         return redirect()->route('institutions.index')->with('success', 'Institution deleted successfully.');
     }
 }

@@ -20,8 +20,6 @@ return new class extends Migration
                 $table->string('pernyataan_kpi'); // KPI Statement
                 $table->string('jenis_sasaran'); // Target Type
                 $table->decimal('sasaran', 10, 2); // Target Value
-                // $table->decimal('pencapaian', 10, 2)->default(0); // Achievement Value
-                // $table->decimal('peratus_pencapaian', 5, 2)->nullable(); // Achievement Percentaget
                 $table->timestamps();
                 
             });

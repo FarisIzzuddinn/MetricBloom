@@ -10,7 +10,7 @@ class TerasController extends Controller
 {
     public function index()
     {
-        $teras = Teras::all(); // Retrieve all SO records
+        $teras = Teras::paginate(20);
         $username = Auth::User();
         return view('admin.teras.index', compact('teras', 'username'));
     }
@@ -31,10 +31,7 @@ class TerasController extends Controller
 
         if ($duplicateTeras) {
             // If an active record already exists, return with an error message
-            return redirect()->route('teras.index')->with([
-                'status' => "Duplicate data: Teras already exists.",
-                'alert-type' => "danger"
-            ]);
+            return redirect()->route('teras.index')->with('danger', 'Nilai Teras Sudah Wujud. Sila Masukkan Nilai Unik.');
         }
 
         // Check if a soft-deleted record with the same 'teras' value exists
@@ -44,10 +41,7 @@ class TerasController extends Controller
             // If a soft-deleted record exists, restore it instead of creating a new one
             $existingTeras->restore();
 
-            return redirect()->route('teras.index')->with([
-                'status' => "Teras restored successfully.",
-                'alert-type' => "success"
-            ]);
+            return redirect()->route('teras.index')->with('success', 'Teras Berjaya Dikembalikan.');
         }
 
         // If no soft-deleted record exists, create a new one
@@ -55,10 +49,7 @@ class TerasController extends Controller
             'teras' => $request->teras,
         ]);
 
-        return redirect()->route('teras.index')->with([
-            'status' => "Teras created successfully.",
-            'alert-type' => "success"
-        ]);
+        return redirect()->route('teras.index')->with('success', 'Teras Berjaya Dicipta.');
     }
 
     public function edit($id)
@@ -80,10 +71,7 @@ class TerasController extends Controller
     
         if ($existingTeras) {
             // Redirect back with an error message if duplicate found
-            return redirect()->back()->with([
-                'status' => 'The Teras value already exists. Please enter a unique value.',
-                'alert-type' => 'danger'
-            ]);
+            return redirect()->back()->with('danger', 'Nilai Teras Sudah Wujud. Sila Masukkan Nilai Unik.');
         }
     
         // Find the teras by ID and update it
@@ -92,10 +80,7 @@ class TerasController extends Controller
         $teras->save();
     
         // Redirect back with success message
-        return redirect()->route('teras.index')->with([
-            'status' => 'Teras updated successfully.',
-            'alert-type' => 'success'
-        ]);
+        return redirect()->route('teras.index')->with('success', 'Teras Berjaya Dikemaskini.');
     }
     
 
@@ -117,26 +102,17 @@ class TerasController extends Controller
 
             // Then the can't deleted 
             if ($isInUse){
-                return redirect()->route('teras.index')->with([
-                    'status' => "Teras cannot be deleted because it is in use.",
-                    'alert-type' => "danger"
-                ]);
+                return redirect()->route('teras.index')->with('danger', 'Teras Tidak Boleh Dipadam Kerana Sedang Digunakan.');
             }
 
             // Else, delete the teras
             $teras->delete();
             $this->renumberItems(); 
 
-            return redirect()->route('teras.index')->with([
-                'status' => "Teras deleted successfully",
-                'alert-type' => "success"
-            ]);
+            return redirect()->route('teras.index')->with('success', 'Teras Berjaya Dipadam.');
         }
 
-        return redirect()->route('teras.index')->with([
-            'status' => "Teras not found",
-            'alert-type' => "warning"
-        ]);
+        return redirect()->route('teras.index')->with('danger', 'Teras Tidak Dijumpai.');
     }
 }
 

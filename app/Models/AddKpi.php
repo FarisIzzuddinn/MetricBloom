@@ -14,12 +14,42 @@ class AddKpi extends Model
         'teras_id',
         'sectors_id',
         'pernyataan_kpi',
-        'jenis_sasaran',
-        'sasaran',
+        'indikator',
+        'strategi',
+        'program',
+        'kategori_report',
+        'aktiviti',
+        'outcome',
+        'justifikasi',
+        'keterangan',
+        'trend_pencapaian',
+        'kaveat',
+        'formula',
         'pencapaian',
         'peratus_pencapaian',
         'pdf_file_path',
+        'sasaran',           // Add this field
+        'jenis_sasaran',     
     ];
+
+    protected $casts = [
+        'sasaran' => 'array',
+        'jenis_sasaran' => 'array',
+    ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($kpi) {
+            $kpi->year = date('Y', strtotime($kpi->created_at));
+        });
+    }
+
+    public function addKpis()
+    {
+        return $this->hasMany(AddKpi::class, 'sectors_id'); // use 'sectors_id', not 'sector_id'
+    }
 
     
     public function kpiStates()
@@ -67,21 +97,28 @@ class AddKpi extends Model
     {
         return $this->belongsTo(Sector::class, 'sectors_id', 'id');
     }
-
-    protected static function boot()
+    public function kjps()
     {
-        parent::boot();
-
-        static::saving(function ($kpi) {
-            if ($kpi->peratus_pencapaian == 100) {
-                $kpi->status = 'achieved';
-            } elseif ($kpi->peratus_pencapaian >= 50) {
-                $kpi->status = 'pending';
-            } else {
-                $kpi->status = 'not achieved';
-            }
-        });
+        return $this->belongsToMany(Kjp::class, 'kpi_kjp', 'add_kpi_id', 'kjp_id');
     }
+    
+    
+
+
+    // protected static function boot()
+    // {
+    //     parent::boot();
+
+    //     static::saving(function ($kpi) {
+    //         if ($kpi->peratus_pencapaian == 100) {
+    //             $kpi->status = 'achieved';
+    //         } elseif ($kpi->peratus_pencapaian >= 50) {
+    //             $kpi->status = 'pending';
+    //         } else {
+    //             $kpi->status = 'not achieved';
+    //         }
+    //     });
+    // }
 
     // public function sector()
     // {

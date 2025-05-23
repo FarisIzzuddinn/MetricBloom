@@ -3,12 +3,20 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- boxicons -->
 	<link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
     <!-- Select2 CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet">
-
+    <!-- Feather Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.css" rel="stylesheet">
+    <!-- custom layouts -->
 	<link rel="stylesheet" href="{{ asset('css/layout.css') }}">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 	<title>Jabatan Penjara Malaysia</title>
     <style>
         .avatar-wrapper {
@@ -35,8 +43,14 @@
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- custom js -->
+<link rel="stylesheet" href="{{ asset('js/script.js') }}">
+
+<!-- apex chart -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+<!-- Feather Icons -->
+<script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
 
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -63,13 +77,15 @@
 <body>
 	<!-- SIDEBAR -->
     <aside id="sidebar" class="sidebar-closed">
-        <a href="#" class="brand">
-            <div class="featured-image mb-3 text-center mt-4 ms-2">
-                <img src="{{ asset('picture/penjara_logo.png') }}" class="img-fluid " style="max-width: 60px;">
-            </div>
-            <span class="sidebar-text ms-3" style="display: block; color: #003300; font-weight: bold; font-size: 20px; margin-top: 10px;">
-            <span class="sidebar-text" style="display: block; color: #003300; font-weight: bold; font-size: 20px; margin-top: 10px; text-align: center;">JABATAN PENJARA <br> MALAYSIA </span>
+        <a href="#" class="brand d-flex flex-column align-items-center text-center mb-3 mt-4">
+            <img src="{{ asset('picture/penjara_logo.png') }}" class="img-fluid mb-2" style="max-width: 50px; height: auto;">
+            <span class="sidebar-text" style="color: #003300; font-weight: bold; font-size: 15px;">
+                JABATAN PENJARA <br> MALAYSIA
+            </span>
         </a>
+        <hr class="sidebar-divider" style="border-top: 2px solid #AAAAAA; width: 100%; margin-top: 15%;">
+        
+        
         <nav class="side-menu">
             @include('sidebar')
         </nav>
@@ -79,7 +95,7 @@
 	<!-- CONTENT -->
 	<section id="content">
 		<!-- NAVBAR -->
-		<nav class="d-flex justify-content-between align-items-center">
+		<nav class="d-flex justify-content-between align-items-center" style="z-index: 500; position: relative;" >
             <div class="d-flex align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
                     <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5"/>
@@ -132,5 +148,9 @@
     menuBar.addEventListener('click', function () {
         sidebar.classList.toggle('hide');
     });
+
+    // Initialize Feather icons
+    feather.replace();
+    
 </script>
 </html>

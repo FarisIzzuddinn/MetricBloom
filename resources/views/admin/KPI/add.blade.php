@@ -5,6 +5,8 @@
     </svg>Add New KPI
 </button>
 
+
+
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
@@ -27,6 +29,26 @@
                         </select>
                     </div>
 
+                    <!-- Strategi Dropdown -->
+                    <div class="mb-4">
+                        <label for="SO" class="form-label fw-semibold">Strategi</label>
+                        <select id="sectors_id" name="sectors_id" class="form-select shadow-sm" required>
+                            @foreach ($sectors as $sector)
+                                <option value="{{ $sector->id }}">{{ $sector->name }}</option>   
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Program Dropdown -->
+                    <div class="mb-4">
+                        <label for="SO" class="form-label fw-semibold">Program</label>
+                        <select id="sectors_id" name="sectors_id" class="form-select shadow-sm" required>
+                            @foreach ($sectors as $sector)
+                                <option value="{{ $sector->id }}">{{ $sector->name }}</option>   
+                            @endforeach
+                        </select>
+                    </div>
+
                     <!-- Sector Dropdown -->
                     <div class="mb-4">
                         <label for="SO" class="form-label fw-semibold">Sector</label>
@@ -36,6 +58,8 @@
                             @endforeach
                         </select>
                     </div>
+
+                   
 
                     <!-- Owners Accordion -->
                     <div class="mb-4">

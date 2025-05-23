@@ -10,13 +10,19 @@ class Sector extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $table = 'sectors';
     protected $fillable = ['name'];
 
     public $timestamps = true;
 
     public function addKpis()
     {
-        return $this->hasMany(AddKpi::class);
+        return $this->hasMany(AddKpi::class, 'sectors_id');
+    }
+
+    public function bahagian()
+    {
+        return $this->hasMany(Bahagian::class, 'sector_id', 'id');
     }
 
     // --------------- sector kpi -----------------

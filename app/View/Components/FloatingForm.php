@@ -2,9 +2,9 @@
 
 namespace App\View\Components;
 
+use Illuminate\View\Component;
 use Closure;
 use Illuminate\Contracts\View\View;
-use Illuminate\View\Component;
 
 class FloatingForm extends Component
 {
@@ -12,18 +12,17 @@ class FloatingForm extends Component
     public $name;
     public $type;
     public $placeholder;
+    public $labelName;
 
-    public function __construct($id, $name, $type, $placeholder)
+    public function __construct($id, $name, $type = 'text', $placeholder = '', $labelName = '')
     {
-        $this -> id = $id;
-        $this -> name = $name;
-        $this -> type = $type;
-        $this -> placeholder = $placeholder;
+        $this->id = $id;
+        $this->name = $name;
+        $this->type = $type;
+        $this->placeholder = $placeholder;
+        $this->labelName = $labelName;
     }
 
-    /**
-     * Get the view / contents that represent the component.
-     */
     public function render(): View|Closure|string
     {
         return view('components.floating-form');

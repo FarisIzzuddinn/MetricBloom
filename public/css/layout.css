@@ -168,6 +168,9 @@ body {
     display: flex;
     justify-content: center;
 }
+#sidebar.hide .sidebar-text {
+    display: none;
+}
 
 
 
@@ -214,7 +217,7 @@ body {
     bottom: -40px;
     left: 0;
     border-radius: 50%;
-    /* box-shadow: -20px -20px 0 var(--light); */
+    box-shadow: -20px -20px 0 var(--light);
 }
 
 #content nav a {
@@ -577,7 +580,199 @@ body {
 
 /* MAIN */
 /* CONTENT */
+/* Colors for different sectors */
+.bg-skk { background-color: #3498DB; }  /* Sektor Keselamatan Dan Koreksional */
+.bg-sm { background-color: #F1C40F; }   /* Sektor Pemasyarakatan */
+.bg-sp { background-color: #E67E22; }   /* Sektor Pengurusan */
+.bg-bdu { background-color: #9B59B6; }  /* Bahagian & Unit */
+.bg-total { background-color: #7F8C8D; } /* Total KPI */
 
+.text-skk { color: #3498DB; }
+.text-sm { color: #F1C40F; }
+.text-sp { color: #E67E22; }
+.text-bdu { color: #9B59B6; }
+.text-total { color: #7F8C8D; }
+
+/* Card hover effect */
+.card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.department-card {
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease;
+    background-color: white;
+}
+
+.department-card:hover {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transform: translateY(-2px);
+}
+
+.department-name {
+    font-size: 0.85rem;
+    line-height: 1.2;
+}
+
+.main-title {
+    font-size: 1.25rem;
+}
+
+.subtitle {
+    font-size: 1rem;
+}
+
+@media (max-width: 767.98px) {
+    .main-title {
+        font-size: 1.1rem;
+    }
+    
+    .subtitle {
+        font-size: 0.9rem;
+    }
+}
+/* Mock Charts */
+/* .mock-bar-chart {
+    height: 300px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+
+.mock-bar {
+    width: 40px;
+    background-color: #3498DB;
+    border-radius: 4px 4px 0 0;
+    position: relative;
+    margin: 0 10px;
+}
+
+.mock-bar-label {
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    color: #6c757d;
+}
+
+.mock-bar-value {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.mock-donut-chart {
+    width: 220px;
+    height: 220px;
+    margin: 20px auto;
+    border-radius: 50%;
+    background: conic-gradient(
+    #3498DB 0% 11%,
+    #F1C40F 11% 22%, 
+    #E67E22 22% 44%,
+    #9B59B6 44% 56%,
+    #2C3E50 56% 100%
+    );
+    position: relative;
+}
+
+.mock-donut-center {
+    position: absolute;
+    width: 65%;
+    height: 65%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.mock-legend {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.mock-legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.75rem;
+}
+
+.mock-legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    margin-right: 5px;
+}
+
+.department-card {
+    height: 100%;
+    transition: transform 0.3s;
+    border: 1px solid #dee2e6;
+    border-radius: 0.5rem;
+}
+
+.department-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.department-icon {
+    width: 64px;
+    height: 64px;   
+    margin: 0 auto;
+    display: block;
+}
+
+.kpi-card-header {
+    background-color: #f1f5f9;
+    border-bottom: 2px solid #28a148;
+}
+
+.main-title {
+    font-weight: 600;
+}
+
+.subtitle {
+    color: #1e3799;
+}
+
+.department-name {
+    font-weight: 500;
+    margin-top: 10px;
+    text-align: center;
+    color: #2c5035;
+}
+
+.department-metrics {
+    text-align: center;
+    padding: 10px;
+}
+
+.sector-heading {
+    background-color: #e9ecef;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-left: 4px solid #17a329;
+    font-weight: 600;
+} */
 
 
 

@@ -13,16 +13,19 @@ use App\Http\Controllers\TerasController;
 use App\Http\Controllers\accessController;
 use App\Http\Controllers\AddKpiController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ViewerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserKpiController;
+use App\Http\Controllers\BahagianController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\StateAdminController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\AdminSectorController;
+use App\Http\Controllers\all\infografikController;
 use App\Http\Controllers\InstitutionController;
+use App\Http\Controllers\pelaporanKpiController;
 use App\Http\Controllers\Auth\ForgotPassController;
 use App\Http\Controllers\institutionAdminController;
-use App\Http\Controllers\ViewerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,15 +38,11 @@ use App\Http\Controllers\ViewerController;
 |
 */
 
-Route::get('/', function () {
-    return view('/auth/login');
-});
-
 // ===================== REGISTER & LOGIN ======================
-Route::get('register', [AuthController::class, 'register'])->name('register');
-Route::post('register', [AuthController::class, 'registerPost'])->name('register.post');
-Route::get('login', [AuthController::class, 'login'])->name('login');
-Route::post('login', [AuthController::class, 'loginPost'])->name('login.post');
+// Route::get('register', [AuthController::class, 'register'])->name('register');
+// Route::post('register', [AuthController::class, 'registerPost'])->name('register.post');
+Route::get('/', [AuthController::class, 'login'])->name('login');
+Route::post('/', [AuthController::class, 'loginPost'])->name('login.post');
 
 Route::get('forget-password', [ForgotPassController::class, 'showForgetPasswordForm'])->name('forget.password.get');
 Route::post('forget-password', [ForgotPassController::class, 'submitForgetPasswordForm'])->name('forget.password.post'); 
@@ -55,39 +54,61 @@ Route::post('reset-password', [ForgotPassController::class, 'submitResetPassword
 Route::get('/profile', [ProfileController::class, 'index'])->name('user.profile');
 Route::post('/profile', [ProfileController::class, 'store'])->name('user.profile.store');
 
-Route::middleware(['role:super admin'])->group(function () {
-    Route::get('/Dashboard/SuperAdmin', [SuperAdminController::class, 'index'])->name('superAdminDashboard');  // Super Admin Dashboard 
-    Route::get('/kpis/all', [SuperAdminController::class, 'getAllKPIs'])->name('allKPIs'); //
-    Route::get('/achieved-kpis', [SuperAdminController::class, 'getAchievedKpis'])->name('achieved.kpis');
+Route::middleware(['auth'])->group(function () {
 
-    Route::get('access-kpi', [accessController::class, 'index'])->name('accessKpi');
-    Route::get('/access-kpi/filter', [accessController::class, 'filterAccess'])->name('accessKpi.filter');
-    Route::post('access-kpi-store', [accessController::class, 'store'])->name('accessKpi.store');
-    Route::delete('kpi-access/{id}', [accessController::class, 'destroy'])->name('accessKpi.destroy');
+    // all roles can access this page when success auhentication 
+    Route::get('/all/infografik', [infografikController::class, 'index'])->name('infografik.index');
+    Route::get('/all/get-infografik', [infografikController::class, 'infografik'])->name('get-infografik');
 
-    Route::resource('states', StateController::class);
-    Route::resource('institutions', InstitutionController::class);
+    Route::middleware(['role:super admin'])->group(function () {
 
-    Route::resource('permissions', PermissionController::class);
-    Route::get('permissions/{permissionId}/delete', [PermissionController::class, 'destroy']);
+        // PENGURUSAN INSTITUSI
+        Route::resource('institutions', InstitutionController::class);
 
-    Route::resource('roles', RoleController::class);
-    Route::get('roles/{roleId}/delete', [RoleController::class, 'destroy'])->middleware('permission:delete role');
-    Route::get('roles/{roleId}/give-permission', [RoleController::class, 'addPermissionToRole']);
-    Route::put('roles/{roleId}/give-permission', [RoleController::class, 'updatePermissionToRole']);
-    Route::delete('/roles/{id}', [RoleController::class, 'destroy'])->name('roles.destroy');
+        // PENGURUSAN PENGGUNA SISTEM
+        Route::resource('users', UserController::class);
 
-    Route::resource('users', UserController::class);
-    Route::get('users/{userId}/delete', [UserController::class, 'destroy']);
-    Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
-    Route::get('/get-institutions/{stateId}', [UserController::class, 'getInstitutions']);
 
-    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
-    Route::get('/reports/pdf', [ReportController::class, 'exportPDF'])->name('reports.pdf');
-    Route::get('/reports/csv', [ReportController::class, 'exportCSV'])->name('reports.csv');
-    Route::get('/reports/visual', [ReportController::class, 'visualReport'])->name('reports.visual');
+
+        Route::get('/Dashboard', [SuperAdminController::class, 'index'])->name('superAdminDashboard');
+
+        Route::get('/pelaporan-kpi', [pelaporanKpiController::class, 'index'])->name('laporanKpi');
+
+        Route::get('/kpis/all', [SuperAdminController::class, 'getAllKPIs'])->name('allKPIs'); 
+        Route::get('/achieved-kpis', [SuperAdminController::class, 'getAchievedKpis'])->name('achieved.kpis');
+    
+        Route::get('access-kpi', [accessController::class, 'index'])->name('accessKpi');
+        Route::get('/access-kpi/filter', [accessController::class, 'filterAccess'])->name('accessKpi.filter');
+        Route::post('access-kpi-store', [accessController::class, 'store'])->name('accessKpi.store');
+        Route::delete('kpi-access/{id}', [accessController::class, 'destroy'])->name('accessKpi.destroy');
+    
+        Route::resource('states', StateController::class);
+    
+        Route::resource('permissions', PermissionController::class);
+        Route::get('permissions/{permissionId}/delete', [PermissionController::class, 'destroy']);
+    
+        Route::resource('roles', RoleController::class);
+        Route::get('roles/{roleId}/delete', [RoleController::class, 'destroy'])->middleware('permission:delete role');
+        Route::get('roles/{roleId}/give-permission', [RoleController::class, 'addPermissionToRole']);
+        Route::put('roles/{roleId}/give-permission', [RoleController::class, 'updatePermissionToRole']);
+        Route::delete('/roles/{id}', [RoleController::class, 'destroy'])->name('roles.destroy');
+    
+        // Route::get('users/{userId}/delete', [UserController::class, 'destroy']);
+        // Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+        // Route::get('/get-institutions/{stateId}', [UserController::class, 'getInstitutions']);
+    
+        Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+        Route::get('/reports/pdf', [ReportController::class, 'exportPDF'])->name('reports.pdf');
+        Route::get('/reports/csv', [ReportController::class, 'exportCSV'])->name('reports.csv');
+        Route::get('/reports/visual', [ReportController::class, 'visualReport'])->name('reports.visual');
+    
+    });
+
+        
+       
 
 });
+
 
 Route::middleware(['role:Admin State'])->group(function () {
     Route::resource('admin-state-kpis', StateAdminController::class);
@@ -124,6 +145,9 @@ Route::middleware(['role:Admin Sector|super admin'])->group(function () {
     Route::delete('/admin/Kpi/IndexKPI/{addKpi}', [AddKpiController::class, 'destroy'])->name('kpi.destroy');
     Route::put('/admin/addKpi/update/{id}', [AddKpiController::class, 'update'])->name('kpi.update');
 
+    // testing 
+    Route::get('/kpi/create', [AddKpiController::class, 'create'])-> name('kpi.create');
+
     //crud teras 
     Route::resource('teras', TerasController::class);
     Route::put('/teras/{teras}', [TerasController::class, 'update'])->name('teras.update');
@@ -132,6 +156,11 @@ Route::middleware(['role:Admin Sector|super admin'])->group(function () {
     //crud so 
     Route::resource('sector', SoController::class);
     Route::get('sector/{sectorID}/delete', [SoController::class, 'destroy']);
+
+    Route::get('bahagian', [BahagianController::class, 'index'])->name('bahagian.index');
+    Route::post('bahagian', [BahagianController::class, 'store'])->name('bahagian.store');
+    Route::put('bahagian/{id}', [BahagianController::class, 'update'])->name('bahagian.update');
+    Route::delete('bahagian/{id}', [BahagianController::class, 'destroy'])->name('bahagian.destroy');
 });
 
 Route::middleware(['role:Admin Sector'])->group(function () {

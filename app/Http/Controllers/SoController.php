@@ -10,7 +10,7 @@ class SoController extends Controller
 {
     public function index()
     {
-        $sectors = Sector::all(); // Retrieve all sectors
+        $sectors = Sector::paginate(20); // Retrieve all sectors
         $username = Auth::user();
         return view('admin.SO.index', compact('sectors', 'username'));
     }
@@ -32,10 +32,7 @@ class SoController extends Controller
         $duplicateSector = Sector::where('name', $request->name)->exists();
 
         if ($duplicateSector) {
-            return redirect()->route('sector.index')->with([
-                'status' => "Duplicate data: Sector Operation already exists.",
-                'alert-type' => "danger",
-            ]);
+            return redirect()->route('sector.index')->with('danger', 'Nilai Sektor Sudah Wujud. Sila Masukkan Nilai Unik.');
         }
 
         // Check for soft-deleted record with the same name
@@ -44,20 +41,14 @@ class SoController extends Controller
         if ($existingSector) {
             $existingSector->restore();
 
-            return redirect()->route('sector.index')->with([
-                'status' => "Sector Operation restored successfully.",
-                'alert-type' => "success",
-            ]);
+            return redirect()->route('sector.index')->with('success', 'Sektor Berjaya Dikembalikan.');
         }
 
         Sector::create([
             'name' => $request->name,
         ]);
 
-        return redirect()->route('sector.index')->with([
-            'status' => "Sector Operation created successfully.",
-            'alert-type' => "success",
-        ]);
+        return redirect()->route('sector.index')->with('success', 'Sektor Berjaya Dicipta.');
     }
 
     public function update(Request $request, Sector $sector)
@@ -71,20 +62,14 @@ class SoController extends Controller
             ->first();
 
         if ($existingSector) {
-            return redirect()->back()->with([
-                'status' => 'The Sector Operation value already exists.',
-                'alert-type' => 'danger',
-            ]);
+            return redirect()->back()->with('danger', 'Nilai Sektor Sudah Wujud. Sila Masukkan Nilai Unik.');
         }
 
         $sector->update([
             'name' => $request->name,
         ]);
 
-        return redirect()->route('sector.index')->with([
-            'status' => 'Sector updated successfully.',
-            'alert-type' => 'success',
-        ]);
+        return redirect()->route('sector.index')->with('success', 'Sektor Berjaya Dikemaskini.');
     }
 
     public function destroy($sectorId)
@@ -95,24 +80,15 @@ class SoController extends Controller
             $isInUse = $sector->addKpis()->exists();
 
             if ($isInUse) {
-                return redirect()->route('sector.index')->with([
-                    'status' => 'Sector cannot be deleted because it is in use.',
-                    'alert-type' => 'danger',
-                ]);
+                return redirect()->route('sector.index')->with('danger', 'Sektor Tidak Boleh Dipadam Kerana Sedang Digunakan.');
             }
 
             $sector->delete();
             $this->renumberItems();
 
-            return redirect()->route('sector.index')->with([
-                'status' => 'Sector deleted successfully.',
-                'alert-type' => 'success',
-            ]);
+            return redirect()->route('sector.index')->with('success', 'Sektor Berjaya Dipadam.');
         }
 
-        return redirect()->route('sector.index')->with([
-            'status' => 'Sector not found.',
-            'alert-type' => 'warning',
-        ]);
+        return redirect()->route('sector.index')->with('danger', 'Sektor Tidak Dijumpai.');
     }
 }

@@ -9,7 +9,7 @@ class Institution extends Model
 {
     use HasFactory;
     protected $table = 'institutions'; // The table name
-    protected $fillable = ['state_id', 'name', 'description'];
+    protected $fillable = ['state_id', 'name'];
 
     // Assign the KPI
     public function kpis()

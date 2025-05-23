@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pecahan KPI Jabatan Penjara Malaysia</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .department-card {
+            height: 100%;
+            transition: transform 0.3s;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem;
+        }
+        
+        .department-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .department-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto;
+            display: block;
+        }
+        
+        .card-header {
+            background-color: #f1f5f9;
+            border-bottom: 2px solid #0d6efd;
+        }
+        
+        .main-title {
+            font-weight: 600;
+            color: #0a3d62;
+        }
+        
+        .subtitle {
+            color: #1e3799;
+        }
+        
+        .department-name {
+            font-weight: 500;
+            margin-top: 10px;
+            text-align: center;
+            color: #2c3e50;
+        }
+        
+        .department-metrics {
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .sector-heading {
+            background-color: #e9ecef;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #0d6efd;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4 mb-5">
+        <div class="card shadow">
+            <div class="card-header bg-light py-3">
+                <div class="w-100 text-center">
+                    <h4 class="mb-0 main-title">Pecahan KPI mengikut Bahagian & Unit</h4>
+                    <h5 class="mb-0 subtitle">Jabatan Penjara Malaysia</h5>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <!-- Sector 1: Keselamatan -->
+                <h5 class="sector-heading rounded">Sektor Keselamatan & Operasi</h5>
+                <div class="row g-4 mb-5">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="department-card p-3">
+                            <img src="/api/placeholder/64/64" alt="Logo Bahagian Keselamatan" class="department-icon">
+                            <h5 class="department-name">Bahagian Keselamatan</h5>
+                            <div class="department-metrics">
+                                <span class="badge bg-primary">KPI: 85%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="department-card p-3">
+                            <img src="/api/placeholder/64/64" alt="Logo Bahagian Operasi" class="department-icon">
+                            <h5 class="department-name">Bahagian Operasi</h5>
+                            <div class="department-metrics">
+                                <span class="badge bg-primary">KPI: 92%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="department-card p-3">
+                            <img src="/api/placeholder/64/64" alt="Logo Unit Risikan" class="department-icon">
+                            <h5 class="department-name">Unit Risikan</h5>
+                            <div class="department-metrics">
+                                <span class="badge bg-primary">KPI: 88%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="department-card p-3">
+                            <img src="/api/placeholder/64/64" alt="Logo Unit Kawalan" class="department-icon">
+                            <h5 class="department-name">Unit Kawalan</h5>
+                            <div class="department-metrics">
+                                <span class="badge bg-primary">KPI: 83%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sector 2: Pengurusan -->
+                <h5 class="sector-heading rounded">Sektor Pengurusan</h5>
+                <div class="row g-4 mb-5">
+                    <div class="col-md-4 col-sm-6">
+                        <div class="department-card p-3">
+                            <img src="/api/placeholder/64/64" alt="Logo Bahagian Pentadbiran" class="department-icon">
+                            <h5 class="department-name">Bahagian Pentadbiran</h5>
+                            <div class="department-metrics">
+                                <span class="badge bg-primary">KPI: 78%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="department-card p-3">
+                            <img src="/api/placeholder/64/64" alt="Logo Unit Kewangan" class="department-icon">
+                            <h5 class="department-name">Unit Kewangan</h5>
+                            <div class="department-metrics">
+                                <span class="badge bg-primary">KPI: 87%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="department-card p-3">
+                            <img src="/api/placeholder/64/64" alt="Logo Unit Sumber Manusia" class="department-icon">
+                            <h5 class="department-name">Unit Sumber Manusia</h5>
+                            <div class="department-metrics">
+                                <span class="badge bg-primary">KPI: 81%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sector 3: Pembangunan & Latihan -->
+                <h5 class="sector-heading rounded">Sektor Pembangunan & Latihan</h5>
+                <div class="row g-4 mb-5">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="department-card p-3">
+                            <img src="/api/placeholder/64/64" alt="Logo Bahagian Pembangunan" class="department-icon">
+                            <h5 class="department-name">Bahagian Pembangunan</h5>
+                            <div class="department-metrics">
+                                <span class="badge bg-primary">KPI: 84%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="department-card p-3">
+                            <img src="/api/placeholder/64/64" alt="Logo Unit Latihan" class="department-icon">
+                            <h5 class="department-name">Unit Latihan</h5>
+                            <div class="department-metrics">
+                                <span class="badge bg-primary">KPI: 90%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="department-card p-3">
+                            <img src="/api/placeholder/64/64" alt="Logo Unit ICT" class="department-icon">
+                            <h5 class="department-name">Unit ICT</h5>
+                            <div class="department-metrics">
+                                <span class="badge bg-primary">KPI: 95%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="department-card p-3">
+                            <img src="/api/placeholder/64/64" alt="Logo Unit Penyelidikan" class="department-icon">
+                            <h5 class="department-name">Unit Penyelidikan</h5>
+                            <div class="department-metrics">
+                                <span class="badge bg-primary">KPI: 79%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Sector 4: Pemulihan & Rawatan -->
+                <h5 class="sector-heading rounded">Sektor Pemulihan & Rawatan</h5>
+                <div class="row g-4">
+                    <div class="col-md-2 col-sm-6">
+                        <div class="department-card p-3">
+                            <img src="/api/placeholder/64/64" alt="Logo Bahagian Pemulihan" class="department-icon">
+                            <h5 class="department-name">Bahagian Pemulihan</h5>
+                            <div class="department-metrics">
+                                <span class="badge bg-primary">KPI: 91%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <div class="department-card p-3">
+                            <img src="/api/placeholder/64/64" alt="Logo Unit Agama" class="department-icon">
+                            <h5 class="department-name">Unit Agama</h5>
+                            <div class="department-metrics">
+                                <span class="badge bg-primary">KPI: 94%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <div class="department-card p-3">
+                            <img src="/api/placeholder/64/64" alt="Logo Unit Psikologi" class="department-icon">
+                            <h5 class="department-name">Unit Psikologi</h5>
+                            <div class="department-metrics">
+                                <span class="badge bg-primary">KPI: 86%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <div class="department-card p-3">
+                            <img src="/api/placeholder/64/64" alt="Logo Unit Vokasional" class="department-icon">
+                            <h5 class="department-name">Unit Vokasional</h5>
+                            <div class="department-metrics">
+                                <span class="badge bg-primary">KPI: 82%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <div class="department-card p-3">
+                            <img src="/api/placeholder/64/64" alt="Logo Unit Perubatan" class="department-icon">
+                            <h5 class="department-name">Unit Perubatan</h5>
+                            <div class="department-metrics">
+                                <span class="badge bg-primary">KPI: 89%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-sm-6">
+                        <div class="department-card p-3">
+                            <img src="/api/placeholder/64/64" alt="Logo Unit Kaunseling" class="department-icon">
+                            <h5 class="department-name">Unit Kaunseling</h5>
+                            <div class="department-metrics">
+                                <span class="badge bg-primary">KPI: 93%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -4,155 +4,346 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
-    <title>Login | JPM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Login | Jabatan Penjara Malaysia</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary: #109927;
+            --secondary: #00796b;
+            --accent: #00bfa5;
+            --light: #e0f2f1;
+            --dark: #1a1a1a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background: #ececec;
+            background-color: #f5f5f5;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #background-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
             overflow: hidden;
         }
 
         #myVideo {
             position: absolute;
-            z-index: -1;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.7);
+        }
+
+        .overlay {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            /* background: linear-gradient(135deg, rgba(0, 77, 64, 0.8) 0%, rgba(0, 77, 64, 0.6) 100%); */
         }
 
-        .box-area {
-            width: 100%;
-            max-width: 930px;
-            border-radius: 20px;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 30px;
-            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
-        }
-
-        .left-box {
-            border-radius: 20px 0 0 20px;
-        }
-
-        .right-box {
-            background: rgba(255, 255, 255, 0.85);
-            border-radius: 20px;
-            padding: 30px;
-        }
-
-        ::placeholder {
-            font-size: 16px;
-        }
-
-        .custom-alert {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-            border-radius: 4px;
-            padding: 10px;
+        .login-container {
             display: flex;
+            justify-content: center;
             align-items: center;
-            margin-bottom: 15px;
+            min-height: 100vh;
+            padding: 20px;
         }
 
-        .position-relative {
+        .login-card {
+            width: 100%;
+            max-width: 1000px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: row;
+        }
+
+        .brand-section {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 45%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brand-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.1;
+        }
+
+        .logo {
+            width: 180px;
+            height: auto;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        }
+
+        .brand-title {
+            color: white;
+            text-align: center;
+            font-size: 22px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .brand-subtitle {
+            color: rgba(255, 255, 255, 0.85);
+            text-align: center;
+            font-size: 14px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .login-section {
+            padding: 40px;
+            width: 55%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-header {
+            margin-bottom: 30px;
+        }
+
+        .login-title {
+            font-size: 26px;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .login-subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .form-floating {
+            margin-bottom: 20px;
             position: relative;
         }
 
-        /* Kedudukan Ikon untuk peranti mudah alih */
-        @media (max-width: 768px) {
-            .position-absolute {
-                right: 15px;
-                top: 50%;
-                transform: translateY(-50%);
-                cursor: pointer;
-                z-index: 2;
+        .form-control {
+            height: 56px;
+            padding: 1rem 1rem 0.5rem;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 12px;
+            background-color: #f9f9f9;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary);
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(0, 121, 107, 0.1);
+        }
+
+        .form-floating label {
+            padding: 1rem;
+            color: #757575;
+        }
+
+        .btn-login {
+            height: 56px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            font-size: 16px;
+            padding: 0.5rem 0;
+            margin-top: 10px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn-login:hover {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 77, 64, 0.2);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+
+        .forgot-password a {
+            color: var(--secondary);
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .forgot-password a:hover {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #757575;
+            cursor: pointer;
+            z-index: 10;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .alert-error {
+            background-color: #ffebee;
+            border-left: 4px solid #ef5350;
+            color: #b71c1c;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-error ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        @media (max-width: 991px) {
+            .login-card {
+                flex-direction: column;
+                max-width: 500px;
+            }
+            
+            .brand-section, .login-section {
+                width: 100%;
+            }
+            
+            .brand-section {
+                padding: 30px;
+            }
+            
+            .login-section {
+                padding: 30px;
             }
         }
 
-        /* Kedudukan Ikon untuk paparan besar (PC) */
-        @media (min-width: 769px) {
-            .position-absolute {
-                right: 10px;
-                top: 50%;
-                transform: translateY(-50%);
-                cursor: pointer;
-                z-index: 1;
+        @media (max-width: 576px) {
+            .brand-section, .login-section {
+                padding: 25px 20px;
+            }
+            
+            .brand-title {
+                font-size: 18px;
+            }
+            
+            .logo {
+                width: 140px;
             }
         }
     </style>
 </head>
 
 <body>
-    <video autoplay muted loop id="myVideo">
-        <source src="{{ asset('picture/green.mp4') }}" type="video/mp4">
-    </video>
+    <div id="background-wrapper">
+        <video autoplay muted loop id="myVideo">
+            <source src="{{ asset('picture/green.mp4') }}" type="video/mp4">
+        </video>
+        <div class="overlay"></div>
+    </div>
 
-    <div class="container d-flex justify-content-center align-items-center min-vh-100">
-        <div class="row border rounded-5 p-3 shadow box-area">
-            <div class="col-md-6 left-box rounded-4 d-flex justify-content-center align-items-center flex-column">
-                <div class="featured-image mb-3">
-                    <img src="{{ asset('picture/penjara_logo.png') }}" class="img-fluid" style="max-width: 250px; width: 100%;">
-                </div>
-                <p class="text-white text-center fs-2" style="font-family: 'Courier New', Courier, monospace; font-weight: 600;">JABATAN PENJARA MALAYSIA</p>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="brand-section">
+                <div class="brand-pattern"></div>
+                <img src="{{ asset('picture/penjara_logo.png') }}" alt="Jabatan Penjara Malaysia Logo" class="logo">
+                <h1 class="brand-title">SMART KPI</h1>
+                <h1 class="brand-title">Jabatan Penjara Malaysia</h1>
             </div>
-
-            <div class="col-md-6">
-                <div class="row align-items-center">
-                    <div class="text-center mb-4">
-                        <h2 style="color: white;">Login</h2>
-                        <p style="color: white;">Enter your email and password</p>
-                    </div>
-
-                    <form method="POST" action="{{ url('login') }}">
-                        @csrf
-                        <div class="input-group mb-3">
-                            <input type="email" class="form-control" id="email" name="email" placeholder="Email address" value="{{ old('email') }}" required autocomplete="off">
-                        </div>
-                        <div class="position-relative mb-3">
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required autocomplete="off">
-                            <span class="position-absolute" id="togglePassword">
-                                <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
-                                    <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0"/>
-                                    <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
-                                </svg>
-                            </span>
-                        </div>
-
-                        <div class="input-group mb-3">
-                            <button class="btn btn-success w-100 rounded-5">Login</button>
-                        </div>
-                    </form>
-
-                    @if ($errors->any())
-                        <div class="custom-alert" role="alert">
-                            <div>
-                                <ul class="mb-0">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        </div>
-                    @endif
-
-                    <!-- <div class="row">
-                        <small style="color: white;">Don't have an account? <a href="{{ route('register') }}">Sign Up</a></small>
-                    </div> -->
-                    <div class="form-group row">
-                        <div class="col-md-6 offset-md-4">
-                            <div class="checkbox">
-                                <label>
-                                    <a href="{{ route('forget.password.get') }}">Reset Password</a>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
+            
+            <div class="login-section">
+                <div class="login-header">
+                    <h2 class="login-title">Welcome Back</h2>
+                    <p class="login-subtitle">Please sign in to access your account</p>
                 </div>
+
+                @if ($errors->any())
+                <div class="alert-error" role="alert">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                @endif
+
+                <form method="POST" action="{{ url('/') }}">
+                    @csrf
+                    <div class="form-floating">
+                        <input type="email" class="form-control" id="email" name="email" placeholder=" " value="{{ old('email') }}" required autocomplete="off">
+                        <label for="email"><i class="fas fa-envelope me-2"></i>Email Address</label>
+                    </div>
+                    
+                    <div class="form-floating">
+                        <input type="password" class="form-control" id="password" name="password" placeholder=" " required autocomplete="off">
+                        <label for="password"><i class="fas fa-lock me-2"></i>Password</label>
+                        <span class="password-toggle" id="togglePassword">
+                            <i class="fas fa-eye" id="eyeIcon"></i>
+                        </span>
+                    </div>
+
+                    <div class="forgot-password">
+                        <a href="{{ route('forget.password.get') }}">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="btn btn-login w-100">
+                        Sign In <i class="fas fa-arrow-right ms-2"></i>
+                    </button>
+                </form>
             </div>
         </div>
     </div>
@@ -161,12 +352,13 @@
         document.getElementById('togglePassword').addEventListener('click', function () {
             var passwordField = document.getElementById('password');
             var eyeIcon = document.getElementById('eyeIcon');
+            
             if (passwordField.type === 'password') {
                 passwordField.type = 'text';
-                eyeIcon.classList.replace('bi-eye-fill', 'bi-eye-slash-fill');
+                eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
             } else {
                 passwordField.type = 'password';
-                eyeIcon.classList.replace('bi-eye-slash-fill', 'bi-eye-fill');
+                eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
             }
         });
     </script>

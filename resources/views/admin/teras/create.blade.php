@@ -1,35 +1,28 @@
-@extends('layout')
-@section('title', 'Dashboard')
-@section('content')
+<x-createButton name="Tambah Teras" target="#addTerasModal" />
 
-<div class="container">
-    <div class="main">
-        <main class="content px-2 py-4">
-            <div class="container-fluid">
-                <h3 class="fw-bold fs-4 ms-2 mb-3">Create teras
-                    <a href="{{ url('teras') }}" class="btn btn-danger float-end">back</a>
-                </h3>
+<div class="modal fade" id="addTerasModal" tabindex="-1" aria-labelledby="addTerasModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTerasModalLabel">Tambah Teras</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-
+            <div class="modal-body">
             <div class="card-body">
                 <form action="{{ url('teras') }}" method="POST">
                     @csrf
 
                     <div class="mb-3">
-                        <label for="teras">teras Name</label>
+                        <label for="teras">Nama Teras</label>
                         <input type="text" name="teras" class="form-control">
                     </div>
                     <div class="mb-3">
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="submit" class="btn btn-success">Simpan</button> 
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Batalkan</button> 
                     </div>
                 </form>
             </div>
-
-        </main>
+            </div>
+        </div>
     </div>
-</div>   
-
-@endsection
-
-
-
+</div> 

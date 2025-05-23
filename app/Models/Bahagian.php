@@ -12,7 +12,7 @@ class Bahagian extends Model
     protected $table = 'bahagian';
 
     protected $fillable = [
-        'nama_bahagian',
+        'nama_bahagian', 'sector_id'
     ];
 
     // public function addKpis()

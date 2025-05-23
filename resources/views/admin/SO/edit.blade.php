@@ -1,36 +1,25 @@
-@extends('layoutNoName')
-@section('title', 'Dashboard')
-@section('content')
+<x-editButton target="#editModal{{ $sector->id }}" />
 
-<div class="container">
-    <div class="main">
-        <main class="content px-2 py-4">
-            <div class="container-fluid">
-                <h3 class="fw-bold fs-4 ms-2 mb-3">Edit SO
-                    <a href="{{ url('so') }}" class="btn btn-danger float-end">back</a>
-                </h3>
+<div class="modal fade" id="editModal{{ $sector->id }}" tabindex="-1" aria-labelledby="editModalLabel{{ $sector->id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel{{ $sector->id }}">Edit Sektor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-
-            <div class="card-body">
-                <form action="{{ url('so/'.$so->id) }}" method="POST" class="d-inline">
-                    @csrf
-                    @method('PUT')
-
+            <form action="{{ url('sector/'.$sector->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body">
                     <div class="mb-3">
-                        <label for="">SO Name</label>
-                        <input type="text" name="SO" value="{{ $so->SO }}" class="form-control">
+                        <label for="sector_name" class="form-label">Nama Sektor</label>
+                        <input type="text" class="form-control" id="sector_name" name="name" value="{{ $sector->name }}" required>
                     </div>
-                    <div class="mb-3">
-                        <button type="submit" class="btn btn-primary">Update</button>
+                    <div>
+                        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                     </div>
-                </form>
-            </div>
-
-        </main>
+                </div>
+            </form>
+        </div>
     </div>
-</div>   
-
-@endsection
-
-
-
+</div>
