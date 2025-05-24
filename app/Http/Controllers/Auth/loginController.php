@@ -20,7 +20,9 @@ class loginController extends Controller
 
         if(Auth::attempt($request->only('email', 'password'))){
             $request->session()->regenerate();
-            return redirect('all/infografik');
+            return redirect('all/infografik')->with('success', 'Login Successfull!');
         }
+
+        return back()->with('error', 'The provided credentials do not match our records.');
     }
 }

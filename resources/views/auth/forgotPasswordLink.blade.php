@@ -297,8 +297,6 @@
     </div>
 
     <div class="login-container">
-        @include('toast-notification')
-        
         <div class="login-card">
             <div class="brand-section">
                 <div class="brand-pattern"></div>
@@ -309,60 +307,85 @@
             
             <div class="login-section">
                 <div class="login-header">
-                    <h2 class="login-title">Welcome Back</h2>
-                    <p class="login-subtitle">Please sign in to access your account</p>
+                    <h2 class="login-title">Reset Account Password</h2>
+                    <p class="login-subtitle">Enter your new password here</p>
                 </div>
 
-                @if ($errors->any())
-                <div class="alert-error" role="alert">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
+                @if(session('status'))
+                    <div>{{ session('status') }}</div>
                 @endif
 
-                <form method="POST" action="{{ url('/') }}">
+                @include('toast-notification')
+
+                <form method="POST" action="{{ route('password.update') }}">
                     @csrf
+                    <input type="hidden" name="token" value="{{ $token }}" />
+
                     <div class="form-floating">
-                        <input type="email" class="form-control" id="email" name="email" placeholder=" " value="{{ old('email') }}" required autocomplete="off">
+                        <input type="email" class="form-control" id="email" value="{{ $email ?? old('email') }}" name="email" placeholder="Email Address" required autofocus>
                         <label for="email"><i class="fas fa-envelope me-2"></i>Email Address</label>
+                        <div class="mt-1 ms-2 text-danger">
+                            @error('email') <div>{{ $message }}</div> @enderror
+                        </div>
                     </div>
-                    
-                    <div class="form-floating">
-                        <input type="password" class="form-control" id="password" name="password" placeholder=" " required autocomplete="off">
-                        <label for="password"><i class="fas fa-lock me-2"></i>Password</label>
+
+                     <div class="form-floating">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                        <label for="password"><i class="fas fa-envelope me-2"></i>Password</label>
                         <span class="password-toggle" id="togglePassword">
                             <i class="fas fa-eye" id="eyeIcon"></i>
                         </span>
+                        <div class="mt-1 ms-2 text-danger">
+                            @error('password') <div>{{ $message }}</div> @enderror
+                        </div>
                     </div>
 
-                    <div class="forgot-password">
-                        <a href="{{ route('password.request') }}">Forgot password?</a>
+                     <div class="form-floating">
+                        <input type="password" class="form-control" id="passwordConfirmation" name="password_confirmation" placeholder="Password Confirmation" required>
+                        <label for="password"><i class="fas fa-envelope me-2"></i>Password Confirmation</label>
+                        <span class="password-toggle" id="togglePasswordConfirmation">
+                            <i class="fas fa-eye" id="eyeIcon2"></i>
+                        </span>
+                        <div class="mt-1 ms-2 text-danger">
+                            @error('password') <div>{{ $message }}</div> @enderror
+                        </div>
                     </div>
 
+                
                     <button type="submit" class="btn btn-login w-100">
-                        Sign In <i class="fas fa-arrow-right ms-2"></i>
+                        Reset Password
                     </button>
                 </form>
             </div>
         </div>
     </div>
-
-    <script>
-        document.getElementById('togglePassword').addEventListener('click', function () {
-            var passwordField = document.getElementById('password');
-            var eyeIcon = document.getElementById('eyeIcon');
-            
-            if (passwordField.type === 'password') {
-                passwordField.type = 'text';
-                eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
-            } else {
-                passwordField.type = 'password';
-                eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
-            }
-        });
-    </script>
 </body>
 </html>
+
+ <script>
+    document.getElementById('togglePassword').addEventListener('click', function () {
+        var passwordField = document.getElementById('password');
+        var eyeIcon = document.getElementById('eyeIcon');
+        
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            passwordField.type = 'password';
+            eyeIcon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    });
+
+     document.getElementById('togglePasswordConfirmation').addEventListener('click', function () {
+        var passwordField = document.getElementById('passwordConfirmation');
+        var eyeIcon2 = document.getElementById('eyeIcon2');
+        
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            eyeIcon2.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            passwordField.type = 'password';
+            eyeIcon2.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    });
+</script>

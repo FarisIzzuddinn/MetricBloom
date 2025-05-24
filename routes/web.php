@@ -25,7 +25,9 @@ use App\Http\Controllers\all\infografikController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\pelaporanKpiController;
 use App\Http\Controllers\Auth\ForgotPassController;
+use App\Http\Controllers\Auth\forgotPaswordController;
 use App\Http\Controllers\Auth\logoutController;
+use App\Http\Controllers\Auth\resetLinkPasswordController;
 use App\Http\Controllers\institutionAdminController;
 use Illuminate\Auth\Events\Logout;
 
@@ -46,10 +48,11 @@ use Illuminate\Auth\Events\Logout;
 Route::get('/', [loginController::class, 'login'])->name('login');
 Route::post('/', [loginController::class, 'loginPost'])->name('login.post');
 
-Route::get('forget-password', [ForgotPassController::class, 'showForgetPasswordForm'])->name('forget.password.get');
-Route::post('forget-password', [ForgotPassController::class, 'submitForgetPasswordForm'])->name('forget.password.post'); 
-Route::get('reset-password/{token}', [ForgotPassController::class, 'showResetPasswordForm'])->name('reset.password.get');
-Route::post('reset-password', [ForgotPassController::class, 'submitResetPasswordForm'])->name('reset.password.post');
+Route::get('forgot-password', [forgotPaswordController::class, 'forgotPassword'])->name('password.request');
+Route::post('forgot-password', [forgotPaswordController::class, 'sendResetEmailLink'])->name('password.email');
+
+Route::get('reset-password/{token}', [resetLinkPasswordController::class, 'forgotPasswordLink'])->name('password.reset');
+Route::post('reset-password', [resetLinkPasswordController::class, 'reset'])->name('password.update');
 
 // Route::resource('profileEdit', AuthController::class);
 //profile route

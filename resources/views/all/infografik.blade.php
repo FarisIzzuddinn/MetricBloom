@@ -1,6 +1,8 @@
 @extends('layout')
 @section('content')
 
+@include('toast-notification')
+
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
         <h1 class="h3 fw-bold text-dark">Papan Pemuka</h1>
