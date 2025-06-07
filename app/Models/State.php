@@ -24,19 +24,9 @@ class State extends Model
     }
 
 
-    // Dashboard super admin
+    // 1 state can have more than 1 institutions 
     public function institutions()
     {
         return $this->hasMany(Institution::class);
     }
-
-    // public function kpis()
-    // {
-    //     return $this->belongsToMany(AddKpi::class, 'kpi_state', 'state_id', 'kpi_id');
-    // }
-
-    // public function adminState()
-    // {
-    //     return $this->hasMany(User::class, 'state_id');
-    // }
 }

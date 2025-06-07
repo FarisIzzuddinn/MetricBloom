@@ -4,12 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Institution extends Model
 {
-    use HasFactory;
-    protected $table = 'institutions'; // The table name
-    protected $fillable = ['state_id', 'name'];
+    use HasFactory, SoftDeletes;
+    protected $table = 'institutions'; 
+    protected $fillable = ['name', 'state_id', 'created_by', 'updated_by', 'deleted_by'];
 
     // Assign the KPI
     public function kpis()
@@ -18,49 +19,17 @@ class Institution extends Model
                     ->withPivot('quarter', 'status', 'pencapaian', 'peratus_pencapaian'); // Add all required pivot fields
     }
 
-    // dashboard super admin
+
+    public function kpiInstitutions()
+    {
+    return $this->hasMany(KpiInstitution::class);
+    }
+
+    // 1 institutions only have 1 state
     public function state()
     {
         return $this->belongsTo(State::class);
     }
-
-    public function kpiInstitutions()
-{
-    return $this->hasMany(KpiInstitution::class);
-}
-
-
-    // public function state()
-    // {
-    //     return $this->belongsTo(State::class);
-    // }
-
-    // public function addkpis()
-    // {
-    //     return $this->hasMany(AddKpi::class);
-    // }
-
-    // public function kpis()
-    // {
-    //     return $this->belongsToMany(AddKpi::class, 'kpi_institution', 'institution_id', 'kpi_id');
-    // }
-    
-
-    // public function addkpi()
-    // {
-    //     return $this->belongsToMany(KPI::class, 'kpi_institution');
-    // }
-
-
-    // public function users()
-    // {
-    //     return $this->hasMany(User::class);
-    // }
-
-    // public function sectors()
-    // {
-    //     return $this->hasMany(Sector::class);
-    // }
 
    
 }

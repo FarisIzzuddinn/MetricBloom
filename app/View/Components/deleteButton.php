@@ -11,12 +11,15 @@ class deleteButton extends Component
     public $target;
     public $permissionId;
     public $permissionName;
+    public $url; // New
 
-    public function __construct($target, $permissionId, $permissionName)
+    public function __construct($target, $permissionId, $permissionName, $url)
     {
         $this->target = $target;
         $this->permissionId = $permissionId;
         $this->permissionName = $permissionName;
+        $this->url = $url;
+
     }
 
     /**

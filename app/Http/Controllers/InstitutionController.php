@@ -13,9 +13,8 @@ class InstitutionController extends Controller
     public function index()
     {
         $institutions = Institution::with('state')->paginate(20);
-        $states = State::all();
-        $username = Auth::User();
-        return view('superAdmin.Institution.index', compact('institutions', 'states', 'username'));
+        $states = State::select('id', 'name')->get();
+        return view('superAdmin.Institution.index', compact('institutions', 'states'));
     }
 
     public function create()
@@ -25,21 +24,19 @@ class InstitutionController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
+        $user_id = auth()->id();
+        
         $request->validate([
             'name' => 'required|string|max:255',
             'state_id' => 'nullable|exists:states,id',
         ]);
 
-        Institution::create($request->all());
+
+        $institutions = $request->only(['name', 'state_id']);
+        $institutions['created_by'] = $user_id;
+        Institution::create($institutions);
 
         return redirect()->route('institutions.index')->with('success', 'Institution created successfully.');
-    }
-
-    public function edit(Institution $institution)
-    {
-        $states = State::all();
-        return view('institutions.edit', compact('institution', 'states'));
     }
 
     public function update(Request $request, Institution $institution)
@@ -49,15 +46,21 @@ class InstitutionController extends Controller
             'state_id' => 'nullable|exists:states,id', // Ensure state_id is valid
         ]);
 
-        // Update institution with all request data
-        $institution->update($request->all());
+        $data = $request->only(['name', 'state_id']);
+        $data['updated_by'] = auth()->id();
+        $institution->update($data);
 
         return redirect()->route('institutions.index')->with('success', 'Institution updated successfully.');
     }
 
-    public function destroy($id){
+    public function destroy($id)
+    {
         $institution = Institution::findOrFail($id);
-        $institution->delete();
+        $institution->deleted_by = auth()->id(); 
+        $institution->save(); 
+
+        $institution->delete(); // Soft delete
         return redirect()->route('institutions.index')->with('success', 'Institution deleted successfully.');
     }
+
 }

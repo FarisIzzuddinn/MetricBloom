@@ -14,9 +14,12 @@ return new class extends Migration
         Schema::create('institutions', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('state_id')->nullable();
-            $table->text('description')->nullable();
+            $table->foreignId('state_id')->nullable()->constrained('states')->onDelete('cascade');
             $table->timestamps();
+            $table->foreignId('created_by')->nullable()->constrained('users');
+            $table->foreignId('updated_by')->nullable()->constrained('users');
+            $table->softDeletes();
+            $table->foreignId('deleted_by')->nullable()->constrained('users');
         });
     }
 

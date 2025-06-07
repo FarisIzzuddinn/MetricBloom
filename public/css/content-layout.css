@@ -15,7 +15,8 @@
     padding: 1rem 1.5rem;
     border-radius: var(--border-radius);
     margin-bottom: 1.5rem;
-    box-shadow: var(--shadow-md);
+    background-color: var(--secondary-color);
+    box-shadow: var(--shadow-lg);
 }
 
 @media (max-width: 768px) {
@@ -53,6 +54,10 @@
     overflow: hidden;
     background: linear-gradient(to bottom right, #ffffff, #f8f9fa);
     width: 100%;
+}
+
+.text-muted {
+    margin-right: 20px;
 }
 
 .table thead th {
@@ -162,3 +167,22 @@
         align-items: center;
     }
 }
+
+/* font size */
+.container-fluid {
+    font-size: 14px;
+}
+
+.dashboard-title {
+    font-size: 16px;
+}
+
+
+/* institutions page  */
+#institutionsTable th,
+#institutionsTable td {
+    border: 0.5px solid #ccc;
+}
+
+
+ 

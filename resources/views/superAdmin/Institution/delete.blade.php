@@ -1,5 +1,11 @@
 <!-- Delete Permission Modal -->
-<x-deleteButton target="#deleteModal" permissionId="{{ $institution->id }}" permissionName="{{ $institution->name }}" />
+<x-deleteButton 
+    target="#deleteModal"
+    permissionId="{{ $institution->id }}"
+    permissionName="{{ $institution->name }}"
+    url="{{ route('institutions.destroy', $institution->id) }}" />
+
+
 
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -12,13 +18,13 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
         <div class="modal-body text-center">
-            <p>Adakah anda pasti memadamkan instiusi ini?</p>
-            <p class="text-danger fw-bold" id="deletePermissionName"></p>
+            <p>Adakah anda pasti memadamkan institusi ini?</p>
+            <p class="text-danger fw-bold" id="deleteInstitutionName"></p>
             <p>Tindakan ini tidak boleh kembali.</p>
         </div>
         <div class="modal-footer justify-content-center">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batalkan</button>
-            <form id="deletePermissionForm" method="POST" action="">
+            <form id="deleteInstitutionForm" method="POST" action="">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn btn-danger">Padam</button>
@@ -26,3 +32,19 @@
         </div>
     </div>
 </div>
+
+<script>
+    const deleteModal = document.getElementById('deleteModal');
+    deleteModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const url = button.getAttribute('data-url');
+        const name = button.getAttribute('data-name');
+
+        const form = document.getElementById('deleteInstitutionForm');
+        const nameDisplay = document.getElementById('deleteInstitutionName');
+
+        form.action = url;
+        nameDisplay.textContent = name;
+    });
+</script>
+
