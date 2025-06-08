@@ -44,9 +44,6 @@
                     @endforelse
                 </tbody>
             </table>
-            <div id="emptyMessage" class="alert alert-info mt-3" style="display: none;">
-                Tiada teras sepadan dengan kriteria carian anda.
-            </div>
         </div>
         <div class="d-flex justify-content-end mt-4 pagination-container">
             {{ $teras->links() }}
