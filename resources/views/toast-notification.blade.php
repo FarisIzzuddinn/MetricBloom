@@ -8,7 +8,6 @@
     }
 
     .toast {
-        background: linear-gradient(135deg, #4CAF50, #2E7D32);
         color: white;
         border: none;
         border-radius: 8px;
@@ -16,8 +15,9 @@
         transition: all 0.3s ease;
     }
 
-    .toast.error {
-        background: linear-gradient(135deg, #F44336, #C62828);
+    .toast .error {
+        background: linear-gradient(135deg, #F44336, #C62828) !important;
+        
     }
 </style>
 

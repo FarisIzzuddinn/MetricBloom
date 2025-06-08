@@ -24,7 +24,7 @@
                 </thead>
                 <tbody>
                     @forelse($institutions as $index => $institution)
-                        <tr class="institution-item" data-state="{{ $institution->state_id }}" data-name="{{ $institution->name }}">
+                        <tr>
                             <td>{{ ($institutions->currentPage() - 1) * $institutions->perPage() + $loop->iteration }}</td>
                             <td>{{ $institution->name }}</td>
                             <td>

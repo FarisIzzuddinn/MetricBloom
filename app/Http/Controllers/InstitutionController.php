@@ -12,7 +12,7 @@ class InstitutionController extends Controller
 {
     public function index()
     {
-        $institutions = Institution::with('state')->paginate(20);
+        $institutions = Institution::select('id', 'name', 'state_id')->with('state')->paginate(20);
         $states = State::select('id', 'name')->get();
         return view('superAdmin.Institution.index', compact('institutions', 'states'));
     }

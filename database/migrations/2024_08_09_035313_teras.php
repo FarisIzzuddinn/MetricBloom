@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('teras', function (Blueprint $table) {
             $table->id();
-            $table->string('teras')->unique();
-            $table->rememberToken();
+            $table->string('teras');
             $table->timestamps();
+            $table->foreignId('created_by')->nullable()->constrained('users');
+            $table->foreignId('updated_by')->nullable()->constrained('users');
             $table->softDeletes();
+            $table->foreignId('deleted_by')->nullable()->constrained('users');
         });
     }
 

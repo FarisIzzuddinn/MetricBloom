@@ -14,6 +14,9 @@ class Teras extends Model
 
     protected $fillable = [
         'teras',
+        'created_by',
+        'updated_by',
+        'deleted_by'
     ];
 
     public function addKpis()

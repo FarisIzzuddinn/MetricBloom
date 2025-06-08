@@ -1,10 +1,11 @@
-<!-- Butang Delete dengan Modal -->
-<button type="button" class="btn btn-sm btn-danger"  data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="setDeleteModal('{{ $tera->teras }}', '{{ url('teras/'.$tera->id) }}')">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" 
-        class="bi bi-trash-fill" viewBox="0 0 16 16">
-        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
-    </svg>
-</button>
+<!-- Delete Permission Modal -->
+<x-deleteButton 
+    target="#deleteModal"
+    permissionId="{{ $tera->id }}"
+    permissionName="{{ $tera->teras }}"
+    url="{{ route('teras.destroy', $tera->id) }}" />
+
+
 
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -17,7 +18,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
         <div class="modal-body text-center">
-            <p>Adakah anda pasti memadamkan teras ini?</p>
+            <p>Adakah anda pasti memadamkan institusi ini?</p>
             <p class="text-danger fw-bold" id="deleteTerasName"></p>
             <p>Tindakan ini tidak boleh kembali.</p>
         </div>
@@ -31,3 +32,19 @@
         </div>
     </div>
 </div>
+
+<script>
+    const deleteModal = document.getElementById('deleteModal');
+    deleteModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const url = button.getAttribute('data-url');
+        const name = button.getAttribute('data-name');
+
+        const form = document.getElementById('deleteTerasForm');
+        const nameDisplay = document.getElementById('deleteTerasName');
+
+        form.action = url;
+        nameDisplay.textContent = name;
+    });
+</script>
+
