@@ -12,7 +12,6 @@
         </div>
     </div>
 
-    <!-- Table View -->
     <div id="tableView" class="card-body">
         <div class="table-responsive">
             <table class="table" id="terasTable" style="border-collapse: collapse; border-radius: 0px; border: 0.5px solid #ccc;">
@@ -27,7 +26,7 @@
                     @forelse($teras as $index => $tera)
                         <tr>
                             <td>{{ ($teras->currentPage() - 1) * $teras->perPage() + $loop->iteration }}</td>
-                            <td>{{ $tera->teras }}</td>
+                            <td>{{ $tera->name }}</td>
                             <td>
                                 <div class="d-flex">
                                     @include('admin.teras.edit')

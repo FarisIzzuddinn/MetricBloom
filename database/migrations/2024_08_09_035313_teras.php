@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('teras', function (Blueprint $table) {
             $table->id();
-            $table->string('teras');
+            $table->string('name');
             $table->timestamps();
             $table->foreignId('created_by')->nullable()->constrained('users');
             $table->foreignId('updated_by')->nullable()->constrained('users');

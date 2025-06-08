@@ -17,10 +17,10 @@ class terasSeeder extends Seeder
         $now = Carbon::now();
         
         DB::table('teras')->insert([
-            ['id' => 1, 'teras' => 'Pemerkasaan Keselamatan', 'created_at' => $now, 'created_by' => '1', 'updated_at' => $now, 'updated_by' => '1'],
-            ['id' => 2, 'teras' => 'Pengukuhan Pengurusan Pesalah Bersepadu', 'created_at' => $now, 'created_by' => '1', 'updated_at' => $now, 'updated_by' => '1'],
-            ['id' => 3, 'teras' => 'Pembentukan Komuniti Inklusif', 'created_at' => $now, 'created_by' => '1', 'updated_at' => $now, 'updated_by' => '1'],
-            ['id' => 4, 'teras' => 'Pemantapan Institusi Dan Sistem Penyampaian', 'created_at' => $now, 'created_by' => '1', 'updated_at' => $now, 'updated_by' => '1'],
+            ['id' => 1, 'name' => 'Pemerkasaan Keselamatan', 'created_at' => $now, 'created_by' => '1', 'updated_at' => $now, 'updated_by' => '1'],
+            ['id' => 2, 'name' => 'Pengukuhan Pengurusan Pesalah Bersepadu', 'created_at' => $now, 'created_by' => '1', 'updated_at' => $now, 'updated_by' => '1'],
+            ['id' => 3, 'name' => 'Pembentukan Komuniti Inklusif', 'created_at' => $now, 'created_by' => '1', 'updated_at' => $now, 'updated_by' => '1'],
+            ['id' => 4, 'name' => 'Pemantapan Institusi Dan Sistem Penyampaian', 'created_at' => $now, 'created_by' => '1', 'updated_at' => $now, 'updated_by' => '1'],
         ]);
     }
 }

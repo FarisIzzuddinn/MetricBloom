@@ -10,7 +10,7 @@ class TerasController extends Controller
 {
     public function index()
     {
-        $teras = Teras::select('id', 'teras')->paginate(20);
+        $teras = Teras::select('id', 'name')->paginate(20);
         $username = Auth::User();
         return view('admin.teras.index', compact('teras', 'username'));
     }
@@ -24,10 +24,10 @@ class TerasController extends Controller
     {
         // Validate the request input
         $request->validate([
-            'teras' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
         ]);
 
-        $duplicateTeras = Teras::where('teras', $request->teras)->exists();
+        $duplicateTeras = Teras::where('name', $request->teras)->exists();
 
         if ($duplicateTeras) {
             return redirect()->route('teras.index')->with('error', 'Nilai Teras Sudah Wujud. Sila Masukkan Nilai Unik.');
@@ -43,7 +43,7 @@ class TerasController extends Controller
         //     return redirect()->route('teras.index')->with('success', 'Teras Berjaya Dikembalikan.');
         // }
 
-        $teras = $request->only(['teras']);
+        $teras = $request->only(['name']);
         $teras['created_by'] = auth()->id();
         
         Teras::create($teras);
@@ -66,7 +66,7 @@ class TerasController extends Controller
         ]);
     
         // Check if the teras already exists with the same name but a different ID
-        $existingTeras = Teras::where('teras', $request->input('teras'))->where('id', '!=', $id)->first();
+        $existingTeras = Teras::where('name', $request->input('teras'))->where('id', '!=', $id)->first();
     
         if ($existingTeras) {
             return redirect()->back()->with('error', 'Nilai Teras Sudah Wujud. Sila Masukkan Nilai Unik.');
@@ -74,7 +74,7 @@ class TerasController extends Controller
     
         $teras = Teras::findOrFail($id);
         $teras->update([
-            'teras' => $request->input('teras'),
+            'name' => $request->input('teras'),
             'updated_by' => auth()->id(), 
         ]);
 
