@@ -2,7 +2,7 @@
 <x-deleteButton 
     target="#deleteModal"
     permissionId="{{ $tera->id }}"
-    permissionName="{{ $tera->teras }}"
+    permissionName="{{ $tera->name }}"
     url="{{ route('teras.destroy', $tera->id) }}" />
 
 

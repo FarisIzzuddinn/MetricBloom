@@ -1,9 +1,8 @@
 <?php
 
-use App\Http\Controllers\Auth\loginController;
+use Illuminate\Auth\Events\Logout;
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\SoController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UserController;
@@ -13,23 +12,24 @@ use App\Http\Controllers\TerasController;
 use App\Http\Controllers\accessController;
 use App\Http\Controllers\AddKpiController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SectorController;
 use App\Http\Controllers\ViewerController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserKpiController;
 use App\Http\Controllers\BahagianController;
+use App\Http\Controllers\Auth\loginController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\StateAdminController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\AdminSectorController;
-use App\Http\Controllers\all\infografikController;
+use App\Http\Controllers\Auth\logoutController;
 use App\Http\Controllers\InstitutionController;
 use App\Http\Controllers\pelaporanKpiController;
+use App\Http\Controllers\all\infografikController;
 use App\Http\Controllers\Auth\ForgotPassController;
-use App\Http\Controllers\Auth\forgotPaswordController;
-use App\Http\Controllers\Auth\logoutController;
-use App\Http\Controllers\Auth\resetLinkPasswordController;
 use App\Http\Controllers\institutionAdminController;
-use Illuminate\Auth\Events\Logout;
+use App\Http\Controllers\Auth\forgotPaswordController;
+use App\Http\Controllers\Auth\resetLinkPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -159,8 +159,8 @@ Route::middleware(['role:Admin Sector|super admin'])->group(function () {
     Route::get('teras/{terasID}/delete', [TerasController::class, 'destroy']);
 
     //crud so 
-    Route::resource('sector', SoController::class);
-    Route::get('sector/{sectorID}/delete', [SoController::class, 'destroy']);
+    Route::resource('sector', SectorController::class);
+    Route::get('sector/{sectorID}/delete', [SectorController::class, 'destroy']);
 
     Route::get('bahagian', [BahagianController::class, 'index'])->name('bahagian.index');
     Route::post('bahagian', [BahagianController::class, 'store'])->name('bahagian.store');

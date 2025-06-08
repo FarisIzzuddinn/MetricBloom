@@ -24,9 +24,9 @@ class DatabaseSeeder extends Seeder
             StatesTableSeeder::class,
             SectorsTableSeeder::class,
             InstitutionsTableSeeder::class,
-            BahagianSeeder::class,
+            // BahagianSeeder::class,
             TerasSeeder::class,
-            KpiTableSeeder::class
+            // KpiTableSeeder::class
         ]);
     }
 }

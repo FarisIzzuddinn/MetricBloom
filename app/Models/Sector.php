@@ -11,7 +11,7 @@ class Sector extends Model
     use HasFactory, SoftDeletes;
 
     protected $table = 'sectors';
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'created_by', 'updated_by', 'deleted_by'];
 
     public $timestamps = true;
 

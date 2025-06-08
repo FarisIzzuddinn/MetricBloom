@@ -13,12 +13,16 @@ return new class extends Migration
     {
         Schema::create('sectors', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->softDeletes();
+            $table->string('name');
+
             $table->timestamps();
+            $table->foreignid('created_by')->nullable()->constrained('users');
+            $table->foreignId('updated_by')->nullable()->constrained('users');
+            $table->softDeletes();
+            $table->foreignId('deleted_by')->nullable()->constrained('users');
         });
     }
-
+    
     /**
      * Reverse the migrations.
      */

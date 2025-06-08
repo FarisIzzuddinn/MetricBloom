@@ -15,7 +15,7 @@
 
                     <div class="mb-3">
                         <label for="teras{{ $tera->id }}" class="form-label">Nama Teras</label>
-                        <input type="text" name="teras" id="teras{{ $tera->id }}" class="form-control" value="{{ $tera->teras }}">
+                        <input type="text" name="teras" id="teras{{ $tera->id }}" class="form-control" value="{{ $tera->name }}">
                     </div>
                     <div>
                         <button type="submit" class="btn btn-primary">Simpan Perubahan</button>

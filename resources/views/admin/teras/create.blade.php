@@ -14,7 +14,7 @@
 
                     <div class="mb-3">
                         <label for="teras">Nama Teras</label>
-                        <input type="text" name="teras" class="form-control">
+                        <input type="text" name="name" class="form-control">
                     </div>
                     <div class="mb-3">
                         <button type="submit" class="btn btn-success">Simpan</button> 
